@@ -3,6 +3,13 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
+    Build 54 (29052011-122308) Swift
+        * Fixed dAmnViper._auth3
+        ** Forgot to use .encode and .decode on data.
+        * Created setup.py.
+        * Moved examples to dAmnViper.examples.
+        ** Should be run with python3 -m.
+    
     Build 53 (14042011-200417) Swift
         * Made even more changes to compensate for changes to deviantART.
         ** MAKE UP YOUR DAMN MINDS dT!

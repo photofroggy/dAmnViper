@@ -1,24 +1,55 @@
+==========
+dAmn Viper
+==========
 
+**dAmn Viper** is a Python package created by photofroggy.
 
-	Thank you for downloading dAmn Viper!
-	dAmn Viper was created by photofroggy, on Windows
-	Vista, using Python 3.0.
-	
-	The module dAmnViper.base contains the stuff you want.
-	
-	The other .py files included in this are examples of
-    how to create different applications using the dAmnViper
-    module.
-	
-	Full documentation is available at the following URL:
-	
-		http://www.botdom.com/documentation/DAmn_Viper
-	
-	Enjoy!
+This package provides an API for connecting to and interacting with
+the dAmn chats. That is, deviantART's messaging network chats.
 
-#############################################################
-######################## DISCLAIMER #########################
-#############################################################
+The package was created using Python version 3, so should be used with
+this version, but it has been tested and proven to work on Python 2.6 and
+greater, thanks to some hacky module scripting.
+
+-------------
+Brief example
+-------------
+
+Creating a client quickly for dAmn is quite easy using dAmn Viper. Below
+is one of the simplest examples of a client that simply connects, and
+tries to stay connected::
+    
+    from dAmnViper.base import ReconnectingClient
+    
+    dAmn = ReconnectingClient()
+    dAmn.user.username = 'username'
+    dAmn.user.password = 'password'
+    dAmn.autojoin = ['Botdom']
+    dAmn.start()
+
+That is all that is required! It is advised that you use the
+ReconnectingClient class when making applications that connect to dAmn.
+Chat bots and full clients can be made by extending the
+ReconnectingClient class to add functionality, as shown in the examples
+provided.
+
+---------
+Prospects
+---------
+
+I know it is a bad idea to not use Twisted, but this library was
+intended for use in applications where the target audience is not likely
+to want to spend time installing program after program. The idea was to
+allow the user to get the application working as quickly as possible.
+
+I will be experimenting with Twisted in the near future and may
+re-release dAmn Viper using Twisted for managing the connection.
+
+----------
+DISCLAIMER
+----------
+
+Disclaimer::
 
 		dAmn Viper is in no way affiliated with or endorsed by deviantART.com.
 	This is not an official service of deviantART.com. This is an independent
