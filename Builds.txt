@@ -1,0 +1,337 @@
+
+    Welcome to the build list!
+    This tells you the date of each build, and perhaps some brief details.
+    The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
+    
+    Build 53 (14042011-200417) Swift
+        * Made even more changes to compensate for changes to deviantART.
+        ** MAKE UP YOUR DAMN MINDS dT!
+        
+    Build 52 (20022011-002000) Swift
+        * Changed the authtoken grabber so it isn't case sensitive.
+        * Fixed bugs with the connection attempt limiters.
+        ** Mainly typos.
+        ** Thanks to blazer for spotting that.
+        * Split up dAmnViper.ReconnectingClient.start into separate methods.
+    
+    Build 51 (18022011-002117) Swift
+        * Guess what dA did...
+        ** The authtoken for dAmn is now not included in any cookies.
+        ** The token is only given in the actual chat page.
+        ** Updated dAmn Viper to retrieve this page after getting dA cookies.
+        ** Restructured the authtoken grabbing code to accommodate for the changes.
+    
+    Build 50 (10022011-144923) Swift
+        * dA changed the cookies again!
+        ** This build is a patch.
+        ** dAmnViper.deviantART.Login now uses a cookie jar! Yay!
+    
+    Build 49 (09022011-220339) Swift
+        * Minor bug fix.
+    
+    Build 48 (09022011-174317) Swift
+        * Patched to work with changes made to deviantART's login system.
+        ** The cookie returned by dA changed!
+    
+    Build 47 (23012011-180841) Swift
+        * Made the dAmnViper.stream.Connection class threaded.
+        ** Updated code in the dAmnViper.base classes to compensate.
+        ** Responses to ping (pong!) now happen in the Connection class.
+        * ^C stops dAmn Viper gracefully.
+        ** Usually this would not kill an app using threads.
+    
+    Build 46 (19012011-000611) Swift
+        * Changed the structure of the object returned by dAmnViper.parse.Protocol().mapper()
+        ** Updated the rest of the source to compensate.
+        * Changed the format of the output used in the logger methods.
+    
+    Build 45 (06122010-010954) Swift
+        * Improved dAmnViper.deviantART.Login.
+        ** The object now handles errors better.
+        ** Login().status has changed.
+        *** Login().status = (error_code, error_message)
+        *** Known error codes and messages are as follows:
+        **** Code: 0; Message: Nothing has happened yet.
+        **** Code: 1; Message: Authtoken retrieved!
+        **** Code: 2; Message: Authtoken not given. Not sure why.
+        **** Code: 3; Message: Could not connect to the internet.
+        **** Code: 4; Message: Incorrect username or password provided.
+        **** Code: 5; <Message unknown. Something went wrong during the request.>
+        **** Code: 6; Message: Something went wrong. I do not know why.
+        *** Changed ReconnectingClient to compensate.
+        * Character encoding latin-1 now used for sending and receiving data.
+        * Changed dAmnViper.stream.Connection to actually encode outgoing data with latin-1.
+        * Updated the protocol message for the login packet.
+        
+    Build 44 (07112010-202103) Swift
+        * dAmnViper.stream.Connection().read now catches EINTR.
+        ** This stops the bot from crashing on Linux if the window is resized.
+        * Changed the structure for Tablumps parsing.
+        * Changed the logger mapping so that raw packet data is available to client loggers.
+        
+    Build 43 (05112010-205739) Swift
+        * Using sys.stdout.write instead of print!
+        ** Should have done this a long time ago...
+        ** Should make porting to 2.x easier.
+        * Changed dAmnViper.deviantART so that it works on both Python 2.6+ and 3.x
+        ** dAmnViper now works on any version of Python ABOVE 2.5!
+    
+    Build 42 (13102010-001919) Swift
+        * Added code to limit connection attempts.
+        ** Default limit is 3 attempts.
+    
+    Build 41 (14042010-162150) Swift
+        * Fixed a small error that made programs crash.
+        ** base.dAmnSock.me tried calling a non-existent method.
+        * Split up base.Client.mainloop.
+        ** base.Client.run and base.Client.mainloop.
+        * Cleaned up code a bit.
+        
+    Build 40 (06042010-030857) Swift
+        * Made dAmnViper.base.ReconnectingClient.start iterative rather than recursive.
+        ** This is to prevent a stack overflow.
+        ** Thanks to blazer-flamewing for suggesting this.
+        
+    Build 39 (05032010-155244) Swift
+        * Fixed a bug in the method parse.Protocol.logger.
+        ** Thanks, once again, to blazer-flamewing for finding the bug.
+        * Created the method parse.Tablumps.populate.
+        ** This method populates the data needed to parse tablumps correctly.
+        ** Updated ~/parse.py to compensate.
+        * Moved attribute base.Client.autorejoin to base.ReconnectingClient.flag.autorejoin.
+        ** Updated ~/base.py to actually use this flag.
+        
+    Build 38 (24012010-221752) Swift
+        * Fixed the method base.Client.format_ns to format pchats properly.
+        ** Thanks to blazer-flamewing for finding the bug and solution.
+    
+    Build 37 (24112009-223106) Swift
+        * Fixed a bug in the dAmnSock.demote method.
+        * Renamed class tablumps to Tablumps.
+        * Rearranged the whole API!
+        ** Broken up the source code into separate files.
+        ** Moved files into a self-contained package, dAmnViper.
+        ** dAmnViper.data contains:
+        *** Class Channel
+        *** dAmnViper.data depends on the class dAmnViper.parse.Packet
+        ** dAmnViper.deviantART contains:
+        *** Class HTTPNoRedirect
+        *** Class Login
+        ** dAmnViper.parse contains:
+        *** Class Packet
+        *** Class Tablumps
+        *** Class Protocol
+        ** dAmnViper.stream contains:
+        *** Class Connection
+        ** dAmnViper.base contains:
+        *** Class dAmnSock
+        *** Class Client
+        *** Class ReconnectingClient
+        *** dAmnViper.base depends on all other dAmnViper modules.
+        
+    Build 36 (28082009-185230) Swift
+        * Fixed a bug involving the admin showverbose packet.
+        * Fixed logging bugs.
+        
+    Build 35 (28082009-150835) Swift
+        * Fixed a small bug in dAmnViper.Packet.
+        ** The first arguments of a packet would not get parsed if there were no command or parameter.
+        
+    Build 34 (28082009-042020) Swift
+        * Fixed a small bug in dAmnViper.dAmnSock.get_token that caused applications to crash.
+        
+    Build 33 (27082009-234836) Swift
+        * Fixed methods start and mainloop in the client classes.
+        * Fixed disconnection handling in the reconnecting client class.
+        ** Above fixes now allow the variables given passed to .start to stay in the loop.
+        * Refactored the Packet class.
+        * Moved tablumps parsing into the Protocol class.
+        ** Add an asterisk to the beginning of a field to parse tablumps in the content.
+        *** recv_packet Protocol sorting data:
+        ***     [None, [('from', 'user')], '*message'],
+        *** Here, the body is stripped of tablumps and stored under the index "message".
+        * Added methods to dAmnViper.dAmnSock for extension purposes;
+        ** .on_get_token - called when .get_token is called.
+        ** .on_token - called when .get_token is finished.
+        * Slightly edited the dAmnViper.Connection class.
+        * Reduced the chances of dAmnViper.ReconnectingClient.logger crashing the bot.
+        ** dAmn sends random character encodings, so it is difficult to accomodate for.
+        
+    Build 32 (19082009-130832) Swift
+        * Created method dAmnViper.Client.on_loop.
+        ** Called after every loop in dAmnViper.Client.mainloop.
+        * dAmnViper.ReconnectingClient.start now accepts any input.
+        ** Input is passed to dAmnViper.ReconnectingClient.mainloop.
+        *** Input is passed to dAmnViper.ReconnectingClient.on_loop.
+        
+    Build 31 (18082009-230658) Swift
+        * Renamed class SocketManager to Connection.
+        ** Updated code accordingly.
+        * Added the @staticmethod decorator to the dAmnViper.tablumps methods.
+        * Added method pkt_generic to dAmnViper.Client class.
+        ** This method is called for every packet received from the server.
+        ** Overwrite this method to do stuff on every packet event.
+        * Tweaked packet sending methods in the dAmnViper.dAmnSock class.
+        ** Stopped using the dAmnViper.nl variable, as it was pointless.
+        * Created class dAmnViper.Channel.header.
+        ** Channels use instances of this to store their titles and topics.
+        * Made some minor tweaks.
+        
+    Build 30 (14062009-143636) Swift
+        * Renamed class Socket to SocketManager.
+        * Added class dAmnSock.
+        ** Moved most of class Client to dAmnSock.
+        ** Added nested class CONST.
+        ** Moved version info to nested class platform.
+        *** Holds attributes "name", "version", "author", "build", "stamp" and "series".
+        ** Class Client now inherits dAmnSock.
+        * Added class ReconnectingClient. Inherits Client.
+        * Made changes to the Protocol class.
+        * Changed protocol strings.
+        * Packet-sending methods now return the number of bytes written.
+        * Channel object now stores channel title and topic as subclasses.
+        ** Updated method "process_property" to compensate for changes.
+        * Added comments in various places.
+        * Made changes to Client.py.
+        * Made changes to Basic.py.
+        * Added file Bare.py as an example of a very simple client.
+        * Added Bot.py as an example of an extremely simple bot.
+        
+    Build 29 (09062009-223948) Swift
+        * Made more changes to make it more awesome!
+        ** Removed the need for threading.Timer.
+        ** Other changes I either can't remember or can't be arsed to list.
+        
+    Build 28 (08062009-032209) Swift
+        * Restructured the entire dAmnViper module.
+        ** Class "Client" contains a full API and connection handling system.
+        ** Class "Protocol" is now used as an object.
+        ** Class "tablumps" is now used as an object.
+        ** Topics and titles now stored as nested classes.
+        ** Added timeout checking.
+        * Updated Client.py to compensate for these changes.
+        * Added Basic.py as an example of a very basic dAmn client.
+    
+    Build 27 (29052009-171521) Swift
+        * Made soooooo many changes!
+        * Stopped using threading.
+        * Added tablumps class.
+        * Added Channel class.
+        * Added protocol class.
+        * Added client class.
+        * Updated the simple client in Client.py.
+        * Updated Authtoken.py.
+        * Fixed several problems originating from earlier ideas.
+        
+    Build 26 (12022009-005421) Jackson
+        * Made the Login stuff cleaner.
+        ** Uses urllib instead of sockets+SSL.
+        * Fixed some bugs.
+        
+    Build 25 (25012009-184836) Jackson
+        * Updated the login code.
+        ** Uses urllib only!
+        ** No need for specific stuff!
+        * Made some bug fixes.
+        
+    Build 24 (10012009-014022) Jackson
+        * Made some really important bug fixes.
+        
+    Build 23 (08012009-154821) Jackson
+        * Changed the version number back to the right one.
+        * Changed license to GNU GPL v3.
+        
+    Build 22 (06012009-215142) Jackson
+        * Restructured the module a bit.
+        ** No more Interface class.
+        *** Methods from class Interface are now module functions.
+        ** Added class resource.
+        ** Added class flag.
+        ** Required variables are stored in class resource and class flag.
+        * Updated the sample scripts to work with the new structure.
+        
+    Build 21 (21122008-181002) Jackson
+        * Added a README file.
+        * Added an example authtoken script.
+        * Added an example client script.
+        * Cleaned up the code in dAmnViper.py slightly.
+        * Finished up the comments.
+        
+    Build 20 (19122008-171345) Merger
+        * Cleanup code in places.
+        * Renamed class Client to Interface.
+        * Added comments everywhere.
+        
+    Build 19 (14122008-160253) Merger
+        * Fixed some small bugs.
+        * Added comments to the Login class.
+        
+    Build 18 (11122008-162510) Merger
+        * Now using urllib.parse rather than urllib.
+        
+    Build 17 (11122008-003846) Merger
+        * Updated code to meet standards defined in PEP 8.
+        ** URL: http://www.python.org/dev/peps/pep-0008/
+        * Removed lambda functions.
+        ** Replaced them with normal methods.
+        
+    Build 16 (08122008-185904) Merger
+        * Ported to Python 3000.
+        * Fixed various small bugs.
+        
+    Build 15 (01122008-174621) Merger
+        * Surpressed expected socket timeout's.
+        * Updated and fixed lambda protocol!
+        ** Lol, lambda protocol...
+        
+    Build 14 (27112008-193129) Merger
+        * Cleaned up the read method.
+        
+    Build 13 (27112008-122346) Vortican
+        * Added tablump parsing to class Packet.
+        ** Stolen from Futurism 0.8
+        * Added method close() to Client.
+        * Made Socket.read() less error prone.
+        
+    Build 12 (26112008-182716) Vortican
+        * Fixed a small error in the Packet class.
+        
+    Build 11 (25112008-234907) Vortican
+        * Rearranged socket error packets.
+        * Fixed a minor bug in Socket.read()
+        
+    Build 10 (24112008-133423) Vortican
+        * Added namespace methods to the client!
+        * Removed __init__ method as it is useless.
+        
+    Build 9 (23112008-165709) Vortican
+        * Changed client methods to lambda functions!
+        
+    Build 8 (22112008-161237) Vortican
+        * Fixed a small error in the login method.
+        
+    Build 7 (22112008-122545) Vortican
+        * Created methods to send packets to dAmn!
+        * Added method send() to the client class.
+        * Changed development state to Beta.
+        
+    Build 6 (16112008-203823) Squirmer
+        * Fixed a bug in the read method.
+        
+    Build 5 (16112008-202042) Squirmer
+        * Expanded on reading from the socket.
+        * Added some basic error handling.
+        
+    Build 4 (13112008-225834) Squirmer
+        * Added flags to the Client interface for different processes during connecting.
+        * Expanded on a few methods.
+        
+    Build 3 (13112008-175454) Fissures
+        * Fixed a tiny syntax error.
+        
+    Build 2 (13112008-173038) Revelation
+        * Changed name to "dAmn Viper" because doofsmack already took "pydAmn"... damnit.
+        * Got a little more structure to the lib.
+        
+    Build 1 (13112008-125702) First Get
+        * Organised things into a somewhat logical structure.
