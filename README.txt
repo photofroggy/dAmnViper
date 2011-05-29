@@ -19,9 +19,9 @@ Creating a client quickly for dAmn is quite easy using dAmn Viper. Below
 is one of the simplest examples of a client that simply connects, and
 tries to stay connected::
     
-    from dAmnViper.base import ReconnectingClient
+    from dAmnViper.base import dAmnSock
     
-    dAmn = ReconnectingClient()
+    dAmn = dAmnSock()
     dAmn.user.username = 'username'
     dAmn.user.password = 'password'
     dAmn.autojoin = ['Botdom']
