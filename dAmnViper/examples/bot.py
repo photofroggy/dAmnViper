@@ -2,14 +2,13 @@
     Created by photofroggy
 '''
 
-from dAmnViper.base import ReconnectingClient
+from dAmnViper.base import dAmnSock
 
-# Extend the dAmnViper.ReconnectingClient class to add some functionality.
+# Extend the dAmnViper.dAmnSock class to add some functionality.
 
-class my_client(ReconnectingClient):
+class MyClient(dAmnSock):
     
-    def __inst__(self, username, password, admin, trigger='!', autojoin=None, callbacks=None):
-        ReconnectingClient.__inst__(self) # Useful to call this.
+    def init(self, username, password, admin, trigger='!', autojoin=None, callbacks=None):
         self.user.username = username
         self.user.password = password
         self._admin = admin.lower()
@@ -49,7 +48,7 @@ def cmd_refresh(data, dAmn):
     
 if __name__ == '__main__':
     # Create a client
-    dAmn = my_client(
+    dAmn = MyClient(
         'username', 'password', 'admin', '!',
         ['Botdom'], {'about': cmd_about, 'quit': cmd_quit, 'refresh': cmd_refresh}
     )

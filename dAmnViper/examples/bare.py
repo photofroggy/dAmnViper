@@ -2,10 +2,10 @@
     Created by photofroggy
 '''
 
-from dAmnViper.base import ReconnectingClient
+from dAmnViper.base import dAmnSock
 
 if __name__ == '__main__':
-    dAmn = ReconnectingClient()
+    dAmn = dAmnSock()
     dAmn.user.username = 'username'
     dAmn.user.password = 'password'
     dAmn.autojoin = ['Botdom']

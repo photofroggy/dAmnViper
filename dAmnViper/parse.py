@@ -5,7 +5,7 @@
 
 import re
 
-class Packet:
+class Packet(object):
     """ Use this class to parse dAmn packets.
         Data is stored in the attributes cmd, param,
         args, body and raw.
@@ -13,22 +13,27 @@ class Packet:
 
     def __init__(self, data=None, sep='='):
         self.cmd, self.param, self.args, self.body, self.raw = None, None, {}, None, data
-        if not bool(data): return
-        if data.find('\n\n') != -1:
-            self.body = data[data.find('\n\n')+2:]
-            data = data[:data.find('\n\n')]
+        if not bool(data):
+            return
+        buff = data.find('\n\n')
+        if buff != -1:
+            self.body = data[buff + 2:]
+            data = data[:buff]
         breaks = data.split('\n')
-        if not bool(breaks): return
+        if not bool(breaks):
+            return
         if len(breaks) >= 1 and not sep in breaks[0]:
             head = breaks.pop(0).split(' ')
             self.cmd = head[0] or None
             self.param = None if len(head) < 2 else head[1]
         for line in breaks:
-            if line.find(sep) == -1: continue
-            self.args[line[:line.find(sep)]] = line[line.find(sep)+len(sep):]
+            sepp = line.find(sep)
+            if sepp == -1:
+                continue
+            self.args[line[:sepp]] = line[sepp + len(sep):]
         # And that's the end of that chapter.
 
-class Tablumps:
+class Tablumps(object):
     """A very simple static class used to parse or capture dAmn-style Tablumps."""
     
     expressions = None
@@ -123,7 +128,7 @@ class Tablumps:
             lumps[self.titles[key]] = cc
         return lumps
 
-class Protocol:
+class ProtocolParser(object):
     """ Protocol processor.
         Use methods of this class to process dAmn information.
         You can customise how different packets are handled by
