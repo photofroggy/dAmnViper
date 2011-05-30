@@ -52,7 +52,8 @@ class ConnectionFactory(ReconnectingClientFactory):
     def halt(self):
         # Because I'm a retard.
         self.stopTrying()
-        reactor.stop()
+        if reactor.running:
+            reactor.stop()
     
     def clientConnectionLost(self, connector, reason):
         self.log('** Connection closed.{0}'.format(

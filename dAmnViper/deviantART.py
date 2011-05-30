@@ -69,7 +69,6 @@ class Login:
     def handle(self, response):
         """ Handle a login failure. """
         loc = response.geturl()
-        print(loc)
         if 'verify.deviantart.com' in loc:
             self.status = (7,
                 "This account has not yet been verified. To verify, please check the email you used to register the account (don't forget to search junk mail), and click the link the email deviantART sent you.")

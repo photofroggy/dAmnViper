@@ -139,7 +139,8 @@ class dAmnSock(object):
         
         reactor.callLater(1, self.deferred_loop.callback, (args, kwargs))
         
-        reactor.run()
+        if not reactor.running:
+            reactor.run()
     
     def mainloop(self, data):
         """ Woo main application loop. """
