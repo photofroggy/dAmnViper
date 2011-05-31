@@ -121,12 +121,6 @@ class IOProtocol(Protocol):
         if self.debug is None:
             self.debug = lambda m: None
     
-    def handle(self, data):
-        """ Create the deferred for handling incoming data. """
-        processor = defer.Deferred()
-        processor.addCallback(self.client.handle_pkt_deferred)
-        processor.callback(data)
-    
     def connectionMade(self):
         """ We have connected to the server! Send a handshake! """
         if not self.client.flag.connecting:
@@ -157,7 +151,7 @@ class IOProtocol(Protocol):
                 self.send_packet('pong\n')
             
             # Let the client do whatever it needs to with the packet.
-            self.handle((packet, time.time()))
+            self.client.handle_pkt(packet, time.time())
     
     def send_packet(self, data):
         """ Send a packet to dAmn. """

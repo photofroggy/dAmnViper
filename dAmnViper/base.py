@@ -1,6 +1,10 @@
 ''' dAmnViper.base module
-    This module is part of the dAmnViper package.
     Created by photofroggy.
+    
+    This module provides the dAmnSock class, which acts
+    as an API for connecting to and interacting with
+    deviantART.com's chatrooms. This is achieved using
+    Twisted.
 '''
 
 # Standard library
@@ -84,7 +88,7 @@ class dAmnSock(object):
             self.limit = 3
 
     extras = {'remember_me':'1'}
-    agent = 'dAmnViper (python 3.x) dAmnSock/1.1'
+    agent = 'dAmnViper (python) dAmnSock/1.1'
     conn = None
     io = None
     info = {}
@@ -98,7 +102,7 @@ class dAmnSock(object):
     def __init__(self, *args, **kwargs):
         # Create an instance of our protocol class. Do anything else required.
         self.populate_objects()
-        self.agent = 'dAmnViper (Python 3.1) viper/base/dAmnSock/{0}.{1}'.format(
+        self.agent = 'dAmnViper (Python) viper/base/dAmnSock/{0}.{1}'.format(
             self.platform.version, self.platform.build)
         self.init(*args, **kwargs)
     
@@ -107,9 +111,11 @@ class dAmnSock(object):
         pass
     
     def set_protocol(self, protocol=None):
+        """ Store the given IO protocol. This is in relation to the network connection. """
         self.io = protocol
     
     def populate_objects(self):
+        """ Populate our objects that are used to store information and stuff. """
         self.user = dAmnSock.user()
         self.flag = dAmnSock.flag()
         self.CONST = dAmnSock.CONST()
@@ -123,22 +129,27 @@ class dAmnSock(object):
         self.handle_timeout.addCallback(self.timedout)
     
     def nullflags(self):
+        """ Reset all status flags in this client. """
         self.flag = dAmnSock.flag()
         
     def start(self, *args, **kwargs):
         """ Start the client. """
         self.nullflags()
         
+        # Make sure we have an authtoken.
         if not self.authenticate(*args, **kwargs):
             return
         
         write_pair = self.get_write_pair(*args, **kwargs)
         
+        # Make a connection.
         self.conn = ConnectionFactory(self, write_pair[0], write_pair[1])
         reactor.connectTCP(self.CONST.SERVER, self.CONST.PORT, self.conn)
         
+        # Set up the client's main loop.
         reactor.callLater(1, self.deferred_loop.callback, (args, kwargs))
         
+        # Start twisted's main loop if it is not already running.
         if not reactor.running:
             reactor.run()
     
@@ -152,6 +163,7 @@ class dAmnSock(object):
         pass
     
     def authenticate(self, *args, **kwargs):
+        """ Fetch the authtoken for the username and password given. """
         if not self.user.token:
             # If we don't have an authtoken, try and grab one!
             self.get_token()
@@ -171,6 +183,7 @@ class dAmnSock(object):
         return True
     
     def get_token(self):
+        """ This is the method that actually handles grabbing the authtoken. """
         self.on_get_token()
         
         if not self.user.password:
@@ -195,21 +208,24 @@ class dAmnSock(object):
         pass
     
     def timedout(self):
+        """ If this method gets called, then the client has not received
+            any data for 2 minutes. Assume disconnected.
+        """
         self.handle_pkt(Packet('disconnect\ne=socket timed out\n\n'), time.time())
     
     def login(self):
-        # Send our login packet. Set the loggingin flag to true.
+        """ Send our login packet. Set the loggingin flag to true. """
         self.flag.loggingin = True
         return self.send('login {0}\npk={1}\n'.format(self.user.username, self.user.token))
     
     def send(self, data):
-        # Send data to dAmn!
+        """ Send data to dAmn! """
         if self.io is None:
             return 0
         return self.io.send_packet(data)
     
     def close(self):
-        # This is how we close our connection!
+        """ This is how we close our connection! """
         self.set_protocol()
         
         if self.timeout_delay is not None:
@@ -217,7 +233,9 @@ class dAmnSock(object):
             self.timeout_delay = None
     
     def format_ns(self, ns):
-        # This takes a dAmn channel name and formats it as a raw dAmn namespace.
+        """ This takes a dAmn channel name and formats it as a raw
+            dAmn namespace.
+        """
         ns = str(ns)
         un = self.user.username
         pre = ns[:1]
@@ -234,7 +252,7 @@ class dAmnSock(object):
         return 'chat:'+ns
     
     def deform_ns(self, ns):
-        # This does the opposite of format_ns()
+        """ This does the opposite of format_ns() """
         parts = str(ns).split(':')
         discard = self.user.username
         if parts[0].lower() == 'chat':
@@ -252,6 +270,7 @@ class dAmnSock(object):
         return '#'+ns
     
     def handle_pkt_deferred(self, data):
+        """ Deferred handling of packets. """
         self.handle_pkt(*data)
     
     def handle_pkt(self, packet, stamp):

@@ -1,6 +1,10 @@
 ''' dAmnViper.parse module
-    This module is part of the dAmnViper package.
     Created by photofroggy.
+    
+    This module provides objects for parsing data going to and from
+    the dAmn server. Tablumps and packets are handled by classes here,
+    and a class is provided to generate output messages for stdout
+    based on packets received from dAmn.
 '''
 
 import re
@@ -13,24 +17,22 @@ class Packet(object):
 
     def __init__(self, data=None, sep='='):
         self.cmd, self.param, self.args, self.body, self.raw = None, None, {}, None, data
-        if not bool(data):
+        buff = data.partition('\n\n')
+        self.body = buff[2] or None
+        buff = buff[0].partition('\n')
+        if not buff[0]:
             return
-        buff = data.find('\n\n')
-        if buff != -1:
-            self.body = data[buff + 2:]
-            data = data[:buff]
-        breaks = data.split('\n')
-        if not bool(breaks):
-            return
-        if len(breaks) >= 1 and not sep in breaks[0]:
-            head = breaks.pop(0).split(' ')
+        if not sep in buff[0]:
+            head = buff[0].partition(' ')
             self.cmd = head[0] or None
-            self.param = None if len(head) < 2 else head[1]
-        for line in breaks:
-            sepp = line.find(sep)
-            if sepp == -1:
+            self.param = head[2] or None
+            buff = buff[2].partition('\n')
+        while buff[0]:
+            seg = buff[0].partition(sep)
+            buff = buff[2].partition('\n')
+            if not seg[1]:
                 continue
-            self.args[line[:sepp]] = line[sepp + len(sep):]
+            self.args[seg[0]] = seg[2]
         # And that's the end of that chapter.
 
 class Tablumps(object):
