@@ -1,13 +1,17 @@
-''' dAmnViper.stream module
-    This module is part of the dAmnViper package.
+''' dAmnViper.net module
     Created by photofroggy.
+    
+    This module provides classes used to actually connect
+    to dAmn using Twisted. The ConnectionFactory starts connections
+    and handles disconnects. The IOProtocol handles basic IO operations
+    on the connection, but delegates most of the processing to an
+    instance of the dAmnSock class from the dAmnViper.base module.
 '''
 
 # Standard library
 import time
 
 # Twisted library imports
-from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.protocol import ReconnectingClientFactory

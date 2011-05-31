@@ -4,6 +4,9 @@
 
 from dAmnViper.base import dAmnSock
 
+# lol
+from dAmnViper.examples.util import get_input
+
 # Extend the dAmnViper.dAmnSock class to add some functionality.
 
 class MyClient(dAmnSock):
@@ -48,9 +51,17 @@ def cmd_refresh(data, dAmn):
     
 if __name__ == '__main__':
     # Create a client
+    un = get_input('>> Username: ')
+    pw = get_input('>> Password: ')
+    ad = get_input('>> Admin: ')
+    tr = get_input('>> Trigger: ')
+    aj = [room.strip() for room in get_input('>> Autojoin: ', True).split(',')]
+    while '' in aj:
+        aj.remove('')
+    aj = aj or ['Botdom']
     dAmn = MyClient(
-        'username', 'password', 'admin', '!',
-        ['Botdom'], {'about': cmd_about, 'quit': cmd_quit, 'refresh': cmd_refresh}
+        un, pw, ad, tr, aj,
+        {'about': cmd_about, 'quit': cmd_quit, 'refresh': cmd_refresh}
     )
     # Start the dAmn client.
     dAmn.start()

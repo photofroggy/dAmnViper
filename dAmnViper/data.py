@@ -1,11 +1,14 @@
 ''' dAmnViper.data module
-    This module is part of the dAmnViper package.
     Created by photofroggy.
+    
+    This module provides the Channel object, which represents a
+    joined channel. The object stores information about the channel,
+    such as the title/topic, and users in the channel.
 '''
 
 from dAmnViper.parse import Packet
 
-class Channel:
+class Channel(object):
     """ Objects representing dAmn channels.
         Information about the channels are stored in here.
     """

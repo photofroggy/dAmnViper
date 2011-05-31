@@ -1,4 +1,4 @@
-''' Example of a client using dAmn Viper's ReconnectingClient class!
+''' Example of a client using dAmn Viper's dAmnSock class!
     Created by photofroggy
 '''
 

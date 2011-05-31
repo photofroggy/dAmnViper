@@ -9,8 +9,11 @@
 from dAmnViper.base import dAmnSock
 from dAmnViper.deviantART import Login
 
+# lol
+from dAmnViper.examples.util import get_input
+
 def get_authtoken(un='username', pw='password'):
-    clientstr = 'Authtoken Grabber/1 (Python/3.0) dAmn Viper/' + dAmnSock.platform.stamp
+    clientstr = 'Authtoken Grabber/1 (Python) dAmn Viper/' + dAmnSock.platform.stamp
     session = Login(un, pw, client=clientstr)
     
     if session.token is None:
@@ -21,8 +24,8 @@ def get_authtoken(un='username', pw='password'):
 if __name__ == '__main__':
     # Designed for use with Python 3.x
     # Change input to raw_input to make it work with earlier versions.
-    un = input('>> Username: ').strip()
-    pw = input('>> Password: ').strip()
+    un = get_input('>> Username: ')
+    pw = get_input('>> Password: ')
     get_authtoken(un, pw)
 
 # EOF

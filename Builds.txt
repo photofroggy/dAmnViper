@@ -6,6 +6,12 @@
     Build 55 () Clean
         * Using Twisted!
         ** Massive code overhaul.
+        * Changed examples to fit PEP 008 more closely.
+        ** Lower case names for the modules.
+        * Created dAmnViper.examples.util.
+        ** Provides get_input.
+        ** get_input is used by examples to get input from the user.
+        ** Made to work on python 2.6+ and python 3.
     
     Build 54 (29052011-122308) Swift
         * Fixed dAmnViper._auth3

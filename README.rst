@@ -37,13 +37,20 @@ provided.
 Prospects
 ---------
 
-I know it is a bad idea to not use Twisted, but this library was
-intended for use in applications where the target audience is not likely
-to want to spend time installing program after program. The idea was to
-allow the user to get the application working as quickly as possible.
+This is an experimental branch which uses Twisted for the interactions
+between the application and dAmn. I am currently uncertain whether or
+not to use this for the master branch as it means end users would have
+more dependencies to install when setting up an application that uses
+dAmn Viper. This argument is negated if the application is bundled, or
+has appropriate installers created.
 
-I will be experimenting with Twisted in the near future and may
-re-release dAmn Viper using Twisted for managing the connection.
+So far, one major disadvantage of using twisted over the standard
+library, is that the loading time is considerably slower under Ubuntu.
+This may not hold true for other Operating Systems.
+
+If the load time is consistently slow across major platforms, and no
+reasonable solutions emerge, then it may not be worth making the
+transition.
 
 ----------
 DISCLAIMER

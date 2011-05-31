@@ -17,6 +17,8 @@ class Packet(object):
 
     def __init__(self, data=None, sep='='):
         self.cmd, self.param, self.args, self.body, self.raw = None, None, {}, None, data
+        if not data:
+            return
         buff = data.partition('\n\n')
         self.body = buff[2] or None
         buff = buff[0].partition('\n')

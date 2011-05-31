@@ -512,8 +512,8 @@ class dAmnSock(object):
         if self.flag.disconnecting:
             self.flag.disconnecting = False
         else:
-            self.log('>> Experiencing an unexpected disconnect.')
-            self.log('>> Attempting to reconnect in a moment.')
+            self.log('~Global', '>> Experiencing an unexpected disconnect.', False)
+            self.log('~Global', '>> Attempting to reconnect in a moment.', False)
         
         time.sleep(1)
         self.nullflags()
