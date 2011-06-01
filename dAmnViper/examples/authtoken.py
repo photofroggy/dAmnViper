@@ -6,24 +6,32 @@
     script, sort of.
 '''
 
+import sys
+
+from twisted.internet import defer
+
 from dAmnViper.base import dAmnSock
-from dAmnViper.deviantART import Login
+from dAmnViper.deviantART import login
 
 # lol
 from dAmnViper.examples.util import get_input
 
 def get_authtoken(un='username', pw='password'):
     clientstr = 'Authtoken Grabber/1 (Python) dAmn Viper/' + dAmnSock.platform.stamp
-    session = Login(un, pw, client=clientstr)
-    
+    d = defer.Deferred()
+    d.addCallback(login_done)
+    login(d, un, pw, client=clientstr)
+
+
+def login_done(session):
     if session.token is None:
-        print('>>',session.status[1])
+        sys.stdout.write('>> {0}\n'.format(session.status[1]))
     else:
-        print('>> Token:',session.token)
+        sys.stdout.write('>> Token: {0}\n'.format(session.token))
+    sys.stdout.flush()
+
 
 if __name__ == '__main__':
-    # Designed for use with Python 3.x
-    # Change input to raw_input to make it work with earlier versions.
     un = get_input('>> Username: ')
     pw = get_input('>> Password: ')
     get_authtoken(un, pw)

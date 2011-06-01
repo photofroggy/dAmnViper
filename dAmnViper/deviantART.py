@@ -1,6 +1,19 @@
-''' dAmn Viper - A Python API for dAmn.
-    Copyright (C) 2009  Henry Rapley <froggywillneverdie@msn.com>
-    Released under a GNU GPL.
+''' dAmnViper.deviantART module
+    Created by photofroggy.
+    
+    This module provides a method to attempt to grab an authtoken from
+    deviantART. Depends on _auth3 or _auth26 depending on which
+    version of Python is being used.
+    
+    The Twisted implementation of dAmnViper cannot be used on Python 3
+    until twisted supports Python 3, so _auth3 is redundant in this
+    case. However, both files may become redundant when
+    twisted.web.client.CookieAgent is available in packaged releases
+    of twisted, not just the trunk.
+    
+    The nature of the code here means that output to stdout is blocked
+    until the request has completed. This will also change when
+    CookieAgent is available.
 '''
 
 import os
@@ -21,8 +34,29 @@ else:
     sys.exit(1)
 
 
+''' This stuff is stupid holmes.
+    Will rewrite this module when CookieAgent is in twisted's releases.
+
+from threading import Thread
+
+def login(deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
+    """ Creates a subthread which invokes the Login object and passes
+        it to the given deferred.
+    """
+    Thread(target=run_login,
+        args=(deferred, username, password, extras, client)).start()
+
+    
+def run_login(deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
+    """ Invokes the Login object to retrieve an authtoken.
+        The resulting object is given to the given deferred.
+    """
+    reactor.callLater(.1, deferred.callback, Login(username, password, extras, client))
+
+'''
+
 class Login:
-    """This class uses given login data to fetch a deviantART cookie and authtoken."""
+    """ This class uses given login data to fetch a deviantART cookie and authtoken. """
     
     url = 'https://www.deviantart.com/users/login'
     curl = 'http://chat.deviantart.com/chat/botdom'

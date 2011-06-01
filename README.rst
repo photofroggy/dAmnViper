@@ -7,9 +7,8 @@ dAmn Viper
 This package provides an API for connecting to and interacting with
 the dAmn chats. That is, deviantART's messaging network chats.
 
-The package was created using Python version 3, so should be used with
-this version, but it has been tested and proven to work on Python 2.6 and
-greater, thanks to some hacky module scripting.
+This branch of dAmn Viper currently only works with Python 2.6 and up
+due to use of the twisted library.
 
 -------------
 Brief example
@@ -46,11 +45,43 @@ has appropriate installers created.
 
 So far, one major disadvantage of using twisted over the standard
 library, is that the loading time is considerably slower under Ubuntu.
-This may not hold true for other Operating Systems.
+This appears to be due to the use of asynchronous methods to retrieve
+an authtoken in `dAmnViper.deviantART`. This will be revised when
+twisted's own `CookieAgent` class is available in the distributed
+copies of twisted.
 
-If the load time is consistently slow across major platforms, and no
-reasonable solutions emerge, then it may not be worth making the
-transition.
+------------
+Dependencies
+------------
+
+A further disadvantage is the acquisition of dependencies. This means
+that applications using dAmn Viper will depend on twisted as well as
+dAmn Viper.
+
+In addition, when the aforementioned `CookieAgent` is available,
+applications will also depend on PyOpenSSL. This is not exactly a great
+situation for application developers and end users.
+
+It is more of an issue for end users, as they will not want to spend
+time installing multiple dependencies. This problem can, however, be
+eleminated by creating installers for applications using dAmn Viper.
+
+As such, this is somewhat a non-point, but it does mean an installer
+has to be created to achieve easy setup for end users. Fortunately,
+installers are something which users tend to be ok at using, so long as
+they aren't too complicated. Having an installer which downloads and
+installs multiple dependencies may complicate things too much. We'll
+see.
+
+--------
+Feedback
+--------
+
+Feedback on this branch of dAmn Viper would be very much appreciated.
+Please send any feedback to my deviantART account via notes, or submit
+something on github, I dunno.
+
+Thanks for reading.
 
 ----------
 DISCLAIMER

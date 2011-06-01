@@ -14,13 +14,13 @@ import time
 # Twisted library imports
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
-from twisted.internet.protocol import ReconnectingClientFactory
+from twisted.internet.protocol import ClientFactory
 
 # Viper stuff
 from dAmnViper.parse import Packet
 
 
-class ConnectionFactory(ReconnectingClientFactory):
+class ConnectionFactory(ClientFactory):
     """ This is the Connection class. It handles the basic functionality
         of the connection between the bot and dAmn's server.
     """
@@ -43,7 +43,6 @@ class ConnectionFactory(ReconnectingClientFactory):
     def startedConnecting(self, connector):
         self.log('** Opening connection to dAmn...')
         self.client.connection.attempts = 1
-        self.client.flag.connecting = True
     
     def create_protocol(self):
         return IOProtocol(self, self.client, self.stdout, self.debug)
@@ -53,52 +52,24 @@ class ConnectionFactory(ReconnectingClientFactory):
         self.client.set_protocol(protocol)
         return protocol
     
-    def halt(self):
-        # Because I'm a retard.
-        self.stopTrying()
-        if reactor.running:
-            reactor.stop()
-    
     def clientConnectionLost(self, connector, reason):
         self.log('** Connection closed.{0}'.format(
             ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''))
         
         self.client.set_protocol(None)
-        
-        if not self.client.flag.reconnect:
-            self.halt()
-            return
-        
-        if self.client.flag.quitting or not self.client.flag.reconnect:
-            self.halt()
-            return
-        
-        if not self.client.authenticate():
-            self.halt()
-            return
-        
-        self.log('** Attempting to reconnect...')
-        self.retry(connector)
     
     def clientConnectionFailed(self, connector, reason):
         self.log('** Failed to connect.{0}'.format(
             ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''))
         
-        self.client.set_protocol(None)
-        
         if self.client.connection.attempts == self.client.connection.limit:
             self.log('** Failed to connect {0} times in a row.'.format(
                 self.client.connection.attempts))
-            self.halt()
+            self.client.set_protocol(None)
             return
-        
-        if not self.client.authenticate():
-            self.halt()
-            return
-        
-        self.log('** Attempting to connect again...')
-        self.client.connection.attempts+= 1
-        self.retry(connector)
+            
+        self.client.flag.retry = True
+        self.client.set_protocol(None)
 
 
 class IOProtocol(Protocol):

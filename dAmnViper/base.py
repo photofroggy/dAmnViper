@@ -24,7 +24,7 @@ from dAmnViper.data import Channel
 from dAmnViper.parse import Packet
 from dAmnViper.parse import ProtocolParser
 # Internets! lols.
-from dAmnViper.deviantART import Login
+from dAmnViper import deviantART
 from dAmnViper.net import ConnectionFactory
 
 
@@ -66,6 +66,7 @@ class dAmnSock(object):
             self.disconnecting = False
             self.reconnect = False
             self.quitting = False
+            self.retry = False
             self.restart = False
             self.close = False
     
@@ -89,12 +90,16 @@ class dAmnSock(object):
 
     extras = {'remember_me':'1'}
     agent = 'dAmnViper (python) dAmnSock/1.1'
+    info = {}
+    
     conn = None
     io = None
-    info = {}
+    
     protocol = ProtocolParser
+    
     autojoin = ['chat:Botdom']
     channel = {}
+    
     deferred_loop = None
     handle_timeout = None
     timeout_delay = None
@@ -113,6 +118,9 @@ class dAmnSock(object):
     def set_protocol(self, protocol=None):
         """ Store the given IO protocol. This is in relation to the network connection. """
         self.io = protocol
+        
+        if protocol is not None:
+            self.onDisconnect()
     
     def populate_objects(self):
         """ Populate our objects that are used to store information and stuff. """
@@ -121,9 +129,11 @@ class dAmnSock(object):
         self.CONST = dAmnSock.CONST()
         self.connection = dAmnSock.connection()
         self.protocol = ProtocolParser()
+        
         # Main loop lolol
         self.deferred_loop = defer.Deferred()
         self.deferred_loop.addCallback(self.on_loop)
+        
         # Last ping deferred
         self.handle_timeout = defer.Deferred()
         self.handle_timeout.addCallback(self.timedout)
@@ -137,50 +147,49 @@ class dAmnSock(object):
         self.nullflags()
         
         # Make sure we have an authtoken.
-        if not self.authenticate(*args, **kwargs):
-            return
+        self.authenticate()
         
-        write_pair = self.get_write_pair(*args, **kwargs)
+        # Set up the client's main loop.
+        reactor.callLater(1, self.deferred_loop.callback, (args, kwargs))
+    
+    def makeConnection(self):
+        """ Open a connection to dAmn. """
+        write_pair = self.get_write_pair()
         
         # Make a connection.
         self.conn = ConnectionFactory(self, write_pair[0], write_pair[1])
         reactor.connectTCP(self.CONST.SERVER, self.CONST.PORT, self.conn)
+    
+    def onDisconnect(self):
+        """ Determine what we should do when we have fully lost our
+            connection to the server.
+        """
         
-        # Set up the client's main loop.
-        reactor.callLater(1, self.deferred_loop.callback, (args, kwargs))
+        if self.flag.quitting or not self.flag.reconnect:
+            
+            if self.flag.quitting:
+                return
+            
+            if self.flag.retry:
+                self.logger('~Global', '** Attempting to connect again...', False)
+                self.connection.attempts+= 1
+                self.authenticate()
+            
+            return
         
-        # Start twisted's main loop if it is not already running.
-        if not reactor.running:
-            reactor.run()
+        self.logger('~Global', '** Attempting to connect again...', False)
+        self.authenticate()
     
-    def mainloop(self, data):
-        """ Woo main application loop. """
-        self.on_loop(*data[0], **data[1])
-        reactor.callLater(1, self.deferred_loop.callback, data)
-    
-    def on_loop(self, *args, **kwargs):
-        """ Overwrite this if you need to do anything on the main application loop. """
-        pass
-    
-    def authenticate(self, *args, **kwargs):
+    def authenticate(self):
         """ Fetch the authtoken for the username and password given. """
+        self.flag.connecting = True
         if not self.user.token:
             # If we don't have an authtoken, try and grab one!
             self.get_token()
             self.logger('~Global', '** Retrieving authtoken, this may take a while...', False)
-            if self.session is None:
-                self.logger('~Global', '>> Insufficient login details provided.', False)
-                self.on_token()
-                return False
-            if self.session.status[0] != 1:
-                # Something went wrong! Maybe the user entered the wrong details?!
-                self.logger('~Global', '>> Failed to get an authtoken.', False)
-                self.logger('~Global', '>> {0}'.format(self.session.status[1]), False)
-                self.on_token()
-                return False
-            # If we get here all is well.
-            self.logger('~Global', '** Got an authtoken.', False)
-        return True
+            return
+        
+        self.makeConnection()
     
     def get_token(self):
         """ This is the method that actually handles grabbing the authtoken. """
@@ -190,14 +199,30 @@ class dAmnSock(object):
             self.on_token()
             return
         
-        self.session = Login(self.user.username, self.user.password, self.extras, self.agent)
+        self.gotSession(deviantART.Login(self.user.username,
+            self.user.password, self.extras, self.agent))
+    
+    def gotSession(self, session):
+        """ Deferred callback for deviantART.login.
+            Called after we have attempted to log into deviantART.com.
+            At least, it will be deferred in future. At the moment it's
+            all synchronous. Damn...
+        """
+        self.session = session
+        
+        self.on_token()
         
         if self.session.status[0] == 1:
             self.user.cookie = self.session.cookie
             self.user.token = self.session.token
             self.user.password = None
+            self.logger('~Global', '** Got an authtoken.', False)
+            self.makeConnection()
+            return
         
-        self.on_token()
+        # Something went wrong! Maybe the user entered the wrong details?!
+        self.logger('~Global', '>> Failed to get an authtoken.', False)
+        self.logger('~Global', '>> {0}'.format(self.session.status[1]), False)
 
     def on_get_token(self):
         """Overwrite this method to do shit when get_token is called."""
@@ -205,6 +230,15 @@ class dAmnSock(object):
     
     def on_token(self):
         """Overwrite this method to do stuff after get_token is finished."""
+        pass
+    
+    def mainloop(self, data):
+        """ Woo main application loop. """
+        self.on_loop(*data[0], **data[1])
+        reactor.callLater(1, self.deferred_loop.callback, data)
+    
+    def on_loop(self, *args, **kwargs):
+        """ Overwrite this if you need to do anything on the main application loop. """
         pass
     
     def timedout(self):
@@ -497,7 +531,6 @@ class dAmnSock(object):
     
     def pkt_disconnect(self, data):
         # dAmn also likes to disconnect clients. A lot.
-        self.close()
         self.flag.connected = False
         self.connection.disconnects+= 1
         self.channel = {}
@@ -509,9 +542,7 @@ class dAmnSock(object):
         if data['e'] == 'no joined channels' and len(self.autojoin) == 0:
             return
         
-        if self.flag.disconnecting:
-            self.flag.disconnecting = False
-        else:
+        if not self.flag.disconnecting:
             self.log('~Global', '>> Experiencing an unexpected disconnect.', False)
             self.log('~Global', '>> Attempting to reconnect in a moment.', False)
         

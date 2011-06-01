@@ -12,6 +12,13 @@
         ** Provides get_input.
         ** get_input is used by examples to get input from the user.
         ** Made to work on python 2.6+ and python 3.
+        * Holy crap asynchronous magic.
+        * Organised the methods in dAmnSock a little more logically.
+        * Changed the README files a bit.
+        * TODO:
+        ** Make sure there are no callLater's still running when we exit.
+        ** Change to using CookieAgent in dAmnViper.deviantART.
+        ** Merge with master branch. (maybe)
     
     Build 54 (29052011-122308) Swift
         * Fixed dAmnViper._auth3

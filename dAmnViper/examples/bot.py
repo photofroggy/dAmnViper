@@ -2,6 +2,10 @@
     Created by photofroggy
 '''
 
+import sys
+
+from twisted.internet import reactor
+
 from dAmnViper.base import dAmnSock
 
 # lol
@@ -51,6 +55,8 @@ def cmd_refresh(data, dAmn):
     
 if __name__ == '__main__':
     # Create a client
+    sys.stdout.write('>> This is an example bot created with dAmn Viper.\n')
+    sys.stdout.write('>> Enter the following details to run the example...\n')
     un = get_input('>> Username: ')
     pw = get_input('>> Password: ')
     ad = get_input('>> Admin: ')
@@ -59,11 +65,16 @@ if __name__ == '__main__':
     while '' in aj:
         aj.remove('')
     aj = aj or ['Botdom']
+    sys.stdout.flush()
     dAmn = MyClient(
         un, pw, ad, tr, aj,
         {'about': cmd_about, 'quit': cmd_quit, 'refresh': cmd_refresh}
     )
+    sys.stdout.write('>> Starting the client...\n')
+    sys.stdout.flush()
     # Start the dAmn client.
     dAmn.start()
+    # Start twisted
+    reactor.run()
 
 # EOF
