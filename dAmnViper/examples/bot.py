@@ -3,12 +3,9 @@
 '''
 
 import sys
-
 from twisted.internet import reactor
 
 from dAmnViper.base import dAmnSock
-
-# lol
 from dAmnViper.examples.util import get_input
 
 # Extend the dAmnViper.dAmnSock class to add some functionality.
@@ -16,6 +13,18 @@ from dAmnViper.examples.util import get_input
 class MyClient(dAmnSock):
     
     def init(self, username, password, admin, trigger='!', autojoin=None, callbacks=None):
+        """ Initialise the client.
+            
+            Override this method if you need to do anything when an
+            instance of the object is created. Do not override __init__
+            directly.
+            
+            This seems like bad practice but it does mean you don't have
+            to remember to call the original __init__ method.
+            
+            In this example, we simply store the variables given to the
+            constructor.
+        """
         self.user.username = username
         self.user.password = password
         self._admin = admin.lower()
@@ -24,10 +33,34 @@ class MyClient(dAmnSock):
         self.callbacks = callbacks or Commands()
     
     def teardown(self):
+        """ Overriding this method is required to stop the application.
+            This method is called by dAmnSock when the client has
+            determined that it no longer needs to keep connected to
+            dAmn, and has been fully disconnected from the server.
+            
+            If reactor.stop() is not called at this point, the program
+            will hang indefinitely. Overriding onDisconnect is not
+            recommended!
+        """
         reactor.stop()
     
     def pkt_recv_msg(self, data):
-        # Provide basic command firing.
+        """ Basic command handling provided here.
+            
+            This method is called by dAmnSock when a 'recv_msg' packet
+            is sent to the client by the server. By this point, dAmnSock
+            should already have displayed a message in stdout reporting
+            the packet.
+            
+            It is possible to add specific handling of certain packets
+            by defining other pkt_* methods, but note that some are
+            already defined, and need to be called in order for dAmnSock
+            to function as expected.
+            
+            This example simply looks for the trigger character in the
+            message, and then passes the message to a command handler
+            where appropriate.
+        """
         if data['message'][:len(self.trigger)] == self.trigger:
             data['message'] = data['message'][len(self.trigger):]
             data['args'] = data['message'].split(' ')
@@ -67,6 +100,11 @@ class Commands(object):
         
 
 def configure():
+    """ Sort of explains itself.
+        
+        This is simply a method to request configuration detials from
+        the user, via stdin.
+    """
     sys.stdout.write('>> We need some details to be able to run the bot\n')
     
     obj = [get_input('>> Username: '),

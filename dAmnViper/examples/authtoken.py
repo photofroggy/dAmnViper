@@ -7,20 +7,17 @@
 '''
 
 import sys
-
 from twisted.internet import defer
 
 from dAmnViper.base import dAmnSock
-from dAmnViper.deviantART import login
+from dAmnViper.deviantART import Login
 
 # lol
 from dAmnViper.examples.util import get_input
 
 def get_authtoken(un='username', pw='password'):
     clientstr = 'Authtoken Grabber/1 (Python) dAmn Viper/' + dAmnSock.platform.stamp
-    d = defer.Deferred()
-    d.addCallback(login_done)
-    login(d, un, pw, client=clientstr)
+    login_done(Login(un, pw, client=clientstr))
 
 
 def login_done(session):

@@ -28,6 +28,8 @@
         ** This is mainly for the sake of keeping the examples simple.
         * "Refreshing" now works!
         ** This not working may have been caused by other bugs.
+        * Updated dAmnViper.examples.authtoken to work with synchronous methods.
+        * Added more descriptive comments to dAmnViper.examples.bot.
         * TODO:
         ** Change to using CookieAgent in dAmnViper.deviantART.
         ** Merge with master branch. (maybe)
