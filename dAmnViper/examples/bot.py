@@ -20,60 +20,78 @@ class MyClient(dAmnSock):
         self.user.password = password
         self._admin = admin.lower()
         self.trigger = trigger
-        self.autojoin = autojoin if bool(autojoin) else ['Botdom']
-        self.callbacks = callbacks if bool(callbacks) else {}
+        self.autojoin = autojoin or ['Botdom']
+        self.callbacks = callbacks or Commands()
     
     def pkt_recv_msg(self, data):
         # Provide basic command firing.
         if data['message'][:len(self.trigger)] == self.trigger:
             data['message'] = data['message'][len(self.trigger):]
             data['args'] = data['message'].split(' ')
-            self.callbacks.get(data['args'][0].lower(), self._no_cmd)(data, self)
+            self.callbacks.handle(
+                data['args'][0].lower(), data, self)
+
+
+class Commands(object):
+    """ Just a simple object to hold any command callbacks. """
     
-    def _no_cmd(self, data, client):
+    def handle(self, cmd, data, client):
+        getattr(self, 'cmd_{0}'.format(cmd),
+            self.unknown_cmd)(data, client)
+    
+    def unknown_cmd(self, data, client):
         pass
     
-def cmd_about(data, dAmn):
-    """Basic command callback."""
-    dAmn.say(data['ns'], data['user']+': Basic dAmn Viper bot by photofroggy.')
-
-def cmd_quit(data, dAmn):
-    """Quit command! Enter the admin name in place of 'admin'!"""
-    if data['user'].lower() != dAmn._admin:
-        return
-    dAmn.say(data['ns'], data['user']+': Closing down!')
-    dAmn.flag.quitting = True
-    dAmn.disconnect()
-
-def cmd_refresh(data, dAmn):
-    """Quit command! Enter the admin name in place of 'admin'!"""
-    if data['user'].lower() != dAmn._admin:
-        return
-    dAmn.say(data['ns'], data['user']+': Refreshing connection!')
-    dAmn.flag.disconnecting = True
-    dAmn.disconnect()
+    def cmd_about(self, data, dAmn):
+        """Basic command callback."""
+        dAmn.say(data['ns'], data['user']+': Basic dAmn Viper bot by photofroggy.')
     
+    def cmd_quit(self, data, dAmn):
+        """Quit command! Enter the admin name in place of 'admin'!"""
+        if data['user'].lower() != dAmn._admin:
+            return
+        dAmn.say(data['ns'], data['user']+': Closing down!')
+        dAmn.flag.quitting = True
+        dAmn.disconnect()
+    
+    def cmd_refresh(self, data, dAmn):
+        """Quit command! Enter the admin name in place of 'admin'!"""
+        if data['user'].lower() != dAmn._admin:
+            return
+        dAmn.say(data['ns'], data['user']+': Refreshing connection!')
+        dAmn.flag.disconnecting = True
+        dAmn.disconnect()
+        
+
+def configure():
+    sys.stdout.write('>> We need some details to be able to run the bot\n')
+    
+    obj = [get_input('>> Username: '),
+        get_input('>> Password: '),
+        get_input('>> Admin: '),
+        get_input('>> Trigger: '),
+        [room.strip() for room in get_input('>> Autojoin: ', True).split(',')]
+    ]
+    
+    while '' in obj[4]:
+        obj[4].remove('')
+    obj[4] = obj[4] or ['Botdom']
+    
+    return obj
+
+
 if __name__ == '__main__':
     # Create a client
     sys.stdout.write('>> This is an example bot created with dAmn Viper.\n')
-    sys.stdout.write('>> Enter the following details to run the example...\n')
-    un = get_input('>> Username: ')
-    pw = get_input('>> Password: ')
-    ad = get_input('>> Admin: ')
-    tr = get_input('>> Trigger: ')
-    aj = [room.strip() for room in get_input('>> Autojoin: ', True).split(',')]
-    while '' in aj:
-        aj.remove('')
-    aj = aj or ['Botdom']
-    sys.stdout.flush()
-    dAmn = MyClient(
-        un, pw, ad, tr, aj,
-        {'about': cmd_about, 'quit': cmd_quit, 'refresh': cmd_refresh}
-    )
+    
+    dAmn = MyClient(*configure(), callbacks=Commands())
+    
     sys.stdout.write('>> Starting the client...\n')
     sys.stdout.flush()
+    
     # Start the dAmn client.
     dAmn.start()
+    
     # Start twisted
     reactor.run()
 

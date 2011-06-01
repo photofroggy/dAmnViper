@@ -15,6 +15,7 @@
         * Holy crap asynchronous magic.
         * Organised the methods in dAmnSock a little more logically.
         * Changed the README files a bit.
+        * Modified the example bot to be a little easier on the eyes.
         * TODO:
         ** Make sure there are no callLater's still running when we exit.
         ** Change to using CookieAgent in dAmnViper.deviantART.
