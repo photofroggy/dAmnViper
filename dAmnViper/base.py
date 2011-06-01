@@ -51,7 +51,7 @@ class dAmnSock(object):
             self.password = None
             self.cookie = None
             self.token = None
-
+    
     class flag(object):
         """Status flags are stored here"""
         
@@ -87,7 +87,29 @@ class dAmnSock(object):
             self.disconnects = 0
             self.attempts = 0
             self.limit = 3
-
+    
+    class defer:
+        """ Storage for Deferred and IDelayedCall objects. """
+        
+        def __init__(self):
+            self.loop = None
+            self.timeout = None
+        
+        def teardown(self):
+            """ Stop any delayed calls from running. """
+            if self.loop is None and self.timeout is None:
+                return
+            
+            try:
+                self.loop.cancel()
+            except Exception as e:
+                pass
+            
+            try:
+                self.timeout.cancel()
+            except Exception as e:
+                pass
+    
     extras = {'remember_me':'1'}
     agent = 'dAmnViper (python) dAmnSock/1.1'
     info = {}
@@ -100,9 +122,7 @@ class dAmnSock(object):
     autojoin = ['chat:Botdom']
     channel = {}
     
-    deferred_loop = None
-    handle_timeout = None
-    timeout_delay = None
+    timeout_delay = 120
 
     def __init__(self, *args, **kwargs):
         # Create an instance of our protocol class. Do anything else required.
@@ -119,7 +139,7 @@ class dAmnSock(object):
         """ Store the given IO protocol. This is in relation to the network connection. """
         self.io = protocol
         
-        if protocol is not None:
+        if protocol is None:
             self.onDisconnect()
     
     def populate_objects(self):
@@ -128,15 +148,8 @@ class dAmnSock(object):
         self.flag = dAmnSock.flag()
         self.CONST = dAmnSock.CONST()
         self.connection = dAmnSock.connection()
-        self.protocol = ProtocolParser()
-        
-        # Main loop lolol
-        self.deferred_loop = defer.Deferred()
-        self.deferred_loop.addCallback(self.on_loop)
-        
-        # Last ping deferred
-        self.handle_timeout = defer.Deferred()
-        self.handle_timeout.addCallback(self.timedout)
+        self.defer = dAmnSock.defer()
+        self.protocol = self.protocol()
     
     def nullflags(self):
         """ Reset all status flags in this client. """
@@ -150,7 +163,7 @@ class dAmnSock(object):
         self.authenticate()
         
         # Set up the client's main loop.
-        reactor.callLater(1, self.deferred_loop.callback, (args, kwargs))
+        self.defer.loop = reactor.callLater(1, self.mainloop, args, kwargs)
     
     def makeConnection(self):
         """ Open a connection to dAmn. """
@@ -168,25 +181,42 @@ class dAmnSock(object):
         if self.flag.quitting or not self.flag.reconnect:
             
             if self.flag.quitting:
+                self.defer.teardown()
+                try:
+                    self.teardown()
+                except Exception as e:
+                    pass
                 return
             
             if self.flag.retry:
                 self.logger('~Global', '** Attempting to connect again...', False)
                 self.connection.attempts+= 1
                 self.authenticate()
+                return
             
+            self.defer.teardown()
+            try:
+                self.teardown()
+            except Exception as e:
+                pass
             return
         
         self.logger('~Global', '** Attempting to connect again...', False)
         self.authenticate()
+    
+    def teardown(self):
+        """ Override this method to do stuff when the client gives up.
+            It is a good idea to use this method to call reactor.stop().
+        """
+        pass
     
     def authenticate(self):
         """ Fetch the authtoken for the username and password given. """
         self.flag.connecting = True
         if not self.user.token:
             # If we don't have an authtoken, try and grab one!
-            self.get_token()
             self.logger('~Global', '** Retrieving authtoken, this may take a while...', False)
+            self.get_token()
             return
         
         self.makeConnection()
@@ -223,7 +253,8 @@ class dAmnSock(object):
         # Something went wrong! Maybe the user entered the wrong details?!
         self.logger('~Global', '>> Failed to get an authtoken.', False)
         self.logger('~Global', '>> {0}'.format(self.session.status[1]), False)
-
+        self.flag.connecting = False
+    
     def on_get_token(self):
         """Overwrite this method to do shit when get_token is called."""
         pass
@@ -232,10 +263,10 @@ class dAmnSock(object):
         """Overwrite this method to do stuff after get_token is finished."""
         pass
     
-    def mainloop(self, data):
+    def mainloop(self, args, kwargs):
         """ Woo main application loop. """
-        self.on_loop(*data[0], **data[1])
-        reactor.callLater(1, self.deferred_loop.callback, data)
+        self.on_loop(*args, **kwargs)
+        self.defer.loop = reactor.callLater(1, self.mainloop, args, kwargs)
     
     def on_loop(self, *args, **kwargs):
         """ Overwrite this if you need to do anything on the main application loop. """
@@ -303,15 +334,11 @@ class dAmnSock(object):
             return ns
         return '#'+ns
     
-    def handle_pkt_deferred(self, data):
-        """ Deferred handling of packets. """
-        self.handle_pkt(*data)
-    
     def handle_pkt(self, packet, stamp):
         """ Handle packets as they come in. """
-        if self.timeout_delay is not None:
-            self.timeout_delay.cancel()
-        self.timeout_delay = reactor.callLater(120, self.handle_timeout.callback)
+        if self.defer.timeout is not None:
+            self.defer.timeout.cancel()
+        self.defer.timeout = reactor.callLater(self.timeout_delay, self.timedout)
         
         ns = '~Global'
         

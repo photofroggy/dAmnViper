@@ -23,6 +23,9 @@ class MyClient(dAmnSock):
         self.autojoin = autojoin or ['Botdom']
         self.callbacks = callbacks or Commands()
     
+    def teardown(self):
+        reactor.stop()
+    
     def pkt_recv_msg(self, data):
         # Provide basic command firing.
         if data['message'][:len(self.trigger)] == self.trigger:
@@ -91,6 +94,9 @@ if __name__ == '__main__':
     
     # Start the dAmn client.
     dAmn.start()
+    
+    if not dAmn.flag.connecting:
+        sys.exit()
     
     # Start twisted
     reactor.run()

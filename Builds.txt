@@ -16,9 +16,19 @@
         * Organised the methods in dAmnSock a little more logically.
         * Changed the README files a bit.
         * Modified the example bot to be a little easier on the eyes.
+        * Made sure there are no callLater's still running when we exit.
+        * Created a teardown method which subclasses should override.
+        ** Override this to call reactor.top().
+        ** If this is left untouched, applications may run forever.
+        * Updated examples to override dAmnSock.teardown().
+        * Got rid of dAmnSock.handle_pkt_deferred().
+        * Updated examples so they don't start the reactor if we fail to get an authtoken.
+        * Wrapped dAmnSock.teardown() calls in try...except blocks.
+        ** This prevents unsightly messages in cases where application developers are lazy.
+        ** This is mainly for the sake of keeping the examples simple.
+        * "Refreshing" now works!
+        ** This not working may have been caused by other bugs.
         * TODO:
-        ** Make sure there are no callLater's still running when we exit.
-        ** "Refreshing" doesn't work. Fine tune usage of flags.
         ** Change to using CookieAgent in dAmnViper.deviantART.
         ** Merge with master branch. (maybe)
     

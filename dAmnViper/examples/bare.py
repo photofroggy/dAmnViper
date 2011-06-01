@@ -14,8 +14,11 @@ if __name__ == '__main__':
     dAmn.user.password = 'password'
     dAmn.autojoin = ['Botdom']
     
+    dAmn.teardown = lambda: reactor.stop()
+    
     dAmn.start()
     
-    reactor.run()
+    if dAmn.flag.connecting:
+        reactor.run()
 
 # EOF
