@@ -39,19 +39,19 @@ else:
 
 from threading import Thread
 
-def login(deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
+def login(reactor, deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
     """ Creates a subthread which invokes the Login object and passes
         it to the given deferred.
     """
     Thread(target=run_login,
-        args=(deferred, username, password, extras, client)).start()
+        args=(reactor, deferred, username, password, extras, client)).start()
 
     
-def run_login(deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
+def run_login(reactor, deferred, username, password, extras={'remember_me':'1'}, client='dAmnViper (python 3.x) TokenGrabber/2'):
     """ Invokes the Login object to retrieve an authtoken.
         The resulting object is given to the given deferred.
     """
-    reactor.callLater(.1, deferred.callback, Login(username, password, extras, client))
+    reactor.callFromThread(deferred.callback, Login(username, password, extras, client))
 
 '''
 
@@ -110,7 +110,7 @@ class Login:
         if 'wrong-password' in loc:
             self.status = (4, 'Incorrect username or password provided.')
             return
-        if loc == 'localhost':
+        if loc in ('localhost', 'ConnectionError'):
             status = response.headers.get('Status')
             if status[0] == -2:
                 self.status = (3, 'Could not connect to the internet.')

@@ -30,9 +30,17 @@
         ** This not working may have been caused by other bugs.
         * Updated dAmnViper.examples.authtoken to work with synchronous methods.
         * Added more descriptive comments to dAmnViper.examples.bot.
-        * TODO:
-        ** Change to using CookieAgent in dAmnViper.deviantART.
+        * dAmnViper.deviantART patched.
+        ** Reports the correct error when no internet connection can be made.
+        * Made sure connection attempts are monitored properly. Needs testing.
+        * on_token is now only called when we have actually managed to get an authtoken.
+        ** This makes far more sense semantically.
+        ** Maybe create an on_token_failure method?
+        ** Passing a boolean to on_token may be better.
+        * TODO: In order of priority
         ** Merge with master branch. (maybe)
+        ** Create fuller documentation.
+        ** Change to using CookieAgent in dAmnViper.deviantART.
     
     Build 54 (29052011-122308) Swift
         * Fixed dAmnViper._auth3

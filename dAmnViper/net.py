@@ -42,7 +42,7 @@ class ConnectionFactory(ClientFactory):
     
     def startedConnecting(self, connector):
         self.log('** Opening connection to dAmn...')
-        self.client.connection.attempts = 1
+        self.client.flag.connecting = True
     
     def create_protocol(self):
         return IOProtocol(self, self.client, self.stdout, self.debug)

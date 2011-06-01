@@ -41,7 +41,7 @@ class dAmnSock(object):
         state = 'Private'
         build = 55
         stamp = '29052011-122308'
-        series = 'Swift'
+        series = 'Clean'
         author = 'photofroggy'
             
     class user(object):
@@ -127,8 +127,8 @@ class dAmnSock(object):
     def __init__(self, *args, **kwargs):
         # Create an instance of our protocol class. Do anything else required.
         self.populate_objects()
-        self.agent = 'dAmnViper (Python) viper/base/dAmnSock/{0}.{1}'.format(
-            self.platform.version, self.platform.build)
+        self.agent = 'dAmnViper/{0} (Python) viper/base/dAmnSock/{1}.{2}'.format(
+            self.platform.series, self.platform.version, self.platform.build)
         self.init(*args, **kwargs)
     
     def init(self, *args, **kwargs):
@@ -158,6 +158,8 @@ class dAmnSock(object):
     def start(self, *args, **kwargs):
         """ Start the client. """
         self.nullflags()
+        
+        self.connection.attempts = 1
         
         # Make sure we have an authtoken.
         self.authenticate()
@@ -201,7 +203,8 @@ class dAmnSock(object):
                 pass
             return
         
-        self.logger('~Global', '** Attempting to connect again...', False)
+        self.connection.attempts = 1
+        self.logger('~Global', '** Attempting to reconnect...', False)
         self.authenticate()
     
     def teardown(self):
@@ -212,7 +215,6 @@ class dAmnSock(object):
     
     def authenticate(self):
         """ Fetch the authtoken for the username and password given. """
-        self.flag.connecting = True
         if not self.user.token:
             # If we don't have an authtoken, try and grab one!
             self.logger('~Global', '** Retrieving authtoken, this may take a while...', False)
@@ -240,27 +242,26 @@ class dAmnSock(object):
         """
         self.session = session
         
-        self.on_token()
-        
         if self.session.status[0] == 1:
             self.user.cookie = self.session.cookie
             self.user.token = self.session.token
             self.user.password = None
             self.logger('~Global', '** Got an authtoken.', False)
             self.makeConnection()
+            # on_token called second so that reactor.run() can be used there.
+            self.on_token()
             return
         
         # Something went wrong! Maybe the user entered the wrong details?!
         self.logger('~Global', '>> Failed to get an authtoken.', False)
         self.logger('~Global', '>> {0}'.format(self.session.status[1]), False)
-        self.flag.connecting = False
     
     def on_get_token(self):
         """Overwrite this method to do shit when get_token is called."""
         pass
     
     def on_token(self):
-        """Overwrite this method to do stuff after get_token is finished."""
+        """Overwrite this method to do stuff when we have an authtoken."""
         pass
     
     def mainloop(self, args, kwargs):

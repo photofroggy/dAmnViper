@@ -32,6 +32,26 @@ class MyClient(dAmnSock):
         self.autojoin = autojoin or ['Botdom']
         self.callbacks = callbacks or Commands()
     
+    def on_token(self):
+        """ This method is called when dAmnViper has an authtoken.
+            
+            Use this method to start the reactor if needed. We can
+            assume we have everything needed to connect, as this method
+            is only called when dAmnViper actually succeeds in getting
+            an authtoken.
+            
+            Technically you can achieve the same behaviour by using
+            something similar to this outside of the class::
+                
+                dAmn.start()
+                if dAmn.flag.connecting:
+                    reactor.run()
+            
+            Using this method just makes things a little cleaner on the
+            outside, but not really.
+        """
+        reactor.run()
+    
     def teardown(self):
         """ Overriding this method is required to stop the application.
             This method is called by dAmnSock when the client has
@@ -132,11 +152,5 @@ if __name__ == '__main__':
     
     # Start the dAmn client.
     dAmn.start()
-    
-    if not dAmn.flag.connecting:
-        sys.exit()
-    
-    # Start twisted
-    reactor.run()
 
 # EOF
