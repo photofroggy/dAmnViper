@@ -18,6 +18,7 @@
         * Modified the example bot to be a little easier on the eyes.
         * TODO:
         ** Make sure there are no callLater's still running when we exit.
+        ** "Refreshing" doesn't work. Fine tune usage of flags.
         ** Change to using CookieAgent in dAmnViper.deviantART.
         ** Merge with master branch. (maybe)
     
