@@ -5,7 +5,7 @@ This module provides classes used to actually connect to dAmn using
 Twisted. The `ConnectionFactory` starts connections and handles
 disconnects. The `IOProtocol` handles basic IO operations on the
 connection, but delegates most of the processing to an instance of the
-:py:class:`dAmnSock <dAmnViper.base.dAmnSock>`.
+:py:class:`dAmnSock <dAmnViper.base.dAmnSock>` class.
 
 2.1 ``ConnectionFactory`` - Connection management
 -------------------------------------------------

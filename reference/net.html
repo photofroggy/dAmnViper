@@ -59,7 +59,7 @@
 Twisted. The <cite>ConnectionFactory</cite> starts connections and handles
 disconnects. The <cite>IOProtocol</cite> handles basic IO operations on the
 connection, but delegates most of the processing to an instance of the
-<a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a>.</p>
+<a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> class.</p>
 <div class="section" id="connectionfactory-connection-management">
 <h2>2.1 <tt class="docutils literal"><span class="pre">ConnectionFactory</span></tt> - Connection management<a class="headerlink" href="#connectionfactory-connection-management" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="connectionfactory"></span><dl class="class">
@@ -77,7 +77,8 @@ dAmnViper.</p>
 <dd><p>Called by twisted when a protocol is needed.</p>
 <p>Twisted calls this method when a connection can be
 established with the server. This method creates an instance
-of the <tt class="xref py py-class docutils literal"><span class="pre">IOProtocol</span></tt> object that the factory belongs
+of the <a class="reference internal" href="#dAmnViper.net.IOProtocol" title="dAmnViper.net.IOProtocol"><tt class="xref py py-class docutils literal"><span class="pre">IOProtocol</span></tt></a>
+class. This instance is given to the <a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> object that the factory belongs
 to, and returned to twisted.</p>
 </dd></dl>
 
@@ -86,7 +87,7 @@ to, and returned to twisted.</p>
 <tt class="descname">clientConnectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory.clientConnectionFailed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when we fail to connect properly.</p>
 <p>The behaviour of this method is similar to the
-<cite>clientConnectionLost</cite> method.</p>
+<tt class="docutils literal"><span class="pre">clientConnectionLost</span></tt> method.</p>
 </dd></dl>
 
 <dl class="method">

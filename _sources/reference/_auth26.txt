@@ -7,6 +7,6 @@
 .. autofunction:: dAmnViper._auth26.fetch_cookie
 
 6.2 ``fetch_channel``
---------------------
+---------------------
 .. autofunction:: dAmnViper._auth26.fetch_channel
 

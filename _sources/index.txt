@@ -27,6 +27,14 @@ dAmn Viper.
 Downloads
 ---------
 
+**Dependencies:**
+
+In order to work properly, dAmn Viper requires the following:
+
+* `Python <http://python.org>`_ 2.7 or better.
+* `Twisted <http://twistedmatrix.com>`_.
+* PyOpenSSL.
+
 **Get stable releases of dAmn Viper here:**
 
 * *not yet available*
