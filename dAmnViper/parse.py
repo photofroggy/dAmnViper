@@ -11,8 +11,26 @@ import re
 
 class Packet(object):
     """ Use this class to parse dAmn packets.
-        Data is stored in the attributes cmd, param,
-        args, body and raw.
+        
+        This object processes given strings as dAmn packets, and stores
+        information from the string in different object attributes. This
+        makes it easier to work with packets in other parts of the API.
+        
+        An example usage of this parser is as follows::
+    
+            p = Packet("packetname mainparam\\nsome=variables\\nsomemore=variables\\n\\nMain content is placed here.")
+            
+        Using the above, we get the following values for our
+        attributes::
+            
+            p.cmd = 'packetname'
+            p.param = 'mainparam'
+            p.args = {'some': 'variables', 'somemore': 'variables'}
+            p.body = 'Main content is placed here.'
+        
+        The ``sep`` parameter in this object refers to the character
+        separating argument keys from their values. Note that arguments
+        are stored in the ``args`` attribute.
     """
 
     def __init__(self, data=None, sep='='):
@@ -38,7 +56,19 @@ class Packet(object):
         # And that's the end of that chapter.
 
 class Tablumps(object):
-    """A very simple static class used to parse or capture dAmn-style Tablumps."""
+    """ dAmn tablumps parser.
+        
+        dAmn sends certain information formatted in a specific manner.
+        Links, images, thumbs, and other forms of data are formatted
+        in strings where the different attributes of these values are
+        separated by tab characters (``\\t``), and usually begin with an
+        ampersand.
+        
+        We refer to these items as "tablumps" because of the tab
+        characters being used as delimeters. The job of this class is to
+        replace tablumps with readable strings, or to extract the data
+        given in the tablumps.
+    """
     
     expressions = None
     replace = None
@@ -112,7 +142,11 @@ class Tablumps(object):
         ]
     
     def parse(self, data):
-        # Parse any dAmn Tablumps found in our input data.
+        """ Parse any dAmn Tablumps found in our input data.
+            
+            This method will simply return a string with the tablumps
+            parsed into readable formats.
+        """
         try:
             for lump, repl in self.replace:
                 data = data.replace(lump, repl)
@@ -123,7 +157,12 @@ class Tablumps(object):
         return data
     
     def capture(self, text):
-        # Return any dAmn Tablumps found in our input data.
+        """ Return any dAmn Tablumps found in our input data.
+            
+            Rather than parsing the tablumps, this method returns the
+            data given by tablumps. This only works for tablumps where
+            a regular expression is used for parsing.
+        """
         lumps = {}
         for key, expression in enumerate(self.expressions):
             cc = expression.findall(text)
@@ -134,9 +173,10 @@ class Tablumps(object):
 
 class ProtocolParser(object):
     """ Protocol processor.
+        
         Use methods of this class to process dAmn information.
         You can customise how different packets are handled by
-        adding itemds to protocol.maps and protocol.messages.
+        adding items to protocol.maps and protocol.messages.
     """
     maps = {
         'dAmnServer': ['version'],

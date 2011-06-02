@@ -29,9 +29,37 @@ from dAmnViper.net import ConnectionFactory
 
 
 class dAmnSock(object):
-    """ Client class.
-        Use an instance of this object to manage a connection to
-        dAmn, and to interact with dAmn.
+    """ The dAmnSock class provides an easy to use API for connecting
+        to dAmn, and for interacting with the server.
+    
+        Applications using this class should extend the class to add in
+        some basic functionality so that it works as they expect. The
+        class can be made to work properly with only minor modifications
+        as shown here::
+            
+            from twisted.internet import reactor
+            from dAmnViper.base import dAmnSock
+            
+            dAmn = dAmnSock()    
+            
+            dAmn.user.username = 'username'
+            dAmn.user.password = 'password'
+            dAmn.autojoin = ['Botdom']
+            
+            dAmn.teardown = lambda: reactor.stop()
+            
+            dAmn.start()
+            
+            if dAmn.flag.connecting:
+                reactor.run()
+        
+        The ``teardown`` callback needs to be defined or the application
+        will hang when the connection to dAmn is lost.
+        
+        A way to remove the need to check the
+        ``dAmnSock.flag.connecting`` flag is to define your own
+        ``on_token`` method on the object, and using this to call
+        ``reactor.run()``.
     """
     
     class platform:
@@ -136,7 +164,10 @@ class dAmnSock(object):
         pass
     
     def set_protocol(self, protocol=None):
-        """ Store the given IO protocol. This is in relation to the network connection. """
+        """ Store the given IO protocol.
+        
+            This is in relation to the network connection.
+        """
         self.io = protocol
         
         if protocol is None:
@@ -236,9 +267,12 @@ class dAmnSock(object):
     
     def gotSession(self, session):
         """ Deferred callback for deviantART.login.
+            
             Called after we have attempted to log into deviantART.com.
             At least, it will be deferred in future. At the moment it's
-            all synchronous. Damn...
+            all synchronous.
+            
+            Damn...
         """
         self.session = session
         
@@ -274,7 +308,9 @@ class dAmnSock(object):
         pass
     
     def timedout(self):
-        """ If this method gets called, then the client has not received
+        """ Timeout detected.
+            
+            If this method gets called, then the client has not received
             any data for 2 minutes. Assume disconnected.
         """
         self.handle_pkt(Packet('disconnect\ne=socket timed out\n\n'), time.time())
@@ -367,75 +403,75 @@ class dAmnSock(object):
     # The methods below pretty much define the protocol for outgoing packets.
 
     def raw(self, data):
-        # Send a raw dAmn packet.
+        """ Send a raw dAmn packet. """
         return self.send(data)
         
     def pong(self):
-        # dAmn likes to play ping pong...
+        """ Send a pong packet to the server """
         return self.send('pong\n')
         
     def join(self, ns):
-        # Send a join packet to dAmn.
+        """ Send a join packet to dAmn. """
         return self.send('join {0}\n'.format(ns))
         
     def part(self, ns):
-        # Send a part packet to dAmn
+        """ Send a part packet to dAmn. """
         return self.send('part {0}\n'.format(ns))
         
     def say(self, ns, message):
-        # Send a message to a dAmn channel namespace.
+        """ Send a message to a dAmn channel namespace. """
         return self.send('send {0}\n\nmsg main\n\n{1}'.format(ns, str(message)))
     
     def action(self, ns, message):
-        # Send an action to a dAmn channel namespace.
+        """ Send an action to a dAmn channel namespace. """
         return self.send('send {0}\n\naction main\n\n{1}'.format(ns, str(message)))
     
     def me(self, ns, message):
-        # This is just another way to do an action.
+        """ This is just another way to do an action. """
         return self.action(ns, message)
         
     def npmsg(self, ns, message):
-        # Send a non-parsed message to a dAmn channel namespace.
+        """ Send a non-parsed message to a dAmn channel namespace. """
         return self.send('send {0}\n\nnpmsg main\n\n{1}'.format(ns, str(message)))
     
     def promote(self, ns, user, pc=None):
-        # Promote a user in a dAmn channel.
+        """ Promote a user in a dAmn channel. """
         return self.send('send {0}\n\npromote {1}\n{2}'.format(ns, user, '' if pc == None else '\n'+str(pc)))
     
     def demote(self, ns, user, pc=None):
-        # Demote a user in a dAmn channel.
+        """ Demote a user in a dAmn channel. """
         return self.send('send {0}\n\ndemote {1}\n{2}'.format(ns, user, '' if pc == None else '\n'+str(pc)))
     
     def kick(self, ns, user, r=None):
-        # Kick a user out of a dAmn channel.
+        """ Kick a user out of a dAmn channel. """
         return self.send('kick {0}\nu={1}\n{2}'.format(ns, user, '' if r == None else '\n'+str(r)))
     
     def ban(self, ns, user):
-        # Ban a user from a dAmn channel.
+        """ Ban a user from a dAmn channel. """
         return self.send('send {0}\n\nban {1}\n'.format(ns, user))
     
     def unban(self, ns, user):
-        # Unban someone from a dAmn channel.
+        """ Unban someone from a dAmn channel. """
         return self.send('send {0}\n\nunban {1}\n'.format(ns, user))
     
     def get(self, ns, p):
-        # Get a property for a dAmn channel.
+        """ Get a property for a dAmn channel. """
         return self.send('get {0}\np={1}\n'.format(ns, p))
     
     def set(self, ns, p, val):
-        # Set a property for a dAmn channel.
+        """ Set a property for a dAmn channel. """
         return self.send('set {0}\np={1}\n\n{2}'.format(ns, p, val))
     
     def admin(self, ns, command):
-        # Send an admin command to a dAmn channel. No need for multiple methods here.
+        """ Send an admin command to a dAmn channel. No need for multiple methods here. """
         return self.send('send {0}\n\nadmin\n\n{1}'.format(ns, command))
     
     def disconnect(self):
-        # Send a disconnect packet to the dAmn server.
+        """ Send a disconnect packet to the dAmn server. """
         return self.send('disconnect\n')
         
     def kill(self, ns, r=None):
-        # Send a kill packet to the dAmn server.
+        """ Send a kill packet to the dAmn server. """
         return self.send('kill {0}\n{1}'.format(ns, '' if r == None else '\n'+str(r)))
     
     # END PROTOCOL OUTPUT METHODS
@@ -585,7 +621,7 @@ class dAmnSock(object):
         return Packet
         
     def logger(self, ns, msg, showns=True, mute=False, pkt=None, ts=None):
-        # Write output to stdout.
+        """ Write output to stdout. """
         if mute and not self.flag.debug:
             return
         

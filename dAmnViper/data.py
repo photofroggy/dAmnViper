@@ -10,6 +10,7 @@ from dAmnViper.parse import Packet
 
 class Channel(object):
     """ Objects representing dAmn channels.
+    
         Information about the channels are stored in here.
     """
     

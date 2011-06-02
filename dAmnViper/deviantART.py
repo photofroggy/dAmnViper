@@ -56,7 +56,46 @@ def run_login(reactor, deferred, username, password, extras={'remember_me':'1'},
 '''
 
 class Login:
-    """ This class uses given login data to fetch a deviantART cookie and authtoken. """
+    """ Login session object.
+        
+        Instances of this class represent a login session for deviantART.
+        The object uses the data given in the constructor to try and
+        log in to deviantART and retrieve and authtoken for the
+        chatrooms.
+        
+        As an example, the following code may be used::
+            
+            session = Login('username', 'password')
+        
+        After the ``Login`` object has finished running, ``status`` can
+        have one of the following values::
+            
+            # If we got an authtoken.
+            session.status = (1, 'Authtoken retrieved!')
+            
+            # If we didn't get an authtoken but don't know why.
+            session.status = (2, 'Authtoken not given. Not sure why.')
+            
+            # If we could not connect to the internet.
+            session.status = (3, 'Could not connect to the internet.')
+            
+            # If the login details were incorrect.
+            session.status = (4, 'Incorrect username or password provided.')
+            
+            # If there was a problem with the request.
+            self.status = (5, request_error_message)
+            
+            # If the account we're trying to use is not verified.
+            session.status = (6,
+                "This account has not yet been verified. To verify, please check the email you used to register the account (don't forget to search junk mail), and click the link the email deviantART sent you.")
+            
+            # If everything failed but we can't figure out why.
+            session.status = (7, 'Something went wrong. I do not know why.')
+        
+        Assuming that the login attempt succeeded, the dAmn authtoken is
+        stored in the ``token`` attribute. The ``jar`` attribute stores
+        the cookie jar used during the login process.
+    """
     
     url = 'https://www.deviantart.com/users/login'
     curl = 'http://chat.deviantart.com/chat/botdom'
@@ -83,6 +122,7 @@ class Login:
         self.crop(username, response.data)
     
     def valid_login_url(self, response):
+        """ Check the URL we are redirected to after trying to log in. """
         url = response.geturl()
         if url == 'ConenctionError':
             return False
@@ -93,6 +133,7 @@ class Login:
         return True
     
     def crop(self, username, data):
+        """ Try to crop the authtoken from the retrieved chat page. """
         match = re.search('"'+username+'", "([0-9a-f]{32})"', data, re.IGNORECASE)
         if match is None or match.group(1) is None:
             self.status = (2, 'Authtoken not given. Not sure why.')
@@ -101,10 +142,10 @@ class Login:
         self.status = (1, 'Authtoken retrieved!')
     
     def handle(self, response):
-        """ Handle a login failure. """
+        """ Try and determine why the login attempt failed. """
         loc = response.geturl()
         if 'verify.deviantart.com' in loc:
-            self.status = (7,
+            self.status = (6,
                 "This account has not yet been verified. To verify, please check the email you used to register the account (don't forget to search junk mail), and click the link the email deviantART sent you.")
             return
         if 'wrong-password' in loc:
@@ -117,6 +158,6 @@ class Login:
             else:
                 self.status = (5, status[1])
             return
-        self.status = (6, 'Something went wrong. I do not know why.')
+        self.status = (7, 'Something went wrong. I do not know why.')
 
 # EOF
