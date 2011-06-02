@@ -160,18 +160,10 @@ class dAmnSock(object):
         self.init(*args, **kwargs)
     
     def init(self, *args, **kwargs):
-        """ Overwrite this method if you need to do anything on instantion."""
-        pass
-    
-    def set_protocol(self, protocol=None):
-        """ Store the given IO protocol.
-        
-            This is in relation to the network connection.
+        """ Overwrite this method if you need to do anything
+            when an instance of this class is created.
         """
-        self.io = protocol
-        
-        if protocol is None:
-            self.onDisconnect()
+        pass
     
     def populate_objects(self):
         """ Populate our objects that are used to store information and stuff. """
@@ -185,6 +177,16 @@ class dAmnSock(object):
     def nullflags(self):
         """ Reset all status flags in this client. """
         self.flag = dAmnSock.flag()
+    
+    def set_protocol(self, protocol=None):
+        """ Store the given IO protocol.
+        
+            This is in relation to the network connection.
+        """
+        self.io = protocol
+        
+        if protocol is None:
+            self.onDisconnect()
         
     def start(self, *args, **kwargs):
         """ Start the client. """
@@ -299,7 +301,7 @@ class dAmnSock(object):
         pass
     
     def mainloop(self, args, kwargs):
-        """ Woo main application loop. """
+        """ This is the client's main loop. """
         self.on_loop(*args, **kwargs)
         self.defer.loop = reactor.callLater(1, self.mainloop, args, kwargs)
     
@@ -395,10 +397,6 @@ class dAmnSock(object):
         self.pkt_generic(data)
         return data
     
-    def pkt_unknown(self, data):
-        """ We received something unexpected. Oh well. """
-        pass
-    
     # PROTOCOL OUTPUT
     # The methods below pretty much define the protocol for outgoing packets.
 
@@ -479,16 +477,51 @@ class dAmnSock(object):
     # These methods process incomming data.
     
     def pkt_generic(self, data):
-        # Overwrite this method to do stuff on every packet event.
+        """ We have received a packet!
+            
+            Override this method to do stuff whenever a packet is
+            received. If you want to do stuff when a specific packet is
+            received, define a new ``pkt_*`` method for that packet.
+            
+            If the method you are defining already exists, then you
+            should call the original method from your own definition, so
+            that the client does not break.
+            
+            Here, the method is given a dict as returned by the
+            :py:class:`ProtocolParser <dAmnViper.parse.ProtocolParser>`
+            method ``mapper``. Other ``pkt_*`` methods are only given
+            the data under the ``args`` key of the dict returned by the
+            ``mapper`` method.
+        """
+        pass
+    
+    def pkt_unknown(self, data):
+        """ We received something unexpected. Oh well. """
         pass
     
     def pkt_dAmnServer(self, data):
-        # What to do in the event of a handshake.
+        """ Received a dAmnServer packet.
+            
+            This method calls the ``login`` method of this class and
+            sets the ``shaking`` flag to ``False``.
+            
+            This method is essential for connecting to dAmn properly.
+        """
         self.flag.shaking = False
         self.login()
         
     def pkt_login(self, data):
-        # What to do when we receive a login packet.
+        """ Received a login packet.
+            
+            When we receive a login packet, we need to determine whether
+            the login was successful or not, and act based on that.
+            
+            This method closes the client if the login failed.
+            Otherwise, the channels listed in the ``autojoin`` attribute
+            are joined.
+            
+            This method is essential for connecting to dAmn properly.
+        """
         
         self.flag.loggingin = False
         
@@ -506,7 +539,18 @@ class dAmnSock(object):
             self.join(self.format_ns(ns))
     
     def pkt_join(self, data):
-        # The client tried to join a channel.
+        """ Received a join packet.
+            
+            This is sent by the server when the client tries to join a
+            channel on the server.
+            
+            If the join was successful, a :py:class:`Channel object
+            <dAmnViper.data.Channel>` is created for the channel and
+            stored in the ``channel`` attribute of the client.
+            
+            If the join failed, the client disconnects if there are no
+            other joined channels. (``naive``)
+        """
         if data['e'] == 'ok':
             self.channel[data['ns']] = Channel(
                 data['ns'], self.deform_ns(data['ns'])
@@ -519,8 +563,11 @@ class dAmnSock(object):
         self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
     
     def pkt_part(self, data):
-        # This is what happens when we receive a part packet.
-        
+        """ Received a part packet.
+            
+            Similar to ``pkt_join``. This method determines whether or
+            not the client is being kicked off the server.
+        """
         if data['ns'] in self.channel.keys():
             del self.channel[data['ns']]
         
@@ -543,7 +590,11 @@ class dAmnSock(object):
         self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
     
     def pkt_property(self, data):
-        # Make sure properties are stored in the right places.
+        """ Received a channel property packet.
+            
+            This method makes sure that the information received is
+            stored in the right place.
+        """
         if data['p'] == 'info':
             return
         
@@ -553,11 +604,24 @@ class dAmnSock(object):
         self.channel[data['ns']].process_property(data)
     
     def pkt_recv_join(self, data):
-        # When a user joins, log them!
+        """ Received a recv_join packet.
+            
+            This happens when a user joins a channel in which the client
+            is also present.
+            
+            This method simply stores information about the user that
+            just joined.
+        """
         self.channel[data['ns']].register_user(Packet(data['info']), data['user'])
         
     def pkt_recv_part(self, data):
-        # No need to log users after they leave a channel.
+        """ Received a recv_part packet.
+            
+            This happens when a user leaves a channel in which the
+            client is present.
+            
+            Here, we remove any records of the user being in the channel.
+        """
         if not data['user'] in self.channel[data['ns']].member:
             return
         
@@ -567,18 +631,33 @@ class dAmnSock(object):
             del self.channel[data['ns']].member[data['user']]
             
     def pkt_recv_kicked(self, data):
-        # Get rid of users who get kicked.
+        """ Received a recv_kick packet.
+            
+            Similar to the ``pkt_recv_part`` method.
+        """
         if not data['user'] in self.channel[data['ns']].member:
             return
         del self.channel[data['ns']].member[data['user']]
         
     def pkt_recv_privchg(self, data):
-        # Got to make sure users' privclasses are up to date.
+        """ Received a recv_privchg packet.
+            
+            This happens when a user's privclass is changed. All we do
+            here is make sure the user is recorded as being in that
+            privclass.
+        """
         if not data['user'] in self.channel[data['ns']].member:
             return
         self.channel[data['ns']].member[data['user']]['pc'] = data['pc']
     
     def pkt_kicked(self, data):
+        """ Received a kicked packet.
+            
+            This happens when the client is kicked from a channel.
+            
+            Here we automatically rejoin the channel if we are permitted
+            to do so.
+        """
         del self.channel[data['ns']]
         if self.flag.disconnecting or self.flag.quitting:
             return
@@ -594,7 +673,13 @@ class dAmnSock(object):
             self.join(data['ns'])
     
     def pkt_disconnect(self, data):
-        # dAmn also likes to disconnect clients. A lot.
+        """ Received a disconnect packet from the server.
+            
+            Here we make sure the client does the right thing when a
+            disconnect happens.
+            
+            This method is required for the client to work as expected.
+        """
         self.flag.connected = False
         self.connection.disconnects+= 1
         self.channel = {}
@@ -617,7 +702,9 @@ class dAmnSock(object):
     # END PROTOCOL METHODS
     
     def parser(self):
-        # Just a shortcut for getting the Packet class.
+        """ This method returns the :py:class:`Packet class
+            <dAmnViper.parse.Packet>`.
+        """
         return Packet
         
     def logger(self, ns, msg, showns=True, mute=False, pkt=None, ts=None):
@@ -635,12 +722,14 @@ class dAmnSock(object):
         sys.stdout.flush()
         
     def new_logger(self, ns='~Global', showns=True, mute=False):
+        """ Returns a wrapped logger method. """
         @wraps(self.logger)
         def wrapper(msg):
             return self.logger(ns, msg, showns, mute)
         return wrapper
     
     def get_write_pair(self, showns=False):
+        """ Returns a pair of wrapped logger methods. """
         return (self.new_logger(showns=False), self.new_logger(showns=False, mute=(not self.flag.debug)))
 
 # EOF

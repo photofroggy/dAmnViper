@@ -38,6 +38,7 @@
         ** Maybe create an on_token_failure method?
         ** Passing a boolean to on_token may be better.
         * Changed comments slightly in the _auth* modules.
+        * Made comments and documentation more useful.
         * TODO: In order of priority
         ** Merge with master branch. (maybe)
         ** Create fuller documentation.
