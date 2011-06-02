@@ -9,6 +9,145 @@ achieved using Twisted.
 .. _damnsock:
 
 .. autoclass:: dAmnViper.base.dAmnSock
-    :members:
+    :members: __doc__
     :member-order: bysource
+
+1.1.1. Main methods
++++++++++++++++++++
+
+These methods should be a point of interest in understanding how
+the class starts up and handles the connection.
+
+.. automethod:: dAmnViper.base.dAmnSock.init
+
+.. automethod:: dAmnViper.base.dAmnSock.populate_objects
+
+.. automethod:: dAmnViper.base.dAmnSock.nullflags
+
+.. automethod:: dAmnViper.base.dAmnSock.set_protocol
+
+.. automethod:: dAmnViper.base.dAmnSock.start
+
+.. automethod:: dAmnViper.base.dAmnSock.makeConnection
+
+.. automethod:: dAmnViper.base.dAmnSock.onDisconnect
+
+.. automethod:: dAmnViper.base.dAmnSock.teardown
+
+.. automethod:: dAmnViper.base.dAmnSock.mainloop
+
+.. automethod:: dAmnViper.base.dAmnSock.on_loop
+
+.. automethod:: dAmnViper.base.dAmnSock.timedout
+
+.. automethod:: dAmnViper.base.dAmnSock.close
+
+
+1.1.2. Authentication
++++++++++++++++++++++
+
+These are the methods which handle authenticating the client properly.
+
+.. automethod:: dAmnViper.base.dAmnSock.authenticate
+
+.. automethod:: dAmnViper.base.dAmnSock.get_token
+
+.. automethod:: dAmnViper.base.dAmnSock.gotSession
+
+.. automethod:: dAmnViper.base.dAmnSock.on_get_token
+
+.. automethod:: dAmnViper.base.dAmnSock.on_token
+
+1.1.3. Sending data
++++++++++++++++++++
+These methods are used to send data to the server. You should use these
+methods if you want to interact with dAmn.
+
+.. automethod:: dAmnViper.base.dAmnSock.send
+
+.. automethod:: dAmnViper.base.dAmnSock.raw
+
+.. automethod:: dAmnViper.base.dAmnSock.pong
+
+.. automethod:: dAmnViper.base.dAmnSock.login
+
+.. automethod:: dAmnViper.base.dAmnSock.join
+
+.. automethod:: dAmnViper.base.dAmnSock.part
+
+.. automethod:: dAmnViper.base.dAmnSock.say
+
+.. automethod:: dAmnViper.base.dAmnSock.npmsg
+
+.. automethod:: dAmnViper.base.dAmnSock.action
+
+.. automethod:: dAmnViper.base.dAmnSock.me
+
+.. automethod:: dAmnViper.base.dAmnSock.promote
+
+.. automethod:: dAmnViper.base.dAmnSock.demote
+
+.. automethod:: dAmnViper.base.dAmnSock.kick
+
+.. automethod:: dAmnViper.base.dAmnSock.ban
+
+.. automethod:: dAmnViper.base.dAmnSock.unban
+
+.. automethod:: dAmnViper.base.dAmnSock.get
+
+.. automethod:: dAmnViper.base.dAmnSock.set
+
+.. automethod:: dAmnViper.base.dAmnSock.admin
+
+.. automethod:: dAmnViper.base.dAmnSock.disconnect
+
+.. automethod:: dAmnViper.base.dAmnSock.kill
+
+1.1.4. Receiving data
++++++++++++++++++++++
+These methods are used to handle incoming data.
+
+.. automethod:: dAmnViper.base.dAmnSock.handle_pkt
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_generic
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_unknown
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_dAmnServer
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_login
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_join
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_part
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_property
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_recv_join
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_recv_part
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_recv_kicked
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_recv_privchg
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_kicked
+
+.. automethod:: dAmnViper.base.dAmnSock.pkt_disconnect
+
+1.1.5. Utility methods
+++++++++++++++++++++++
+These methods are general purpose methods which can be used in your
+application.
+
+.. automethod:: dAmnViper.base.dAmnSock.format_ns
+
+.. automethod:: dAmnViper.base.dAmnSock.deform_ns
+
+.. automethod:: dAmnViper.base.dAmnSock.logger
+
+.. automethod:: dAmnViper.base.dAmnSock.new_logger
+
+.. automethod:: dAmnViper.base.dAmnSock.get_write_pair
+
 
