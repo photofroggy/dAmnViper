@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. parse module &mdash; dAmn Viper v3.55 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.55',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="dAmn Viper v3.55 documentation" href="../index.html" />
+    <link rel="up" title="Package Reference" href="index.html" />
+    <link rel="next" title="5. deviantART module" href="deviantART.html" />
+    <link rel="prev" title="3. data module" href="data.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deviantART.html" title="5. deviantART module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="3. data module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">dAmn Viper v3.55 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Package Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="parse-module">
+<h1>4. <tt class="docutils literal"><span class="pre">parse</span></tt> module<a class="headerlink" href="#parse-module" title="Permalink to this headline">¶</a></h1>
+<p>This module provides objects for parsing data going to and from the dAmn
+server. Tablumps and packets are handled by classes here, and a class is
+provided to generate output messages for stdout based on packets
+received from dAmn.</p>
+<div class="section" id="packet-basic-packet-parsing">
+<h2>4.1 <tt class="docutils literal"><span class="pre">Packet</span></tt> - Basic packet parsing<a class="headerlink" href="#packet-basic-packet-parsing" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="packetobj"></span><dl class="class">
+<dt id="dAmnViper.parse.Packet">
+<em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">Packet</tt><big>(</big><em>data=None</em>, <em>sep='='</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.Packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this class to parse dAmn packets.</p>
+<p>This object processes given strings as dAmn packets, and stores
+information from the string in different object attributes. This
+makes it easier to work with packets in other parts of the API.</p>
+<p>An example usage of this parser is as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">Packet</span><span class="p">(</span><span class="s">&quot;packetname mainparam</span><span class="se">\n</span><span class="s">some=variables</span><span class="se">\n</span><span class="s">somemore=variables</span><span class="se">\n\n</span><span class="s">Main content is placed here.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the above, we get the following values for our
+attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;packetname&#39;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="s">&#39;mainparam&#39;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;some&#39;</span><span class="p">:</span> <span class="s">&#39;variables&#39;</span><span class="p">,</span> <span class="s">&#39;somemore&#39;</span><span class="p">:</span> <span class="s">&#39;variables&#39;</span><span class="p">}</span>
+<span class="n">p</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="s">&#39;Main content is placed here.&#39;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">sep</span></tt> parameter in this object refers to the character
+separating argument keys from their values. Note that arguments
+are stored in the <tt class="docutils literal"><span class="pre">args</span></tt> attribute.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="protocolparser-damn-protocol-mapping">
+<h2>4.2. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping<a class="headerlink" href="#protocolparser-damn-protocol-mapping" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="protocolparser"></span><dl class="class">
+<dt id="dAmnViper.parse.ProtocolParser">
+<em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">ProtocolParser</tt><a class="headerlink" href="#dAmnViper.parse.ProtocolParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Protocol processor.</p>
+<p>Use methods of this class to process dAmn information.
+You can customise how different packets are handled by
+adding items to protocol.maps and protocol.messages.</p>
+<dl class="attribute">
+<dt id="dAmnViper.parse.ProtocolParser.tablumps">
+<tt class="descname">tablumps</tt><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.tablumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">Tablumps</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="tablumps-damn-tablump-parsing">
+<h2>4.3. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing<a class="headerlink" href="#tablumps-damn-tablump-parsing" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="tablumps"></span><dl class="class">
+<dt id="dAmnViper.parse.Tablumps">
+<em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">Tablumps</tt><a class="headerlink" href="#dAmnViper.parse.Tablumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>dAmn tablumps parser.</p>
+<p>dAmn sends certain information formatted in a specific manner.
+Links, images, thumbs, and other forms of data are formatted
+in strings where the different attributes of these values are
+separated by tab characters (<tt class="docutils literal"><span class="pre">\t</span></tt>), and usually begin with an
+ampersand.</p>
+<p>We refer to these items as &#8220;tablumps&#8221; because of the tab
+characters being used as delimeters. The job of this class is to
+replace tablumps with readable strings, or to extract the data
+given in the tablumps.</p>
+<dl class="method">
+<dt id="dAmnViper.parse.Tablumps.capture">
+<tt class="descname">capture</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.Tablumps.capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return any dAmn Tablumps found in our input data.</p>
+<p>Rather than parsing the tablumps, this method returns the
+data given by tablumps. This only works for tablumps where
+a regular expression is used for parsing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.parse.Tablumps.parse">
+<tt class="descname">parse</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.Tablumps.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse any dAmn Tablumps found in our input data.</p>
+<p>This method will simply return a string with the tablumps
+parsed into readable formats.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. <tt class="docutils literal"><span class="pre">parse</span></tt> module</a><ul>
+<li><a class="reference internal" href="#packet-basic-packet-parsing">4.1 <tt class="docutils literal"><span class="pre">Packet</span></tt> - Basic packet parsing</a></li>
+<li><a class="reference internal" href="#protocolparser-damn-protocol-mapping">4.2. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping</a></li>
+<li><a class="reference internal" href="#tablumps-damn-tablump-parsing">4.3. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data.html"
+                        title="previous chapter">3. <tt class="docutils literal docutils literal docutils literal"><span class="pre">data</span></tt> module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deviantART.html"
+                        title="next chapter">5. <tt class="docutils literal docutils literal docutils literal"><span class="pre">deviantART</span></tt> module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/reference/parse.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deviantART.html" title="5. deviantART module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="3. data module"
+             >previous</a> |</li>
+        <li><a href="../index.html">dAmn Viper v3.55 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Package Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, photofroggy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

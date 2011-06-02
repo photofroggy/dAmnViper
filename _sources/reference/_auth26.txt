@@ -1,0 +1,12 @@
+6. ``_auth26`` module
+==============================================
+.. automodule:: dAmnViper._auth26
+
+6.1 ``fetch_cookie``
+--------------------
+.. autofunction:: dAmnViper._auth26.fetch_cookie
+
+6.2 ``fetch_channel``
+--------------------
+.. autofunction:: dAmnViper._auth26.fetch_channel
+

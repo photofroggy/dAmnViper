@@ -1,0 +1,24 @@
+5. ``deviantART`` module
+==============================================
+This module provides a method to attempt to grab an authtoken from
+deviantART. Depends on :py:mod:`_auth3 <dAmnViper._auth3>` or
+:py:mod:`_auth26 <dAmnViper._auth26>` depending on which version of
+Python is being used.
+
+The **Twisted** implementation of ``dAmnViper`` cannot be used on Python
+3 until twisted supports Python 3, so :py:mod:`_auth3
+<dAmnViper._auth3>` is redundant in this case. However, both files may
+become redundant when ``twisted.web.client.CookieAgent`` is available in
+packaged releases of twisted, not just the trunk.
+
+The nature of the code here means that output to stdout is blocked until
+the request has completed. This may change when ``CookieAgent`` is
+available.
+
+5.1 ``Login`` - deviantART.com login session
+--------------------------------------------
+.. _loginobj:
+
+.. autoclass:: dAmnViper.deviantART.Login
+    :members:
+

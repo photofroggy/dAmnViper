@@ -1,0 +1,14 @@
+1. ``base`` module
+==============================================
+This module provides the dAmnSock class, which acts as an API for
+connecting to and interacting with deviantART.com's chatrooms. This is
+achieved using Twisted.
+
+1.1 ``dAmnSock`` - The main API for connecting to dAmn
+------------------------------------------------------
+.. _damnsock:
+
+.. autoclass:: dAmnViper.base.dAmnSock
+    :members:
+    :member-order: bysource
+
