@@ -66,7 +66,7 @@ class ConnectionFactory(ClientFactory):
             
             Twisted calls this method when a connection can be
             established with the server. This method creates an instance
-            of the :py:class:`IOProtocol <dAmnViper.net.IOProtocol>'
+            of the :py:class:`IOProtocol <dAmnViper.net.IOProtocol>`
             class. This instance is given to the :py:class:`dAmnSock
             <dAmnViper.base.dAmnSock>` object that the factory belongs
             to, and returned to twisted.
@@ -91,7 +91,7 @@ class ConnectionFactory(ClientFactory):
         """ Called by twisted when we fail to connect properly.
             
             The behaviour of this method is similar to the
-            `clientConnectionLost` method.
+            ``clientConnectionLost`` method.
         """
         self.log('** Failed to connect.{0}'.format(
             ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''))
