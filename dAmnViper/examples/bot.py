@@ -145,7 +145,12 @@ if __name__ == '__main__':
     # Create a client
     sys.stdout.write('>> This is an example bot created with dAmn Viper.\n')
     
-    dAmn = MyClient(*configure(), callbacks=Commands())
+    try:
+        dAmn = MyClient(*configure(), callbacks=Commands())
+    except KeyboardInterrupt as e:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+        sys.exit(0)
     
     sys.stdout.write('>> Starting the client...\n')
     sys.stdout.flush()

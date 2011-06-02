@@ -1,6 +1,8 @@
-''' dAmnViper.deviantART
-    This module is part of the dAmnViper package.
+''' dAmnViper._auth3 module
     Created by photofroggy.
+    
+    This module performs the HTTP requests required for fetching
+    authtokens. The code here does not work with Python 2.
 '''
 
 import re
