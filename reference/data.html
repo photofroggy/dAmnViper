@@ -64,7 +64,66 @@ title/topic, and users in the channel.</p>
 <dt id="dAmnViper.data.Channel">
 <em class="property">class </em><tt class="descclassname">dAmnViper.data.</tt><tt class="descname">Channel</tt><big>(</big><em>namespace</em>, <em>shorthand</em><big>)</big><a class="headerlink" href="#dAmnViper.data.Channel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Objects representing dAmn channels.</p>
-<p>Information about the channels are stored in here.</p>
+<p>Information about the channels are stored in here. The different
+attributes of the object are as follows:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">title</span></tt> - This is an instance of the class
+<tt class="docutils literal"><span class="pre">Channel.header</span></tt>, and stores information about the title of
+the channel. The object has the attributes <tt class="docutils literal"><span class="pre">content</span></tt>, <tt class="docutils literal"><span class="pre">by</span></tt>
+and <tt class="docutils literal"><span class="pre">ts</span></tt>. These store the content of the title, the person
+who set the title, and the timestamp from when they set it,
+respectively.</li>
+<li><tt class="docutils literal"><span class="pre">topic</span></tt> - Similar to the <tt class="docutils literal"><span class="pre">title</span></tt> attribute, but it stores
+information about the channel&#8217;s topic, as opposed to the
+channel&#8217;s title.</li>
+<li><tt class="docutils literal"><span class="pre">pc</span></tt> - Stores information about the channel&#8217;s privclasses.</li>
+<li><tt class="docutils literal"><span class="pre">pc_order</span></tt> - A list storing the the privclass names in order
+of hierarchy. This is to allow applications to display
+information more easily if needed.</li>
+<li><tt class="docutils literal"><span class="pre">member</span></tt> - A dictionary storing information about each user
+currently in the channel.</li>
+<li><tt class="docutils literal"><span class="pre">namespace</span></tt> - The channel&#8217;s full namespace. This is usually
+a string in the form <tt class="docutils literal"><span class="pre">chat:channel_name</span></tt>. This can differ
+depending on the type of channel the object represents.</li>
+<li><tt class="docutils literal"><span class="pre">shorthand</span></tt> - The shorthand form of the channel
+<tt class="docutils literal"><span class="pre">namespace</span></tt>. This is usually a string in the format
+<tt class="docutils literal"><span class="pre">#channel_name</span></tt> if the namespace is of the format
+<tt class="docutils literal"><span class="pre">chat:channel_name</span></tt>. This can differ depending on the type
+of channel the object represents.</li>
+<li><tt class="docutils literal"><span class="pre">type</span></tt> - A string in for format <tt class="docutils literal"><span class="pre">&lt;dAmn</span> <span class="pre">channel</span>
+<span class="pre">'namespace'&gt;</span></tt> where <tt class="docutils literal"><span class="pre">namespace</span></tt> is the same as the object&#8217;s
+<tt class="docutils literal"><span class="pre">namespace</span></tt> attribute.</li>
+</ul>
+<p>Calling <tt class="docutils literal"><span class="pre">str(channel)</span></tt>, where <tt class="docutils literal"><span class="pre">channel</span></tt> is an instance of
+the <tt class="docutils literal"><span class="pre">Channel</span></tt> class, returns the <tt class="docutils literal"><span class="pre">namespace</span></tt> attribute.</p>
+<p>As an example, here is what some of the attributes would look
+like for the <strong>#Botdom</strong> channel when the object is created:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">(</span><span class="s">&#39;chat:Botdom&#39;</span><span class="p">,</span> <span class="s">&#39;#Botdom&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">namespace</span>
+<span class="go">&#39;chat:Botdom&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">shorthand</span>
+<span class="go">&#39;#Botdom&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+<span class="go">&#39;chat:Botdom&#39;</span>
+</pre></div>
+</div>
+<p>The other attributes would be empty objects of their respective
+types until the appropriate data is received from the server.</p>
+<dl class="method">
+<dt id="dAmnViper.data.Channel.process_property">
+<tt class="descname">process_property</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.data.Channel.process_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when receive a property packet for the channel.</p>
+<p>This method makes sure that the data is stored in the right
+places in the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.data.Channel.register_user">
+<tt class="descname">register_user</tt><big>(</big><em>info</em>, <em>user=None</em><big>)</big><a class="headerlink" href="#dAmnViper.data.Channel.register_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a user joins the channel.</p>
+<p>Simply store their information in the <tt class="docutils literal"><span class="pre">member</span></tt> dictionary.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

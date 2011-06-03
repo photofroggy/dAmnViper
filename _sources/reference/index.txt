@@ -18,4 +18,5 @@ amongst other tasks.
     parse
     deviantART
     _auth26
+    examples/index
     

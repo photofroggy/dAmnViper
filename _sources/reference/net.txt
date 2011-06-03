@@ -16,7 +16,7 @@ connection, but delegates most of the processing to an instance of the
 
 2.2. ``IOProtocol`` - Input and Output piping
 ---------------------------------------------
-.. _ioprotocol
+.. _ioprotocol:
 
 .. autoclass:: dAmnViper.net.IOProtocol
     :members:

@@ -9,9 +9,7 @@
     
     downloads
     reference/index
-    help/index
-    help/tutorials/index
-    help/concepts/index
+    reference/examples/index
 
 dAmn Viper - dAmn API in Python
 ===============================
@@ -58,15 +56,10 @@ Go :doc:`here <reference/index>` for documentation on the package.
 Help Files
 ----------
 
-If you need help using or understanding the ``dAmnViper`` package, use
-the sections below.
+If you need help using ``dAmnViper``, take a look at the :doc:`example
+modules <reference/examples/index>`.
 
-.. toctree::
-    :maxdepth: 1
-
-    Tutorials <help/tutorials/index>
-    Concepts <help/concepts/index>
-    Terminology <help/terminology>
+Tutorials may be made for ``dAmnViper`` at a later date.
 
 Indices and tables
 ------------------
