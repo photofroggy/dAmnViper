@@ -1,0 +1,4 @@
+7.1. ``authtoken`` module
+=========================
+
+.. literalinclude:: ../../../../dAmnViper/dAmnViper/examples/authtoken.py
