@@ -35,10 +35,11 @@ In order to work properly, dAmn Viper requires the following:
 
 **Get stable releases of dAmn Viper here:**
 
-* *not yet available*
+* `dAmn Viper 3 Beta - Build 55
+  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.55.zip>`_
 * :doc:`more... <downloads>`
 
-**Get the bleeding edge builds of Reflex here:**
+**Get the bleeding edge builds of dAmn Viper here:**
 
 * `Latest Zip <https://github.com/photofroggy/dAmnViper/zipball/master>`_
 * `Latest Tarball <https://github.com/photofroggy/dAmnViper/tarball/master>`_
