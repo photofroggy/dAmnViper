@@ -18,13 +18,21 @@ Creating a client quickly for dAmn is quite easy using dAmn Viper. Below
 is one of the simplest examples of a client that simply connects, and
 tries to stay connected::
     
+    from twisted.internet import reactor
     from dAmnViper.base import dAmnSock
     
     dAmn = dAmnSock()
+    
     dAmn.user.username = 'username'
     dAmn.user.password = 'password'
     dAmn.autojoin = ['Botdom']
+    
+    dAmn.teardown = lambda: reactor.stop()
+    
     dAmn.start()
+    
+    if dAmn.flag.connecting:
+        reactor.run()
 
 That is all that is required! It is advised that you use the
 ReconnectingClient class when making applications that connect to dAmn.
@@ -36,19 +44,21 @@ provided.
 Prospects
 ---------
 
-This is an experimental branch which uses Twisted for the interactions
-between the application and dAmn. I am currently uncertain whether or
-not to use this for the master branch as it means end users would have
-more dependencies to install when setting up an application that uses
-dAmn Viper. This argument is negated if the application is bundled, or
-has appropriate installers created.
+Because an API is being developed at deviantART (don't tell anyone just
+yet), I plan on using this API to retrieve an authtoken. However, as it
+stands, the API is not ideal, as no password grant is supported, and
+using the usual authorisation methods in place of the password grant
+requires some very lengthy methods.
 
-So far, one major disadvantage of using twisted over the standard
-library, is that the loading time is considerably slower under Ubuntu.
-This appears to be due to the use of asynchronous methods to retrieve
-an authtoken in `dAmnViper.deviantART`. This will be revised when
-twisted's own `CookieAgent` class is available in the distributed
-copies of twisted.
+It is of course possible to implement things simply using the normal
+authorisation methods (OAuth2.0 style), but as mentioned, it takes a
+long time, and it requires users to open a web browser! This is not
+ideal in the case of a terminal-based application! It's even somewhat
+silly in desktop applications.
+
+Loading a web browser should not be required, but if that is the only
+option, then I will have to choose between using very tedious methods or
+sticking to the current page scraping methods used.
 
 ------------
 Dependencies
@@ -58,7 +68,7 @@ A further disadvantage is the acquisition of dependencies. This means
 that applications using dAmn Viper will depend on twisted as well as
 dAmn Viper.
 
-In addition, when the aforementioned `CookieAgent` is available,
+In addition, if deviantART's API implements the password grant type,
 applications will also depend on PyOpenSSL. This is not exactly a great
 situation for application developers and end users.
 

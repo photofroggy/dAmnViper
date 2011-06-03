@@ -34,9 +34,8 @@ dAmn Viper
 This package provides an API for connecting to and interacting with
 the dAmn chats. That is, deviantART's messaging network chats.
 
-The package was created using Python version 3, so should be used with
-this version, but it has been tested and proven to work on Python 2.6 and
-greater, thanks to some hacky module scripting.
+This branch of dAmn Viper currently only works with Python 2.6 and up
+due to use of the twisted library.
 
 -------------
 Brief example
@@ -46,13 +45,21 @@ Creating a client quickly for dAmn is quite easy using dAmn Viper. Below
 is one of the simplest examples of a client that simply connects, and
 tries to stay connected::
     
-    from dAmnViper.base import ReconnectingClient
+    from twisted.internet import reactor
+    from dAmnViper.base import dAmnSock
     
-    dAmn = ReconnectingClient()
+    dAmn = dAmnSock()
+    
     dAmn.user.username = 'username'
     dAmn.user.password = 'password'
     dAmn.autojoin = ['Botdom']
+    
+    dAmn.teardown = lambda: reactor.stop()
+    
     dAmn.start()
+    
+    if dAmn.flag.connecting:
+        reactor.run()
 
 That is all that is required! It is advised that you use the
 ReconnectingClient class when making applications that connect to dAmn.
@@ -64,13 +71,54 @@ provided.
 Prospects
 ---------
 
-I know it is a bad idea to not use Twisted, but this library was
-intended for use in applications where the target audience is not likely
-to want to spend time installing program after program. The idea was to
-allow the user to get the application working as quickly as possible.
+Because an API is being developed at deviantART (don't tell anyone just
+yet), I plan on using this API to retrieve an authtoken. However, as it
+stands, the API is not ideal, as no password grant is supported, and
+using the usual authorisation methods in place of the password grant
+requires some very lengthy methods.
 
-I will be experimenting with Twisted in the near future and may
-re-release dAmn Viper using Twisted for managing the connection.
+It is of course possible to implement things simply using the normal
+authorisation methods (OAuth2.0 style), but as mentioned, it takes a
+long time, and it requires users to open a web browser! This is not
+ideal in the case of a terminal-based application! It's even somewhat
+silly in desktop applications.
+
+Loading a web browser should not be required, but if that is the only
+option, then I will have to choose between using very tedious methods or
+sticking to the current page scraping methods used.
+
+------------
+Dependencies
+------------
+
+A further disadvantage is the acquisition of dependencies. This means
+that applications using dAmn Viper will depend on twisted as well as
+dAmn Viper.
+
+In addition, if deviantART's API implements the password grant type,
+applications will also depend on PyOpenSSL. This is not exactly a great
+situation for application developers and end users.
+
+It is more of an issue for end users, as they will not want to spend
+time installing multiple dependencies. This problem can, however, be
+eleminated by creating installers for applications using dAmn Viper.
+
+As such, this is somewhat a non-point, but it does mean an installer
+has to be created to achieve easy setup for end users. Fortunately,
+installers are something which users tend to be ok at using, so long as
+they aren't too complicated. Having an installer which downloads and
+installs multiple dependencies may complicate things too much. We'll
+see.
+
+--------
+Feedback
+--------
+
+Feedback on this branch of dAmn Viper would be very much appreciated.
+Please send any feedback to my deviantART account via notes, or submit
+something on github, I dunno.
+
+Thanks for reading.
 
 ----------
 DISCLAIMER

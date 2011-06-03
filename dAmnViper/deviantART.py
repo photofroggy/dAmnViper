@@ -7,13 +7,12 @@
     
     The Twisted implementation of dAmnViper cannot be used on Python 3
     until twisted supports Python 3, so _auth3 is redundant in this
-    case. However, both files may become redundant when
-    twisted.web.client.CookieAgent is available in packaged releases
-    of twisted, not just the trunk.
-    
+    case. However, both files may become redundant if deviantART
+    implements the password grant type in their OAuth API.
+        
     The nature of the code here means that output to stdout is blocked
-    until the request has completed. This will also change when
-    CookieAgent is available.
+    until the request has completed. This may also change when the
+    password is available.
 '''
 
 import os

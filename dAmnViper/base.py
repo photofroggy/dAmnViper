@@ -66,10 +66,10 @@ class dAmnSock(object):
         """Information about the dAmn Viper platform."""
         name = 'dAmn Viper'
         version = 3
-        state = 'Private'
+        state = 'Beta'
         build = 55
-        stamp = '29052011-122308'
-        series = 'Clean'
+        stamp = '03062011-170934'
+        series = 'Twister'
         author = 'photofroggy'
             
     class user(object):
@@ -137,6 +137,20 @@ class dAmnSock(object):
                 self.timeout.cancel()
             except Exception as e:
                 pass
+    
+    ''' Not yet you don't, bitch!
+    class oauth2:
+        """ oAuth2 credentials.
+            
+            These are the defaults. You should define your own
+            before trying to connect to dAmn using dAmnSock.
+        """
+        id = 25
+        key = ""
+        auth_type = 0
+        grant_type = 0
+        access_token_type = 0
+    '''
     
     extras = {'remember_me':'1'}
     agent = 'dAmnViper (python) dAmnSock/1.1'

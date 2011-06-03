@@ -3,7 +3,7 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
-    Build 55 () Clean
+    Build 55 (03062011-170934) Twister
         * Using Twisted!
         ** Massive code overhaul.
         * Changed examples to fit PEP 008 more closely.
@@ -39,9 +39,15 @@
         ** Passing a boolean to on_token may be better.
         * Changed comments slightly in the _auth* modules.
         * Made comments and documentation more useful.
+        * Added documentation showing the example modules.
+        * Updated documentation some more, again.
+        * God damn this build log is getting long.
+        * PUSHING BUILD!!!!
+        ** Bumped to version 3!
+        ** Changed series to "Twister"!
+        ** Changed state to Beta!
         * TODO: In order of priority
-        ** Merge with master branch. (maybe)
-        ** Create fuller documentation.
+        ** Create tutorials.
         ** Change to using CookieAgent in dAmnViper.deviantART.
     
     Build 54 (29052011-122308) Swift
