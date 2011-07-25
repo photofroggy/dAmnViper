@@ -5,14 +5,14 @@
 import sys
 from twisted.internet import reactor
 
-from dAmnViper.base import dAmnSock
+from dAmnViper.base import dAmnClient
 from dAmnViper.examples.util import get_input
 
 # Extend the dAmnViper.dAmnSock class to add some functionality.
 
-class MyClient(dAmnSock):
+class MyClient(dAmnClient):
     
-    def init(self, username, password, admin, trigger='!', autojoin=None, callbacks=None):
+    def init(self, username, authtoken, admin, trigger='!', autojoin=None, callbacks=None):
         """ Initialise the client.
             
             Override this method if you need to do anything when an
@@ -26,14 +26,14 @@ class MyClient(dAmnSock):
             constructor.
         """
         self.user.username = username
-        self.user.password = password
+        self.user.token = authtoken
         self._admin = admin.lower()
         self.trigger = trigger
         self.autojoin = autojoin or ['Botdom']
         self.callbacks = callbacks or Commands()
     
-    def on_token(self):
-        """ This method is called when dAmnViper has an authtoken.
+    def on_connection_start(self, connector):
+        """ This method is called when dAmnViper has started connecting.
             
             Use this method to start the reactor if needed. We can
             assume we have everything needed to connect, as this method
@@ -128,7 +128,7 @@ def configure():
     sys.stdout.write('>> We need some details to be able to run the bot\n')
     
     obj = [get_input('>> Username: '),
-        get_input('>> Password: '),
+        get_input('>> Authtoken: '),
         get_input('>> Admin: '),
         get_input('>> Trigger: '),
         [room.strip() for room in get_input('>> Autojoin: ', True).split(',')]

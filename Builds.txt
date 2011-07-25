@@ -3,6 +3,22 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
+    Build 56 () Twister
+        * Cleaned up the Login class a little.
+        * Renamed some of the nexted classes in dAmnViper.base.dAmnSock.
+        * dAmnSock.populate_objects now uses the form self.Class().
+        ** This allows subclasses to define their own nested classes.
+        * Bug fixes.
+        ** dAmnSock.timeout_delay was being treated as a deferred.
+        * Reorganised function definitions.
+        * Renamed class dAmnViper.base.dAmnSock to Client.
+        * Client class no longer fetches an authtoken.
+        * Made the Client class cleaner.
+        * Most of dAmnViper.net.ConnectionFactory has been abstracted to the Client class.
+        * Added method `handshake()` to the Client class.
+        * Refactored the `onDisconnect` method.
+        * Renamed `onDisconnect` to `persist`.
+    
     Build 55 (03062011-170934) Twister
         * Using Twisted!
         ** Massive code overhaul.

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     dAmn = dAmnSock()
     
     dAmn.user.username = 'username'
-    dAmn.user.password = 'password'
+    dAmn.user.token = 'authtoken'
     dAmn.autojoin = ['Botdom']
     
     dAmn.teardown = lambda: reactor.stop()

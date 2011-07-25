@@ -44,24 +44,30 @@ class Packet(object):
 
     def __init__(self, data=None, sep='='):
         self.cmd, self.param, self.args, self.body, self.raw = None, None, {}, None, data
+        
         if not data:
             return
-        buff = data.partition('\n\n')
-        self.body = buff[2] or None
-        buff = buff[0].partition('\n')
-        if not buff[0]:
+        
+        data = data.partition('\n\n')
+        self.body = data[2] or None
+        data = data[0].partition('\n')
+        
+        if not data[0]:
             return
-        if not sep in buff[0]:
-            head = buff[0].partition(' ')
+        
+        if not sep in data[0]:
+            head = data[0].partition(' ')
             self.cmd = head[0] or None
             self.param = head[2] or None
-            buff = buff[2].partition('\n')
-        while buff[0]:
-            seg = buff[0].partition(sep)
-            buff = buff[2].partition('\n')
-            if not seg[1]:
+            data = data[2].partition('\n')
+        
+        while data[0]:
+            arg = data[0].partition(sep)
+            data = data[2].partition('\n')
+            if not arg[1]:
                 continue
-            self.args[seg[0]] = seg[2]
+            self.args[arg[0]] = arg[2]
+        
         # And that's the end of that chapter.
 
 class Tablumps(object):
@@ -448,29 +454,38 @@ class ProtocolParser(object):
         return store
     
     def logger(self, event, data, ns, pkt):
-        """ Return a log_list (channel, message[, bool(showns)[, bool(mute)]]).
+        """ Return a log_list (message, channel[, bool(showns)[, bool(mute)]]).
             
             The message returned is based on the templates defined in
             the ``messages`` attribute of this class.
         """
-        sequence = [ns, '', True, False, pkt]
+        sequence = ['', ns, True, False, pkt]
+        
         if not event in self.messages.keys():
             return None
+        
         if hasattr(self, 'log_'+event):
             return getattr(self, 'log_'+event)(event, data, ns, pkt)
+        
         msgtpl = self.messages[event]
+        
         if msgtpl is None or len(msgtpl) == 0:
             return None
+        
         data = [(item[1] if bool(item[1]) else '') for item in data]
         disp = (msgtpl[0].replace('{ns}', ns)).format(*data)
+        
         if disp[-3:] == ' []':
             disp = disp[:-3]
-        sequence[1] = disp
+        
+        sequence[0] = disp
         msgtpl = [] if len(msgtpl) == 1 else msgtpl[1:]
         i = 2
+        
         for item in msgtpl:
             sequence[i] = item
             i+=  1
+        
         return sequence
     
     def gen_recv(self, store, data, map):

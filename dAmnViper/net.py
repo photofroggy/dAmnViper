@@ -23,11 +23,11 @@ from dAmnViper.parse import Packet
 class ConnectionFactory(ClientFactory):
     """ Connection management.
         
-        Instances of this class are used by :py:class:`dAmnSock
-        <dAmnViper.base.dAmnSock>` to connect to dAmn.
+        Instances of this class are used by the base :py:class:`Client class
+        <dAmnViper.base.Client>` to connect to chat networks.
         
-        The object returns instances of :py:class:`IOProtocol
-        <dAmnViper.net.IOProtocol>` when a connection is made and
+        The object returns instances of :py:class:`ChatProtocol
+        <dAmnViper.net.ChatProtocol>` when a connection is made and
         handles disconnects and connection failures.
         
         This object should not be used directly by applications using
@@ -50,25 +50,20 @@ class ConnectionFactory(ClientFactory):
             self.debug = lambda m: None
     
     def startedConnecting(self, connector):
-        """ Called by twisted when we start to connect.
-            
-            All this method really does is display a message and set
-            the connecting flag to ``True``.
-        """
-        self.log('** Opening connection to dAmn...')
-        self.client.flag.connecting = True
+        """ Called by twisted when we start to connect. """
+        self.client.startedConnecting(connector)
     
     def create_protocol(self):
-        return IOProtocol(self, self.client, self.stdout, self.debug)
+        return ChatProtocol(self, self.client, self.stdout, self.debug)
         
     def buildProtocol(self, addr):
         """ Called by twisted when a protocol is needed.
             
             Twisted calls this method when a connection can be
             established with the server. This method creates an instance
-            of the :py:class:`IOProtocol <dAmnViper.net.IOProtocol>`
-            class. This instance is given to the :py:class:`dAmnSock
-            <dAmnViper.base.dAmnSock>` object that the factory belongs
+            of the :py:class:`ChatProtocol <dAmnViper.net.ChatProtocol>`
+            class. This instance is given to the :py:class:`base Client
+            <dAmnViper.base.Client>` object that the factory belongs
             to, and returned to twisted.
         """
         protocol = self.create_protocol()
@@ -79,13 +74,11 @@ class ConnectionFactory(ClientFactory):
         """ Called by twisted when a connection is lost.
             
             Displays a message notifying the connection loss and tells
-            the :py:class:`dAmnSock <dAmnViper.base.dAmnSock>` object
+            the base :py:class:`Client <dAmnViper.base.Client>` object
             that there is no longer a connection open.
         """
-        self.log('** Connection closed.{0}'.format(
-            ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''))
         
-        self.client.set_protocol(None)
+        self.client.connectionLost(connector, reason)
     
     def clientConnectionFailed(self, connector, reason):
         """ Called by twisted when we fail to connect properly.
@@ -93,25 +86,16 @@ class ConnectionFactory(ClientFactory):
             The behaviour of this method is similar to the
             ``clientConnectionLost`` method.
         """
-        self.log('** Failed to connect.{0}'.format(
-            ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''))
         
-        if self.client.connection.attempts == self.client.connection.limit:
-            self.log('** Failed to connect {0} times in a row.'.format(
-                self.client.connection.attempts))
-            self.client.set_protocol(None)
-            return
-            
-        self.client.flag.retry = True
-        self.client.set_protocol(None)
+        self.client.connectionFailed(connector, reason)
 
 
-class IOProtocol(Protocol):
+class ChatProtocol(Protocol):
     """ Protocol layer for the dAmn connection.
         
         Instances of this class are used to directly communicate with
         the connection to dAmn via twisted, and gives any data received
-        to the :py:class:`dAmnSock <dAmnViper.base.dAmnSock>` instance
+        to the :py:class:`Client <dAmnViper.base.Client>` instance
         being used for this connection.
         
         This object should not be used directly by applications using
@@ -143,32 +127,21 @@ class IOProtocol(Protocol):
     def connectionMade(self):
         """ Called by twisted when we have connected.
             
-            This method simply sends a handshake to the dAmn server, and
-            sets the client's ``shaking`` flag to ``True``, indicating
-            that a handshake packet has been sent.
+            This method simply calls the same method in the client object.
         """
-        if not self.client.flag.connecting:
-            return
         
-        self.client.flag.shaking = True
-        pkt = '{0}\nagent={1}\n{2}'.format(
-            self.client.CONST.CLIENT, self.client.agent,
-            '\n'.join(['{0}={1}'.format(
-                    key, self.client.info[key]
-            ) for key in self.client.info]))
-        
-        self.send_packet(pkt)
+        self.client.connectionMade()
     
     def dataReceived(self, data):
         """ Called by twisted when data is received.
             
             The data received is added to out buffer. If there are any
             full packets in the buffer, these packets are sent to the
-            :py:class:`dAmnSock <dAmnViper.base.dAmnSock>` instance to
+            :py:class:`Client <dAmnViper.base.Client>` instance to
             be parsed properly.
             
-            Any event handling relating to specific packet is done in
-            ``dAmnSock`` instance.
+            Any event handling relating to specific packet is done in the
+            ``Client`` instance.
         """
         
         # Split on null.
