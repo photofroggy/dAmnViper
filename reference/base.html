@@ -12,7 +12,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.55',
+        VERSION:     '3.56',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -34,9 +34,6 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="net.html" title="2. net module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -54,43 +51,28 @@
             
   <div class="section" id="base-module">
 <h1>1. <tt class="docutils literal"><span class="pre">base</span></tt> module<a class="headerlink" href="#base-module" title="Permalink to this headline">¶</a></h1>
-<p>This module provides the dAmnSock class, which acts as an API for
+<p>This module provides the dAmnClient class, which acts as an API for
 connecting to and interacting with deviantART.com&#8217;s chatrooms. This is
 achieved using Twisted.</p>
-<div class="section" id="damnsock-the-main-api-for-connecting-to-damn">
-<h2>1.1 <tt class="docutils literal"><span class="pre">dAmnSock</span></tt> - The main API for connecting to dAmn<a class="headerlink" href="#damnsock-the-main-api-for-connecting-to-damn" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="damnsock"></span><dl class="class">
-<dt id="dAmnViper.base.dAmnSock">
-<em class="property">class </em><tt class="descclassname">dAmnViper.base.</tt><tt class="descname">dAmnSock</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock" title="Permalink to this definition">¶</a></dt>
-<dd><p>The dAmnSock class provides an easy to use API for connecting
-to dAmn, and for interacting with the server.</p>
-<p>Applications using this class should extend the class to add in
-some basic functionality so that it works as they expect. The
-class can be made to work properly with only minor modifications
-as shown here:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
-<span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnSock</span>
-
-<span class="n">dAmn</span> <span class="o">=</span> <span class="n">dAmnSock</span><span class="p">()</span>    
-
-<span class="n">dAmn</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
-<span class="n">dAmn</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s">&#39;password&#39;</span>
-<span class="n">dAmn</span><span class="o">.</span><span class="n">autojoin</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Botdom&#39;</span><span class="p">]</span>
-
-<span class="n">dAmn</span><span class="o">.</span><span class="n">teardown</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-<span class="n">dAmn</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-<span class="k">if</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">connecting</span><span class="p">:</span>
-    <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>The <tt class="docutils literal"><span class="pre">teardown</span></tt> callback needs to be defined or the application
-will hang when the connection to dAmn is lost.</p>
-<p>A way to remove the need to check the
-<tt class="docutils literal"><span class="pre">dAmnSock.flag.connecting</span></tt> flag is to define your own
-<tt class="docutils literal"><span class="pre">on_token</span></tt> method on the object, and using this to call
-<tt class="docutils literal"><span class="pre">reactor.run()</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">dAmnClient</span></tt> is built on top of the <tt class="docutils literal"><span class="pre">Client</span></tt> class, which provides the
+basic functionality required to connect to a dAmn server. The <tt class="docutils literal"><span class="pre">dAmnClient</span></tt>
+class handles the server handshake and sets the right information for the
+connection, so should be used instead of the <tt class="docutils literal"><span class="pre">Client</span></tt> class in most cases.</p>
+<div class="section" id="client-the-base-chat-client-api">
+<h2>1.1 <tt class="docutils literal"><span class="pre">Client</span></tt> - The base chat client API<a class="headerlink" href="#client-the-base-chat-client-api" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="baseclient"></span><dl class="class">
+<dt id="dAmnViper.base.Client">
+<em class="property">class </em><tt class="descclassname">dAmnViper.base.</tt><tt class="descname">Client</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is a client for llama-like chat servers.</p>
+<dl class="docutils">
+<dt>The llama project can be seen here:</dt>
+<dd><a class="reference external" href="http://code.google.com/p/project-llama-server/">http://code.google.com/p/project-llama-server/</a>
+<a class="reference external" href="http://llamaserver.blogspot.com/">http://llamaserver.blogspot.com/</a></dd>
+</dl>
+<p>Applications using this class should extend it and override the
+<cite>startedConnecting</cite> and <cite>teardown</cite> methods. If you are simply
+connecting to a dAmn server, you may want to use the
+<a class="reference internal" href="#dAmnViper.base.dAmnClient" title="dAmnViper.base.dAmnClient"><tt class="xref py py-class docutils literal"><span class="pre">dAmnClient</span> <span class="pre">class</span></tt></a> instead.</p>
 </dd></dl>
 
 <div class="section" id="main-methods">
@@ -98,243 +80,259 @@ will hang when the connection to dAmn is lost.</p>
 <p>These methods should be a point of interest in understanding how
 the class starts up and handles the connection.</p>
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.init">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">init</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.init" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.init">
+<tt class="descclassname">Client.</tt><tt class="descname">init</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overwrite this method if you need to do anything
 when an instance of this class is created.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.populate_objects">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">populate_objects</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.populate_objects" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.populate_objects">
+<tt class="descclassname">Client.</tt><tt class="descname">populate_objects</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.populate_objects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Populate our objects that are used to store information and stuff.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.nullflags">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">nullflags</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.nullflags" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.nullflags">
+<tt class="descclassname">Client.</tt><tt class="descname">nullflags</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.nullflags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset all status flags in this client.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.set_protocol">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">set_protocol</tt><big>(</big><em>protocol=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.set_protocol" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.set_protocol">
+<tt class="descclassname">Client.</tt><tt class="descname">set_protocol</tt><big>(</big><em>protocol=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.set_protocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store the given IO protocol.</p>
-<p>This is in relation to the network connection.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.start">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">start</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.start" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.start">
+<tt class="descclassname">Client.</tt><tt class="descname">start</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the client.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.makeConnection">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">makeConnection</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.makeConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open a connection to dAmn.</p>
+<dt id="dAmnViper.base.Client.makeConnection">
+<tt class="descclassname">Client.</tt><tt class="descname">makeConnection</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.makeConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a connection to a dAmn-like server.</p>
+<p>Raises a <tt class="docutils literal"><span class="pre">ValueError</span></tt> if <tt class="docutils literal"><span class="pre">Client.user.username</span></tt> or
+<tt class="docutils literal"><span class="pre">Client.user.token</span></tt> is <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+<p>Raises a <tt class="docutils literal"><span class="pre">ValueError</span></tt> if any of the <tt class="docutils literal"><span class="pre">Client.CONST</span></tt> attributes
+are <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.onDisconnect">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">onDisconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.onDisconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine what we should do when we have fully lost our
-connection to the server.</p>
+<dt id="dAmnViper.base.Client.startedConnecting">
+<tt class="descclassname">Client.</tt><tt class="descname">startedConnecting</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.startedConnecting" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when twisted is starting to connect.</p>
+<p>Sub classes of the <tt class="docutils literal"><span class="pre">Client</span></tt> class must override this method in
+order to determine what the client should do when trying to
+connect to the chat server.</p>
+<p>Raises a <tt class="docutils literal"><span class="pre">NotImplementedError</span></tt> if not overridden.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.teardown">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">teardown</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.teardown" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.connectionLost">
+<tt class="descclassname">Client.</tt><tt class="descname">connectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.connectionLost" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when we lose our connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.base.Client.connectionFailed">
+<tt class="descclassname">Client.</tt><tt class="descname">connectionFailed</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.connectionFailed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when we fail to connect.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.base.Client.connectionMade">
+<tt class="descclassname">Client.</tt><tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when we have made a connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.base.Client.persist">
+<tt class="descclassname">Client.</tt><tt class="descname">persist</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine what we should do when we have fully lost our connection
+to the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.base.Client.teardown">
+<tt class="descclassname">Client.</tt><tt class="descname">teardown</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.teardown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override this method to do stuff when the client gives up.
 It is a good idea to use this method to call reactor.stop().</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.mainloop">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">mainloop</tt><big>(</big><em>args</em>, <em>kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.mainloop" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.mainloop">
+<tt class="descclassname">Client.</tt><tt class="descname">mainloop</tt><big>(</big><em>args</em>, <em>kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.mainloop" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the client&#8217;s main loop.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.on_loop">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">on_loop</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.on_loop" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.on_loop">
+<tt class="descclassname">Client.</tt><tt class="descname">on_loop</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.on_loop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overwrite this if you need to do anything on the main application loop.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.timedout">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">timedout</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.timedout" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.timedout">
+<tt class="descclassname">Client.</tt><tt class="descname">timedout</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.timedout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Timeout detected.</p>
 <p>If this method gets called, then the client has not received
-any data for 2 minutes. Assume disconnected.</p>
+any data for 2 minutes. Send a pong to test the connection.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.close">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.close" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.close">
+<tt class="descclassname">Client.</tt><tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is how we close our connection!</p>
 </dd></dl>
 
 </div>
-<div class="section" id="authentication">
-<h3>1.1.2. Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h3>
-<p>These are the methods which handle authenticating the client properly.</p>
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.authenticate">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">authenticate</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.authenticate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch the authtoken for the username and password given.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.get_token">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">get_token</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.get_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the method that actually handles grabbing the authtoken.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.gotSession">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">gotSession</tt><big>(</big><em>session</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.gotSession" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deferred callback for deviantART.login.</p>
-<p>Called after we have attempted to log into deviantART.com.
-At least, it will be deferred in future. At the moment it&#8217;s
-all synchronous.</p>
-<p>Damn...</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.on_get_token">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">on_get_token</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.on_get_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overwrite this method to do shit when get_token is called.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.on_token">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">on_token</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.on_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overwrite this method to do stuff when we have an authtoken.</p>
-</dd></dl>
-
+<div class="section" id="connection-events">
+<h3>1.1.2. Connection events<a class="headerlink" href="#connection-events" title="Permalink to this headline">¶</a></h3>
+<p>As well as the above methods, there are dummy methods which are called for
+different events to do with the connection. These methods can be overwritten
+if your client needs to do anything specific on those events. Those methods are
+as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">on_connection_start</span></tt> - Parameters: connector</li>
+<li><tt class="docutils literal"><span class="pre">on_connection_lost</span></tt> - Parameters: connector, reason</li>
+<li><tt class="docutils literal"><span class="pre">on_connection_failed</span></tt> - Parameters: connector, reason</li>
+<li><tt class="docutils literal"><span class="pre">on_connection_made</span></tt> - No input.</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="sending-data">
 <h3>1.1.3. Sending data<a class="headerlink" href="#sending-data" title="Permalink to this headline">¶</a></h3>
 <p>These methods are used to send data to the server. You should use these
 methods if you want to interact with dAmn.</p>
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.send">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">send</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.send" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.send">
+<tt class="descclassname">Client.</tt><tt class="descname">send</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send data to dAmn!</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.raw">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">raw</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.raw" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.raw">
+<tt class="descclassname">Client.</tt><tt class="descname">raw</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.raw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a raw dAmn packet.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pong">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pong</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pong" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pong">
+<tt class="descclassname">Client.</tt><tt class="descname">pong</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pong" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a pong packet to the server</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.login">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">login</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send our login packet. Set the loggingin flag to true.</p>
+<dt id="dAmnViper.base.Client.handshake">
+<tt class="descclassname">Client.</tt><tt class="descname">handshake</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.handshake" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a handshake to the server.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.join">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">join</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.join" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.login">
+<tt class="descclassname">Client.</tt><tt class="descname">login</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send our login packet. Set the loggingin flag to true.</p>
+<p>Raises a <tt class="docutils literal"><span class="pre">ValueError</span></tt> if <tt class="docutils literal"><span class="pre">Client.user.username</span></tt> or
+<tt class="docutils literal"><span class="pre">Client.user.token</span></tt> is <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.base.Client.join">
+<tt class="descclassname">Client.</tt><tt class="descname">join</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a join packet to dAmn.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.part">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">part</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.part" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.part">
+<tt class="descclassname">Client.</tt><tt class="descname">part</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.part" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a part packet to dAmn.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.say">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">say</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.say" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.say">
+<tt class="descclassname">Client.</tt><tt class="descname">say</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.say" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a message to a dAmn channel namespace.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.npmsg">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">npmsg</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.npmsg" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.npmsg">
+<tt class="descclassname">Client.</tt><tt class="descname">npmsg</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.npmsg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a non-parsed message to a dAmn channel namespace.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.action">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">action</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.action" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.action">
+<tt class="descclassname">Client.</tt><tt class="descname">action</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an action to a dAmn channel namespace.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.me">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">me</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.me" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.me">
+<tt class="descclassname">Client.</tt><tt class="descname">me</tt><big>(</big><em>ns</em>, <em>message</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.me" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is just another way to do an action.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.promote">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">promote</tt><big>(</big><em>ns</em>, <em>user</em>, <em>pc=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.promote" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.promote">
+<tt class="descclassname">Client.</tt><tt class="descname">promote</tt><big>(</big><em>ns</em>, <em>user</em>, <em>pc=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.promote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Promote a user in a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.demote">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">demote</tt><big>(</big><em>ns</em>, <em>user</em>, <em>pc=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.demote" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.demote">
+<tt class="descclassname">Client.</tt><tt class="descname">demote</tt><big>(</big><em>ns</em>, <em>user</em>, <em>pc=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.demote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Demote a user in a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.kick">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">kick</tt><big>(</big><em>ns</em>, <em>user</em>, <em>r=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.kick" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.kick">
+<tt class="descclassname">Client.</tt><tt class="descname">kick</tt><big>(</big><em>ns</em>, <em>user</em>, <em>r=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.kick" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kick a user out of a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.ban">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">ban</tt><big>(</big><em>ns</em>, <em>user</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.ban" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.ban">
+<tt class="descclassname">Client.</tt><tt class="descname">ban</tt><big>(</big><em>ns</em>, <em>user</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.ban" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ban a user from a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.unban">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">unban</tt><big>(</big><em>ns</em>, <em>user</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.unban" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.unban">
+<tt class="descclassname">Client.</tt><tt class="descname">unban</tt><big>(</big><em>ns</em>, <em>user</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.unban" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unban someone from a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.get">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">get</tt><big>(</big><em>ns</em>, <em>p</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.get" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.get">
+<tt class="descclassname">Client.</tt><tt class="descname">get</tt><big>(</big><em>ns</em>, <em>p</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a property for a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.set">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">set</tt><big>(</big><em>ns</em>, <em>p</em>, <em>val</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.set" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.set">
+<tt class="descclassname">Client.</tt><tt class="descname">set</tt><big>(</big><em>ns</em>, <em>p</em>, <em>val</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property for a dAmn channel.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.admin">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">admin</tt><big>(</big><em>ns</em>, <em>command</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.admin" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.admin">
+<tt class="descclassname">Client.</tt><tt class="descname">admin</tt><big>(</big><em>ns</em>, <em>command</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.admin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an admin command to a dAmn channel. No need for multiple methods here.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.disconnect">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.disconnect" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.disconnect">
+<tt class="descclassname">Client.</tt><tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.disconnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a disconnect packet to the dAmn server.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.kill">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">kill</tt><big>(</big><em>ns</em>, <em>r=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.kill" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.kill">
+<tt class="descclassname">Client.</tt><tt class="descname">kill</tt><big>(</big><em>ns</em>, <em>r=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.kill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a kill packet to the dAmn server.</p>
 </dd></dl>
 
@@ -343,14 +341,14 @@ methods if you want to interact with dAmn.</p>
 <h3>1.1.4. Receiving data<a class="headerlink" href="#receiving-data" title="Permalink to this headline">¶</a></h3>
 <p>These methods are used to handle incoming data.</p>
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.handle_pkt">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">handle_pkt</tt><big>(</big><em>packet</em>, <em>stamp</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.handle_pkt" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.handle_pkt">
+<tt class="descclassname">Client.</tt><tt class="descname">handle_pkt</tt><big>(</big><em>packet</em>, <em>stamp</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.handle_pkt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle packets as they come in.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_generic">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_generic</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_generic" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_generic">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_generic</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_generic" title="Permalink to this definition">¶</a></dt>
 <dd><p>We have received a packet!</p>
 <p>Override this method to do stuff whenever a packet is
 received. If you want to do stuff when a specific packet is
@@ -366,23 +364,14 @@ the data under the <tt class="docutils literal"><span class="pre">args</span></t
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_unknown">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_unknown</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_unknown" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_unknown">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_unknown</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_unknown" title="Permalink to this definition">¶</a></dt>
 <dd><p>We received something unexpected. Oh well.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_dAmnServer">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_dAmnServer</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_dAmnServer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Received a dAmnServer packet.</p>
-<p>This method calls the <tt class="docutils literal"><span class="pre">login</span></tt> method of this class and
-sets the <tt class="docutils literal"><span class="pre">shaking</span></tt> flag to <tt class="xref docutils literal"><span class="pre">False</span></tt>.</p>
-<p>This method is essential for connecting to dAmn properly.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_login">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_login</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_login" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_login">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_login</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a login packet.</p>
 <p>When we receive a login packet, we need to determine whether
 the login was successful or not, and act based on that.</p>
@@ -393,8 +382,8 @@ are joined.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_join">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_join</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_join" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_join">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_join</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a join packet.</p>
 <p>This is sent by the server when the client tries to join a
 channel on the server.</p>
@@ -405,24 +394,24 @@ other joined channels. (<tt class="docutils literal"><span class="pre">naive</sp
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_part">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_part</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_part" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_part">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_part</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_part" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a part packet.</p>
 <p>Similar to <tt class="docutils literal"><span class="pre">pkt_join</span></tt>. This method determines whether or
 not the client is being kicked off the server.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_property">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_property</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_property" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_property">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_property</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a channel property packet.</p>
 <p>This method makes sure that the information received is
 stored in the right place.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_recv_join">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_recv_join</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_recv_join" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_recv_join">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_recv_join</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_recv_join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a recv_join packet.</p>
 <p>This happens when a user joins a channel in which the client
 is also present.</p>
@@ -431,8 +420,8 @@ just joined.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_recv_part">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_recv_part</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_recv_part" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_recv_part">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_recv_part</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_recv_part" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a recv_part packet.</p>
 <p>This happens when a user leaves a channel in which the
 client is present.</p>
@@ -440,15 +429,15 @@ client is present.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_recv_kicked">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_recv_kicked</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_recv_kicked" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_recv_kicked">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_recv_kicked</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_recv_kicked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a recv_kick packet.</p>
 <p>Similar to the <tt class="docutils literal"><span class="pre">pkt_recv_part</span></tt> method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_recv_privchg">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_recv_privchg</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_recv_privchg" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_recv_privchg">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_recv_privchg</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_recv_privchg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a recv_privchg packet.</p>
 <p>This happens when a user&#8217;s privclass is changed. All we do
 here is make sure the user is recorded as being in that
@@ -456,8 +445,8 @@ privclass.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_kicked">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_kicked</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_kicked" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_kicked">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_kicked</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_kicked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a kicked packet.</p>
 <p>This happens when the client is kicked from a channel.</p>
 <p>Here we automatically rejoin the channel if we are permitted
@@ -465,8 +454,8 @@ to do so.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.pkt_disconnect">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">pkt_disconnect</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.pkt_disconnect" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.pkt_disconnect">
+<tt class="descclassname">Client.</tt><tt class="descname">pkt_disconnect</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.pkt_disconnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a disconnect packet from the server.</p>
 <p>Here we make sure the client does the right thing when a
 disconnect happens.</p>
@@ -479,37 +468,78 @@ disconnect happens.</p>
 <p>These methods are general purpose methods which can be used in your
 application.</p>
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.format_ns">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">format_ns</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.format_ns" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.format_ns">
+<tt class="descclassname">Client.</tt><tt class="descname">format_ns</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.format_ns" title="Permalink to this definition">¶</a></dt>
 <dd><p>This takes a dAmn channel name and formats it as a raw
 dAmn namespace.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.deform_ns">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">deform_ns</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.deform_ns" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.deform_ns">
+<tt class="descclassname">Client.</tt><tt class="descname">deform_ns</tt><big>(</big><em>ns</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.deform_ns" title="Permalink to this definition">¶</a></dt>
 <dd><p>This does the opposite of format_ns()</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.logger">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">logger</tt><big>(</big><em>ns</em>, <em>msg</em>, <em>showns=True</em>, <em>mute=False</em>, <em>pkt=None</em>, <em>ts=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.logger" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.logger">
+<tt class="descclassname">Client.</tt><tt class="descname">logger</tt><big>(</big><em>msg</em>, <em>ns=None</em>, <em>showns=True</em>, <em>mute=False</em>, <em>pkt=None</em>, <em>ts=None</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write output to stdout.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.new_logger">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">new_logger</tt><big>(</big><em>ns='~Global'</em>, <em>showns=True</em>, <em>mute=False</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.new_logger" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.new_logger">
+<tt class="descclassname">Client.</tt><tt class="descname">new_logger</tt><big>(</big><em>ns=None</em>, <em>showns=True</em>, <em>mute=False</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.new_logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a wrapped logger method.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.base.dAmnSock.get_write_pair">
-<tt class="descclassname">dAmnSock.</tt><tt class="descname">get_write_pair</tt><big>(</big><em>showns=False</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnSock.get_write_pair" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.base.Client.get_write_pair">
+<tt class="descclassname">Client.</tt><tt class="descname">get_write_pair</tt><big>(</big><em>showns=False</em><big>)</big><a class="headerlink" href="#dAmnViper.base.Client.get_write_pair" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a pair of wrapped logger methods.</p>
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="damnclient-basic-damn-client-class">
+<h2>1.2. <tt class="docutils literal"><span class="pre">dAmnClient</span></tt> - Basic dAmn client class<a class="headerlink" href="#damnclient-basic-damn-client-class" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="damnclient"></span><dl class="class">
+<dt id="dAmnViper.base.dAmnClient">
+<em class="property">class </em><tt class="descclassname">dAmnViper.base.</tt><tt class="descname">dAmnClient</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.base.dAmnClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class provides an easy to use API for connecting to dAmn, and for
+interacting with the server.</p>
+<p>This class inherits much of its behaviour from the <a class="reference internal" href="#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span>
+<span class="pre">class</span></tt></a>. This class has been made to cater more
+closely for dAmn servers. The Client class can be used to make clients
+which connect to llama based servers. In fact, with some slight
+modifications, this class could also connect to llama servers.</p>
+<p>Applications using this class should extend the class to add in
+some basic functionality so that it works as they expect. The
+class can be made to work properly with only minor modifications
+as shown here:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+<span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnSock</span>
+
+<span class="n">dAmn</span> <span class="o">=</span> <span class="n">dAmnClient</span><span class="p">()</span>    
+
+<span class="n">dAmn</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
+<span class="n">dAmn</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="s">&#39;authtoken&#39;</span>
+<span class="n">dAmn</span><span class="o">.</span><span class="n">autojoin</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Botdom&#39;</span><span class="p">]</span>
+
+<span class="n">dAmn</span><span class="o">.</span><span class="n">teardown</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="n">dAmn</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">connecting</span><span class="p">:</span>
+    <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">teardown</span></tt> callback needs to be defined or the application
+will hang when the connection to dAmn is lost.</p>
+<p>A way to remove the need to check the <tt class="docutils literal"><span class="pre">dAmnClient.flag.connecting</span></tt>
+flag is to define your own <tt class="docutils literal"><span class="pre">on_connection_start</span></tt> method on the
+object, and using this to call <tt class="docutils literal"><span class="pre">reactor.run()</span></tt>.</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -522,14 +552,15 @@ dAmn namespace.</p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">1. <tt class="docutils literal"><span class="pre">base</span></tt> module</a><ul>
-<li><a class="reference internal" href="#damnsock-the-main-api-for-connecting-to-damn">1.1 <tt class="docutils literal"><span class="pre">dAmnSock</span></tt> - The main API for connecting to dAmn</a><ul>
+<li><a class="reference internal" href="#client-the-base-chat-client-api">1.1 <tt class="docutils literal"><span class="pre">Client</span></tt> - The base chat client API</a><ul>
 <li><a class="reference internal" href="#main-methods">1.1.1. Main methods</a></li>
-<li><a class="reference internal" href="#authentication">1.1.2. Authentication</a></li>
+<li><a class="reference internal" href="#connection-events">1.1.2. Connection events</a></li>
 <li><a class="reference internal" href="#sending-data">1.1.3. Sending data</a></li>
 <li><a class="reference internal" href="#receiving-data">1.1.4. Receiving data</a></li>
 <li><a class="reference internal" href="#utility-methods">1.1.5. Utility methods</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#damnclient-basic-damn-client-class">1.2. <tt class="docutils literal"><span class="pre">dAmnClient</span></tt> - Basic dAmn client class</a></li>
 </ul>
 </li>
 </ul>
@@ -568,9 +599,6 @@ dAmn namespace.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="net.html" title="2. net module"
              >next</a> |</li>

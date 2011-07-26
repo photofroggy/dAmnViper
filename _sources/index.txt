@@ -2,6 +2,8 @@
    sphinx-quickstart on Sun May 29 07:51:37 2011.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
+
+.. title:: Home
    
 .. toctree::
     :hidden:
@@ -35,8 +37,8 @@ In order to work properly, dAmn Viper requires the following:
 
 **Get stable releases of dAmn Viper here:**
 
-* `dAmn Viper 3 Beta - Build 55
-  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.55.zip>`_
+* `dAmn Viper 3 Beta - Build 56
+  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.56.zip>`_
 * :doc:`more... <downloads>`
 
 **Get the bleeding edge builds of dAmn Viper here:**
@@ -59,6 +61,9 @@ Help Files
 
 If you need help using ``dAmnViper``, take a look at the :doc:`example
 modules <reference/examples/index>`.
+
+There are also some pages explaining :doc:`dAmnViper's
+concepts <concepts/index>`!
 
 Tutorials may be made for ``dAmnViper`` at a later date.
 

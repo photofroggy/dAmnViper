@@ -12,7 +12,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.55',
+        VERSION:     '3.56',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="dAmn Viper" href="../index.html" />
     <link rel="up" title="Package Reference" href="index.html" />
-    <link rel="next" title="5. deviantART module" href="deviantART.html" />
+    <link rel="next" title="7. examples package" href="examples/index.html" />
     <link rel="prev" title="3. data module" href="data.html" /> 
   </head>
   <body>
@@ -34,10 +34,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="deviantART.html" title="5. deviantART module"
+          <a href="examples/index.html" title="7. examples package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="data.html" title="3. data module"
@@ -67,29 +64,6 @@ received from dAmn.</p>
 <p>This object processes given strings as dAmn packets, and stores
 information from the string in different object attributes. This
 makes it easier to work with packets in other parts of the API.</p>
-<p>An example usage of this parser is as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Packet</span><span class="p">(</span><span class="s">&quot;packetname mainparam</span><span class="se">\n</span><span class="s">some=variables</span><span class="se">\n</span><span class="s">somemore=variables</span><span class="se">\n\n</span><span class="s">Main content is placed here.&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">cmd</span>
-<span class="go">&#39;packetname&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">param</span>
-<span class="go">&#39;mainparam&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">args</span>
-<span class="go">{&#39;some&#39;: &#39;variables&#39;, &#39;somemore&#39;: &#39;variables&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">body</span>
-<span class="go">&#39;Main content is placed here.&#39;</span>
-</pre></div>
-</div>
-<p>To parse a sub-packet that may be stored in the the body of a
-packet, simply use the following code:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">subPacket</span> <span class="o">=</span> <span class="n">Packet</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>If there is a sub-packet in the body, then the appropriate
-attributes will be filled as normal, because sub packets follow
-the same format as normal packets.</p>
-<p>Note that the <tt class="docutils literal"><span class="pre">sep</span></tt> parameter in this object refers to the
-character separating argument keys from their values. Note that
-arguments are stored in the <tt class="docutils literal"><span class="pre">args</span></tt> attribute.</p>
 </dd></dl>
 
 </div>
@@ -98,126 +72,14 @@ arguments are stored in the <tt class="docutils literal"><span class="pre">args<
 <span class="target" id="protocolparser"></span><dl class="class">
 <dt id="dAmnViper.parse.ProtocolParser">
 <em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">ProtocolParser</tt><a class="headerlink" href="#dAmnViper.parse.ProtocolParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Protocol processor.</p>
+<dd><p>Parser for processing the dAmn protocol.</p>
 <p>Use methods of this class to process dAmn information. You can
 customise how different packets are handled by adding items to
 protocol.maps and protocol.messages.</p>
-<p>The <tt class="docutils literal"><span class="pre">maps</span></tt> attribute determines how the data for each packet
-is mapped into a usable dictionary and key/value pair list.</p>
-<p>The key/value pair list is referred to as <tt class="docutils literal"><span class="pre">rules</span></tt>, and is
-useful when the data is required in a specific order it is
-defined in. This is used when generating messages in the
-<tt class="docutils literal"><span class="pre">logger</span></tt> method.</p>
-<p>The <tt class="docutils literal"><span class="pre">mapper</span></tt> method returns a dictionary with the following
-values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;event&#39;</span><span class="p">:</span> <span class="n">packet_name</span><span class="p">,</span>
-    <span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="n">mapped_args</span><span class="p">,</span>
-    <span class="s">&#39;rules&#39;</span><span class="p">:</span> <span class="n">key_value_rules</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>The <tt class="docutils literal"><span class="pre">packet_name</span></tt> is usually the packet&#8217;s <tt class="docutils literal"><span class="pre">cmd</span></tt>, or the
-command name of the packet. In general, packet names can have
-the following formats:</p>
-<div class="highlight-python"><pre>{pkt.cmd}
-{pkt.cmd}_{pkt.sub.cmd}
-{pkt.cmd}_{pkt.sub.cmd}_{pkt.sub.param}</pre>
-</div>
-<p>Where <tt class="docutils literal"><span class="pre">pkt</span></tt> is a <tt class="docutils literal"><span class="pre">Packet</span></tt> object and <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> is the
-object <tt class="docutils literal"><span class="pre">Packet(pkt.body)</span></tt>.</p>
-<p>By default, all packet names follow the first format. Packets
-may use other formats if their <tt class="docutils literal"><span class="pre">cmd</span></tt> values have an entry in
-the <tt class="docutils literal"><span class="pre">names</span></tt> attribute of this class.</p>
-<p>Entries in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute are always iterables. The
-iterable can have at most two items, and these items can be a
-<tt class="docutils literal"><span class="pre">pkt.cmd</span></tt> and a <tt class="docutils literal"><span class="pre">pkt.sub.cmd</span></tt>, in that order.</p>
-<p>If a packet&#8217;s command is found in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute, then
-the second format for the packet name is used. If a sub-packet&#8217;s
-command is found, then the third format is used.</p>
-<p><strong>Packet Mapping</strong></p>
-<p>Packet data is mapped into a dictionary according to the objects
-in the <tt class="docutils literal"><span class="pre">maps</span></tt> attribute of this class. The <tt class="docutils literal"><span class="pre">mapper</span></tt> method
-uses the object which is stored under the packet name&#8217;s
-corresponding key. Each object is a list, containing the names
-that each value will be stored under. The data is mapped as so:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="n">packet_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>As an example, this is the map for the <tt class="docutils literal"><span class="pre">login</span></tt> packet:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="s">&#39;login&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="s">&#39;data&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>Which results in the following dictionary being returned by
-the <tt class="docutils literal"><span class="pre">mapper</span></tt> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;event&#39;</span><span class="p">:</span> <span class="s">&#39;login&#39;</span><span class="p">,</span>
-    <span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">,</span>
-        <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">],</span>
-        <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span>
-    <span class="p">},</span>
-    <span class="s">&#39;rules&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">]),</span>
-        <span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Note:</strong> <em>Examples beyond this point will only show the
-``args`` portion of the returned object.</em></p>
-<p>If a <tt class="docutils literal"><span class="pre">generic_{pkt.cmd}</span></tt> method is defined, the behaviour of
-the mapper can be changed for all packets with the same <tt class="docutils literal"><span class="pre">cmd</span></tt>
-value.</p>
-<p>This class defines a <tt class="docutils literal"><span class="pre">generic_recv</span></tt> packet, which creates the
-mapped data using the attributes of <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> instead of
-<tt class="docutils literal"><span class="pre">pkt</span></tt>.</p>
-<p><strong>Packet Arguments Mapping</strong></p>
-<p>In the previous example, you may have noticed that the object
-defining the mapping for the <tt class="docutils literal"><span class="pre">login</span></tt> packet used a list to
-define how the packet&#8217;s <tt class="docutils literal"><span class="pre">args</span></tt> data was mapped. This is
-because the packet&#8217;s <tt class="docutils literal"><span class="pre">args</span></tt> attribute is a dictionary in
-itself.</p>
-<p>There are two ways in which we can define the mapping for each
-packet argument using the mapping list. The first and simplest
-way is to simply define the name or the argument we want to have
-mapped to the resulting object. This will cause the <tt class="docutils literal"><span class="pre">mapper</span></tt>
-to find that argument, and to store the argument under a key of
-the same name, which is why we get <tt class="docutils literal"><span class="pre">args['e']</span> <span class="pre">=</span>
-<span class="pre">pkt.args['e']</span></tt>.</p>
-<p>The second way to define the mapping is to use a pair of
-strings. Using the pair, you define which argument you want to
-store, and the key name you want to store it under. For example,
-the <tt class="docutils literal"><span class="pre">recv_msg</span></tt> packet has the following mapping:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="s">&#39;recv_msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;from&#39;</span><span class="p">,</span> <span class="s">&#39;user&#39;</span><span class="p">)],</span> <span class="s">&#39;*message&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p><strong>Note:</strong> <em>Using None tells the mapper not to store the value.</em></p>
-<p>The mapping above results in the following object being given
-under the <tt class="docutils literal"><span class="pre">args</span></tt> key:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">sub</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;from&#39;</span><span class="p">],</span>
-    <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">sub</span><span class="o">.</span><span class="n">body</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>Remember, <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> is used here because of the
-<tt class="docutils literal"><span class="pre">generic_recv</span></tt> method!</p>
-<p><strong>Tablumps Parsing</strong></p>
-<p>The mapping definitions can tell the parser to parse tablumps on
-a specific value. This is done by putting an asterisk (<tt class="docutils literal"><span class="pre">*</span></tt>) at
-the front of the key name!</p>
-<p>In the example given above, the mapping definition defines the
-key <tt class="docutils literal"><span class="pre">*message</span></tt> for the <tt class="docutils literal"><span class="pre">pkt.sub.body</span></tt> value. As a result,
-the parser stores the <tt class="docutils literal"><span class="pre">pkt.sub.body</span></tt> data under the
-<tt class="docutils literal"><span class="pre">message</span></tt> after passing it through the tablumps parser!</p>
-<p>Instances of this class store a <tt class="docutils literal"><span class="pre">Tablumps</span></tt> object in the
-<tt class="docutils literal"><span class="pre">tablumps</span></tt> attribute in instances of this class.</p>
 <dl class="method">
 <dt id="dAmnViper.parse.ProtocolParser.logger">
 <tt class="descname">logger</tt><big>(</big><em>event</em>, <em>data</em>, <em>ns</em>, <em>pkt</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a log_list (channel, message[, bool(showns)[, bool(mute)]]).</p>
+<dd><p>Return a log_list (message, channel[, bool(showns)[, bool(mute)]]).</p>
 <p>The message returned is based on the templates defined in
 the <tt class="docutils literal"><span class="pre">messages</span></tt> attribute of this class.</p>
 </dd></dl>
@@ -302,8 +164,8 @@ parsed into readable formats.</p>
   <p class="topless"><a href="data.html"
                         title="previous chapter">3. <tt class="docutils literal docutils literal docutils literal"><span class="pre">data</span></tt> module</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deviantART.html"
-                        title="next chapter">5. <tt class="docutils literal docutils literal docutils literal"><span class="pre">deviantART</span></tt> module</a></p>
+  <p class="topless"><a href="examples/index.html"
+                        title="next chapter">7. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/reference/parse.txt"
@@ -333,10 +195,7 @@ parsed into readable formats.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="deviantART.html" title="5. deviantART module"
+          <a href="examples/index.html" title="7. examples package"
              >next</a> |</li>
         <li class="right" >
           <a href="data.html" title="3. data module"

@@ -12,7 +12,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '3.55',
+        VERSION:     '3.56',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -33,13 +33,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">7. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">7. <tt class="docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,14 +54,14 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
 
-<span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnSock</span>
+<span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnClient</span>
 <span class="kn">from</span> <span class="nn">dAmnViper.examples.util</span> <span class="kn">import</span> <span class="n">get_input</span>
 
 <span class="c"># Extend the dAmnViper.dAmnSock class to add some functionality.</span>
 
-<span class="k">class</span> <span class="nc">MyClient</span><span class="p">(</span><span class="n">dAmnSock</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyClient</span><span class="p">(</span><span class="n">dAmnClient</span><span class="p">):</span>
     
-    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">admin</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="n">autojoin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">authtoken</span><span class="p">,</span> <span class="n">admin</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="n">autojoin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialise the client.</span>
 <span class="sd">            </span>
 <span class="sd">            Override this method if you need to do anything when an</span>
@@ -78,14 +75,14 @@
 <span class="sd">            constructor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">authtoken</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_admin</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span> <span class="o">=</span> <span class="n">trigger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autojoin</span> <span class="o">=</span> <span class="n">autojoin</span> <span class="ow">or</span> <span class="p">[</span><span class="s">&#39;Botdom&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span> <span class="ow">or</span> <span class="n">Commands</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">on_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This method is called when dAmnViper has an authtoken.</span>
+    <span class="k">def</span> <span class="nf">on_connection_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connector</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This method is called when dAmnViper has started connecting.</span>
 <span class="sd">            </span>
 <span class="sd">            Use this method to start the reactor if needed. We can</span>
 <span class="sd">            assume we have everything needed to connect, as this method</span>
@@ -180,7 +177,7 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; We need some details to be able to run the bot</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
     
     <span class="n">obj</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Username: &#39;</span><span class="p">),</span>
-        <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Password: &#39;</span><span class="p">),</span>
+        <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Authtoken: &#39;</span><span class="p">),</span>
         <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Admin: &#39;</span><span class="p">),</span>
         <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Trigger: &#39;</span><span class="p">),</span>
         <span class="p">[</span><span class="n">room</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Autojoin: &#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)]</span>
@@ -219,7 +216,7 @@
 <em class="property">class </em><tt class="descclassname">dAmnViper.examples.bot.</tt><tt class="descname">MyClient</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="dAmnViper.examples.bot.MyClient.init">
-<tt class="descname">init</tt><big>(</big><em>username</em>, <em>password</em>, <em>admin</em>, <em>trigger='!'</em>, <em>autojoin=None</em>, <em>callbacks=None</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.init" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">init</tt><big>(</big><em>username</em>, <em>authtoken</em>, <em>admin</em>, <em>trigger='!'</em>, <em>autojoin=None</em>, <em>callbacks=None</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialise the client.</p>
 <p>Override this method if you need to do anything when an
 instance of the object is created. Do not override __init__
@@ -231,9 +228,9 @@ constructor.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.examples.bot.MyClient.on_token">
-<tt class="descname">on_token</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.on_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is called when dAmnViper has an authtoken.</p>
+<dt id="dAmnViper.examples.bot.MyClient.on_connection_start">
+<tt class="descname">on_connection_start</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.on_connection_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when dAmnViper has started connecting.</p>
 <p>Use this method to start the reactor if needed. We can
 assume we have everything needed to connect, as this method
 is only called when dAmnViper actually succeeds in getting
@@ -322,7 +319,7 @@ the user, via stdin.</p>
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="bare.html"
-                        title="previous chapter">7.2. <tt class="docutils literal docutils literal docutils literal"><span class="pre">bare</span></tt> module</a></p>
+                        title="previous chapter">7.2. <tt class="docutils literal docutils literal"><span class="pre">bare</span></tt> module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/reference/examples/bot.txt"
@@ -352,13 +349,10 @@ the user, via stdin.</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              >previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" >7. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" >7. <tt class="docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -12,7 +12,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.55',
+        VERSION:     '3.56',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -32,9 +32,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="base.html" title="1. base module"
              accesskey="N">next</a> |</li>
@@ -61,12 +58,13 @@ amongst other tasks.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="base.html">1. <tt class="docutils literal"><span class="pre">base</span></tt> module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="base.html#damnsock-the-main-api-for-connecting-to-damn">1.1 <tt class="docutils literal"><span class="pre">dAmnSock</span></tt> - The main API for connecting to dAmn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#client-the-base-chat-client-api">1.1 <tt class="docutils literal"><span class="pre">Client</span></tt> - The base chat client API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#damnclient-basic-damn-client-class">1.2. <tt class="docutils literal"><span class="pre">dAmnClient</span></tt> - Basic dAmn client class</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="net.html">2. <tt class="docutils literal"><span class="pre">net</span></tt> module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="net.html#connectionfactory-connection-management">2.1 <tt class="docutils literal"><span class="pre">ConnectionFactory</span></tt> - Connection management</a></li>
-<li class="toctree-l2"><a class="reference internal" href="net.html#ioprotocol-input-and-output-piping">2.2. <tt class="docutils literal"><span class="pre">IOProtocol</span></tt> - Input and Output piping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="net.html#chatprotocol-input-and-output-piping-for-chat-servers">2.2. <tt class="docutils literal"><span class="pre">ChatProtocol</span></tt> - Input and Output piping for chat servers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">3. <tt class="docutils literal"><span class="pre">data</span></tt> module</a><ul>
@@ -79,17 +77,7 @@ amongst other tasks.</p>
 <li class="toctree-l2"><a class="reference internal" href="parse.html#tablumps-damn-tablump-parsing">4.3. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="deviantART.html">5. <tt class="docutils literal"><span class="pre">deviantART</span></tt> module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="deviantART.html#login-deviantart-com-login-session">5.1 <tt class="docutils literal"><span class="pre">Login</span></tt> - deviantART.com login session</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="_auth26.html">6. <tt class="docutils literal"><span class="pre">_auth26</span></tt> module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="_auth26.html#fetch-cookie">6.1 <tt class="docutils literal"><span class="pre">fetch_cookie</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="_auth26.html#fetch-channel">6.2 <tt class="docutils literal"><span class="pre">fetch_channel</span></tt></a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">7. <tt class="docutils literal"><span class="pre">examples</span></tt> package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples/authtoken.html">7.1. <tt class="docutils literal"><span class="pre">authtoken</span></tt> module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/bare.html">7.2. <tt class="docutils literal"><span class="pre">bare</span></tt> module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/bot.html">7.3. <tt class="docutils literal"><span class="pre">bot</span></tt> module</a></li>
 </ul>
@@ -138,9 +126,6 @@ amongst other tasks.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="base.html" title="1. base module"
              >next</a> |</li>

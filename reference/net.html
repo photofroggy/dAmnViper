@@ -12,7 +12,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.55',
+        VERSION:     '3.56',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -34,9 +34,6 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="data.html" title="3. data module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -56,17 +53,17 @@
 <h1>2. <tt class="docutils literal"><span class="pre">net</span></tt> module<a class="headerlink" href="#net-module" title="Permalink to this headline">¶</a></h1>
 <p>This module provides classes used to actually connect to dAmn using
 Twisted. The <cite>ConnectionFactory</cite> starts connections and handles
-disconnects. The <cite>IOProtocol</cite> handles basic IO operations on the
+disconnects. The <cite>ChatProtocol</cite> handles basic IO operations on the
 connection, but delegates most of the processing to an instance of the
-<a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> class.</p>
+<a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> class.</p>
 <div class="section" id="connectionfactory-connection-management">
 <h2>2.1 <tt class="docutils literal"><span class="pre">ConnectionFactory</span></tt> - Connection management<a class="headerlink" href="#connectionfactory-connection-management" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="connectionfactory"></span><dl class="class">
 <dt id="dAmnViper.net.ConnectionFactory">
 <em class="property">class </em><tt class="descclassname">dAmnViper.net.</tt><tt class="descname">ConnectionFactory</tt><big>(</big><em>client</em>, <em>stdout=None</em>, <em>debug=None</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connection management.</p>
-<p>Instances of this class are used by <a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> to connect to dAmn.</p>
-<p>The object returns instances of <a class="reference internal" href="#dAmnViper.net.IOProtocol" title="dAmnViper.net.IOProtocol"><tt class="xref py py-class docutils literal"><span class="pre">IOProtocol</span></tt></a> when a connection is made and
+<p>Instances of this class are used by the base <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span> <span class="pre">class</span></tt></a> to connect to chat networks.</p>
+<p>The object returns instances of <a class="reference internal" href="#dAmnViper.net.ChatProtocol" title="dAmnViper.net.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a> when a connection is made and
 handles disconnects and connection failures.</p>
 <p>This object should not be used directly by applications using
 dAmnViper.</p>
@@ -76,8 +73,8 @@ dAmnViper.</p>
 <dd><p>Called by twisted when a protocol is needed.</p>
 <p>Twisted calls this method when a connection can be
 established with the server. This method creates an instance
-of the <a class="reference internal" href="#dAmnViper.net.IOProtocol" title="dAmnViper.net.IOProtocol"><tt class="xref py py-class docutils literal"><span class="pre">IOProtocol</span></tt></a>
-class. This instance is given to the <a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> object that the factory belongs
+of the <a class="reference internal" href="#dAmnViper.net.ChatProtocol" title="dAmnViper.net.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a>
+class. This instance is given to the <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">base</span> <span class="pre">Client</span></tt></a> object that the factory belongs
 to, and returned to twisted.</p>
 </dd></dl>
 
@@ -94,7 +91,7 @@ to, and returned to twisted.</p>
 <tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when a connection is lost.</p>
 <p>Displays a message notifying the connection loss and tells
-the <a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> object
+the base <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> object
 that there is no longer a connection open.</p>
 </dd></dl>
 
@@ -102,49 +99,45 @@ that there is no longer a connection open.</p>
 <dt id="dAmnViper.net.ConnectionFactory.startedConnecting">
 <tt class="descname">startedConnecting</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory.startedConnecting" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when we start to connect.</p>
-<p>All this method really does is display a message and set
-the connecting flag to <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="ioprotocol-input-and-output-piping">
-<h2>2.2. <tt class="docutils literal"><span class="pre">IOProtocol</span></tt> - Input and Output piping<a class="headerlink" href="#ioprotocol-input-and-output-piping" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="ioprotocol"></span><dl class="class">
-<dt id="dAmnViper.net.IOProtocol">
-<em class="property">class </em><tt class="descclassname">dAmnViper.net.</tt><tt class="descname">IOProtocol</tt><big>(</big><em>conn</em>, <em>client</em>, <em>stdout=None</em>, <em>debug=None</em><big>)</big><a class="headerlink" href="#dAmnViper.net.IOProtocol" title="Permalink to this definition">¶</a></dt>
+<div class="section" id="chatprotocol-input-and-output-piping-for-chat-servers">
+<h2>2.2. <tt class="docutils literal"><span class="pre">ChatProtocol</span></tt> - Input and Output piping for chat servers<a class="headerlink" href="#chatprotocol-input-and-output-piping-for-chat-servers" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="chatprotocol"></span><dl class="class">
+<dt id="dAmnViper.net.ChatProtocol">
+<em class="property">class </em><tt class="descclassname">dAmnViper.net.</tt><tt class="descname">ChatProtocol</tt><big>(</big><em>conn</em>, <em>client</em>, <em>stdout=None</em>, <em>debug=None</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ChatProtocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol layer for the dAmn connection.</p>
 <p>Instances of this class are used to directly communicate with
 the connection to dAmn via twisted, and gives any data received
-to the <a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> instance
+to the <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> instance
 being used for this connection.</p>
 <p>This object should not be used directly by applications using
 dAmnViper.</p>
 <dl class="method">
-<dt id="dAmnViper.net.IOProtocol.connectionMade">
-<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.net.IOProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.net.ChatProtocol.connectionMade">
+<tt class="descname">connectionMade</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.net.ChatProtocol.connectionMade" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when we have connected.</p>
-<p>This method simply sends a handshake to the dAmn server, and
-sets the client&#8217;s <tt class="docutils literal"><span class="pre">shaking</span></tt> flag to <tt class="xref docutils literal"><span class="pre">True</span></tt>, indicating
-that a handshake packet has been sent.</p>
+<p>This method simply calls the same method in the client object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.net.IOProtocol.dataReceived">
-<tt class="descname">dataReceived</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.net.IOProtocol.dataReceived" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.net.ChatProtocol.dataReceived">
+<tt class="descname">dataReceived</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ChatProtocol.dataReceived" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when data is received.</p>
 <p>The data received is added to out buffer. If there are any
 full packets in the buffer, these packets are sent to the
-<a class="reference internal" href="base.html#dAmnViper.base.dAmnSock" title="dAmnViper.base.dAmnSock"><tt class="xref py py-class docutils literal"><span class="pre">dAmnSock</span></tt></a> instance to
+<a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> instance to
 be parsed properly.</p>
-<p>Any event handling relating to specific packet is done in
-<tt class="docutils literal"><span class="pre">dAmnSock</span></tt> instance.</p>
+<p>Any event handling relating to specific packet is done in the
+<tt class="docutils literal"><span class="pre">Client</span></tt> instance.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.net.IOProtocol.send_packet">
-<tt class="descname">send_packet</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.net.IOProtocol.send_packet" title="Permalink to this definition">¶</a></dt>
+<dt id="dAmnViper.net.ChatProtocol.send_packet">
+<tt class="descname">send_packet</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ChatProtocol.send_packet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper function for sending packets to the server.</p>
 <p>Here, a null character (<tt class="docutils literal"><span class="pre">\0</span></tt>) is appended to the given
 data, and we return the number of characters we have tried
@@ -166,7 +159,7 @@ send to the server.</p>
   <ul>
 <li><a class="reference internal" href="#">2. <tt class="docutils literal"><span class="pre">net</span></tt> module</a><ul>
 <li><a class="reference internal" href="#connectionfactory-connection-management">2.1 <tt class="docutils literal"><span class="pre">ConnectionFactory</span></tt> - Connection management</a></li>
-<li><a class="reference internal" href="#ioprotocol-input-and-output-piping">2.2. <tt class="docutils literal"><span class="pre">IOProtocol</span></tt> - Input and Output piping</a></li>
+<li><a class="reference internal" href="#chatprotocol-input-and-output-piping-for-chat-servers">2.2. <tt class="docutils literal"><span class="pre">ChatProtocol</span></tt> - Input and Output piping for chat servers</a></li>
 </ul>
 </li>
 </ul>
@@ -205,9 +198,6 @@ send to the server.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="data.html" title="3. data module"
              >next</a> |</li>

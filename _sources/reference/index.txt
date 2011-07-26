@@ -16,7 +16,5 @@ amongst other tasks.
     net
     data
     parse
-    deviantART
-    _auth26
     examples/index
     

@@ -3,9 +3,9 @@
 
 This module provides classes used to actually connect to dAmn using
 Twisted. The `ConnectionFactory` starts connections and handles
-disconnects. The `IOProtocol` handles basic IO operations on the
+disconnects. The `ChatProtocol` handles basic IO operations on the
 connection, but delegates most of the processing to an instance of the
-:py:class:`dAmnSock <dAmnViper.base.dAmnSock>` class.
+:py:class:`Client <dAmnViper.base.Client>` class.
 
 2.1 ``ConnectionFactory`` - Connection management
 -------------------------------------------------
@@ -14,10 +14,10 @@ connection, but delegates most of the processing to an instance of the
 .. autoclass:: dAmnViper.net.ConnectionFactory
     :members:
 
-2.2. ``IOProtocol`` - Input and Output piping
----------------------------------------------
-.. _ioprotocol:
+2.2. ``ChatProtocol`` - Input and Output piping for chat servers
+----------------------------------------------------------------
+.. _chatprotocol:
 
-.. autoclass:: dAmnViper.net.IOProtocol
+.. autoclass:: dAmnViper.net.ChatProtocol
     :members:
 

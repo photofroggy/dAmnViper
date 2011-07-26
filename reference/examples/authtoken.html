@@ -34,16 +34,13 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="7. examples package"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">7. <tt class="docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">7. <tt class="docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,44 +51,6 @@
             
   <div class="section" id="authtoken-module">
 <h1>7.1. <tt class="docutils literal"><span class="pre">authtoken</span></tt> module<a class="headerlink" href="#authtoken-module" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-python"><div class="highlight"><pre><span class="sd">&#39;&#39;&#39; Authtoken grabbing example.</span>
-<span class="sd">    Created by photofroggy</span>
-<span class="sd">    </span>
-<span class="sd">    This is a basic example of how to get an authtoken using dAmn Viper!</span>
-<span class="sd">    It also acts as an interactive authtoken grabber when run as a</span>
-<span class="sd">    script, sort of.</span>
-<span class="sd">&#39;&#39;&#39;</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">defer</span>
-
-<span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnSock</span>
-<span class="kn">from</span> <span class="nn">dAmnViper.deviantART</span> <span class="kn">import</span> <span class="n">Login</span>
-
-<span class="c"># lol</span>
-<span class="kn">from</span> <span class="nn">dAmnViper.examples.util</span> <span class="kn">import</span> <span class="n">get_input</span>
-
-<span class="k">def</span> <span class="nf">get_authtoken</span><span class="p">(</span><span class="n">un</span><span class="o">=</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="n">pw</span><span class="o">=</span><span class="s">&#39;password&#39;</span><span class="p">):</span>
-    <span class="n">clientstr</span> <span class="o">=</span> <span class="s">&#39;Authtoken Grabber/1 (Python) dAmn Viper/&#39;</span> <span class="o">+</span> <span class="n">dAmnSock</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">stamp</span>
-    <span class="n">login_done</span><span class="p">(</span><span class="n">Login</span><span class="p">(</span><span class="n">un</span><span class="p">,</span> <span class="n">pw</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">clientstr</span><span class="p">))</span>
-
-
-<span class="k">def</span> <span class="nf">login_done</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Token: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">token</span><span class="p">))</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">un</span> <span class="o">=</span> <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Username: &#39;</span><span class="p">)</span>
-    <span class="n">pw</span> <span class="o">=</span> <span class="n">get_input</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Password: &#39;</span><span class="p">)</span>
-    <span class="n">get_authtoken</span><span class="p">(</span><span class="n">un</span><span class="p">,</span> <span class="n">pw</span><span class="p">)</span>
-
-<span class="c"># EOF</span>
-</pre></div>
-</div>
 </div>
 
 
@@ -102,7 +61,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">7. <tt class="docutils literal docutils literal"><span class="pre">examples</span></tt> package</a></p>
+                        title="previous chapter">7. <tt class="docutils literal"><span class="pre">examples</span></tt> package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="bare.html"
                         title="next chapter">7.2. <tt class="docutils literal"><span class="pre">bare</span></tt> module</a></p>
@@ -135,16 +94,13 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="7. examples package"
              >previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" >7. <tt class="docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" >7. <tt class="docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

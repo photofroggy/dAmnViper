@@ -18,7 +18,6 @@ Simple as that!
 .. toctree::
     :maxdepth: 2
 
-    authtoken
     bare
     bot
     
