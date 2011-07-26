@@ -774,7 +774,7 @@ class dAmnClient(Client):
             dAmn.start()
             
             if dAmn.flag.connecting:
-                reactor.run()
+                reactor\.run()
         
         The ``teardown`` callback needs to be defined or the application
         will hang when the connection to dAmn is lost.
@@ -800,7 +800,7 @@ class dAmnClient(Client):
     
     def startedConnecting(self, connector):
         """ This method is called when we have started connecting. """
-        self.logger('** Opening connection dAmn...', showns=False)
+        self.logger('** Opening connection to dAmn...', showns=False)
         self.flag.connecting = True
         self.on_connection_start(connector)
     

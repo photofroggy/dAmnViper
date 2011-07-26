@@ -238,17 +238,24 @@ class ProtocolParser(object):
     def evt_namespace(self, pkt):
         # Work on the namespace of an event!
         namespace = pkt.cmd
+        
         for conditions in self.names:
+            
             if conditions[0] == namespace:
                 subline = pkt.body.split('\n')[0]
                 subline = subline.split(' ')
+                
                 if not subline or not subline[0]:
                     break
+                
                 namespace = '_'.join([namespace, subline[0]])
+                
                 if len(conditions) > 1 and len(subline) > 1:
                     if conditions[1] == subline[0]:
                         namespace = '_'.join([namespace, subline[1]])
+                
                 break
+        
         return namespace if namespace in self.maps else 'unknown'
     
     def mapper(self, pkt):
@@ -264,36 +271,56 @@ class ProtocolParser(object):
     def sort(self, store, data, map):
         """ Sort data according to the conditions in the given map. """
         for i, cond in enumerate(map):
-            if not cond: continue
+            if not cond:
+                continue
+            
             if i is 0:
                 ptab = cond[0] == '*'
-                if ptab: cond = cond[1:]
+                
+                if ptab:
+                    cond = cond[1:]
+                
                 val = (data.param if not ptab else self.tablumps.parse(data.param)) if data.param else ''
                 store['rules'].append((cond, val))
                 store['args'][cond] = val
+            
             if i is 1:
                 for item in cond:
                     if not item:
                         continue
+                    
                     argn, name = item if isinstance(item, tuple) else (item, item)
                     ptab = argn[0] == '*'
-                    if ptab and argn == name: name = argn[1:]
+                    
+                    if ptab and argn == name:
+                        name = argn[1:]
+                    
                     val = '' if not argn in data.args.keys() else data.args[argn]
-                    if ptab: val = self.tablumps.parse(val)
+                    
+                    if ptab:
+                        val = self.tablumps.parse(val)
+                    
                     store['rules'].append((name, val))
                     store['args'][name] = val
+            
             if i is 2:
                 ptab = cond[0] == '*'
-                if ptab: cond = cond[1:]
+                
+                if ptab:
+                    cond = cond[1:]
+                
                 val = (data.body if not ptab else self.tablumps.parse(data.body)) if data.body else ''
                 store['rules'].append((cond, val))
                 store['args'][cond] = val
+            
             if i is 3:
                 store = self.sort(store, Packet(data.body), cond)
+            
             if i is 4:
                 val = data.raw if data.raw else ''
                 store['rules'].append((cond, val))
                 store['args'][cond] = val
+        
         return store
     
     def logger(self, event, data, ns, pkt):
@@ -304,28 +331,35 @@ class ProtocolParser(object):
         """
         sequence = ['', ns, True, False, pkt]
         
+        # Return None if we don't have a message for this packet.
         if not event in self.messages.keys():
             return None
         
+        # Use custom log method if available.
         if hasattr(self, 'log_'+event):
             return getattr(self, 'log_'+event)(event, data, ns, pkt)
         
-        msgtpl = self.messages[event]
+        # Reference message options.
+        options = self.messages[event]
         
-        if msgtpl is None or len(msgtpl) == 0:
+        if options is None or len(options) == 0:
             return None
         
+        # Format the associated message.
         data = [(item[1] if bool(item[1]) else '') for item in data]
-        disp = (msgtpl[0].replace('{ns}', ns)).format(*data)
+        msg = (options[0].replace('{ns}', ns)).format(*data)
         
-        if disp[-3:] == ' []':
-            disp = disp[:-3]
+        # Trim any empty brackets.
+        if msg[-3:] == ' []':
+            msg = msg[:-3]
         
-        sequence[0] = disp
-        msgtpl = [] if len(msgtpl) == 1 else msgtpl[1:]
+        # Store the message
+        sequence[0] = msg
+        options = [] if len(options) == 1 else options[1:]
+        
         i = 2
-        
-        for item in msgtpl:
+        # Store any other options.
+        for item in options:
             sequence[i] = item
             i+=  1
         
@@ -336,9 +370,11 @@ class ProtocolParser(object):
         store['args']['ns'] = data.param
         store['rules'].append(('ns', data.param))
         store = self.sort(store, Packet(data.body), map)
+        
         if store['event'] in ('recv_msg', 'recv_action'):
             store['args']['raw'] = data.raw
             store['rules'].append(('raw', data.raw))
+        
         return store
 
 # EOF
