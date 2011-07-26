@@ -28,7 +28,125 @@ from dAmnViper.parse import ProtocolParser
 from dAmnViper.net import ConnectionFactory
 
 
-class Client(object):
+class IClient(object):
+    """ Interface for client objects for dAmn-like servers.
+        
+        **Note:** *This object does not use zope.interface. I find z.i to be
+        somewhat needless except in the case where it saves a bit of typing.*
+        
+        Any client class which connects to a dAmn server or similar, using the
+        dAmnViper library, should implement this interface as a bare minimum.
+        
+        All methods in this class raise a ``NotImplementedError`` exception if
+        they are not overridden. Note that ``startedConnecting`` is *not*
+        overridden in the ``Client`` class, but is overridden in the
+        ``dAmnClient`` class.
+    """
+    
+    def start(self, *args, **kwargs):
+        """ Start the client.
+            
+            This method should perform any required start-up activities that
+            need to be performed before first attempting to connect to a chat
+            server.
+            
+            This method should eventually call ``makeConnection``.
+        """
+        raise NotImplementedError
+    
+    def set_protocol(self, protocol=None):
+        """ Set the :py:class:`ChatProtocol <dAmnViper.net.ChatProtocol>`
+            object being used by the client.
+            
+            This method is called by the :py:class:`ConnectionFactory
+            <dAmnViper.net.ConnectionFactory>` object when a protocol object is
+            created for the connection. The client itself should call this
+            method with ``None`` as the protocol when the client loses a
+            connection or fails to connect. This method should, in turn, call
+            the ``persist`` method in the client object.
+        """
+        raise NotImplementedError
+    
+    def makeConnection(self):
+        """ Open a connection to a chat server.
+            
+            This method should attempt to open a connection to a chat server
+            using :py:class:`ConnectionFactory
+            <dAmnViper.net.ConnectionFactory>` object as the connection's
+            client factory.
+            
+            This method should be called by the ``start`` method and the
+            ``persist`` method.
+        """
+        raise NotImplementedError
+    
+    def startedConnecting(self, connector):
+        """ This method is called when the client is starting to connect.
+            
+            This method is called by the :py:class:`ConnectionFactory
+            <dAmnViper.net.ConnectionFactory>` method of the same name, which
+            is called by twisted when twisted is starting to connect to the
+            chat server.
+        """
+        raise NotImplementedError
+    
+    def connectionLost(self, connector, reason):
+        """ This method is called when the client loses its connection.
+            
+            This method is called in a similar way that the
+            ``startedConnecting`` method is called.
+        """
+        raise NotImplementedError
+    
+    def connectionFailed(self, connector, reason):
+        """ This method is called when the client fails to connect.
+            
+            Same as ``connectionLost`` and ``startedConnecting``.
+        """
+        raise NotImplementedError
+    
+    def connectionMade(self):
+        """ Called when we have made a connection with the server.
+            
+            This method is invoked by a method with the same name in the
+            :py:class:`ChatProtocol <dAmnViper.net.ChatProtocol>` object being
+            used for the connection.
+            
+            Clients should use this method to do anything which is required on
+            making a connection, such as sending a handshake to the server.
+        """
+        raise NotImplementedError
+    
+    def persist(self):
+        """ Determine if the client should make another attempt to connect to
+            the chat server.
+            
+            Given the current state of the client object when ``persist`` is
+            called, this method should determine whether or not the client
+            should make another attempt at connecting to the chat server.
+            
+            The client object should use attributes to help in deciding this,
+            as this method does not take any relevant input.
+            
+            This method should call ``makeConnection`` directly if the client
+            is going to connect again.
+        """
+        raise NotImplementedError
+    
+    def send(self, data):
+        """ Send data to the chat server. """
+        raise NotImplementedError
+    
+    def close(self):
+        """ Close the connection to the server. """
+        raise NotImplementedError
+    
+    def handle_pkt(self, packet, stamp):
+        """ Handle a packet received from the chat server. """
+        raise NotImplementedError
+
+
+class Client(IClient):
     """ This class is a client for llama-like chat servers.
         
         The llama project can be seen here:
@@ -205,17 +323,6 @@ class Client(object):
         # Make a connection.
         self.conn = ConnectionFactory(self, write_pair[0], write_pair[1])
         reactor.connectTCP(self.CONST.SERVER, self.CONST.PORT, self.conn)
-    
-    def startedConnecting(self, connector):
-        """ This method is called when twisted is starting to connect.
-            
-            Sub classes of the ``Client`` class must override this method in
-            order to determine what the client should do when trying to
-            connect to the chat server.
-            
-            Raises a ``NotImplementedError`` if not overridden.
-        """
-        raise NotImplementedError
     
     def connectionLost(self, connector, reason):
         """ This method is called when we lose our connection. """
@@ -774,7 +881,7 @@ class dAmnClient(Client):
             dAmn.start()
             
             if dAmn.flag.connecting:
-                reactor\.run()
+                reactor.run()
         
         The ``teardown`` callback needs to be defined or the application
         will hang when the connection to dAmn is lost.
@@ -799,7 +906,13 @@ class dAmnClient(Client):
         self.init(*args, **kwargs)
     
     def startedConnecting(self, connector):
-        """ This method is called when we have started connecting. """
+        """ This method is called when we have started connecting.
+            
+            All this method does is display a message in ``stdout``, set the
+            ``connecting`` flag to ``True``, and calls ``on_connection_start``
+            to allow any sub-classes or custom clients to perform any actions
+            when the client starts connecting to dAmn.
+        """
         self.logger('** Opening connection to dAmn...', showns=False)
         self.flag.connecting = True
         self.on_connection_start(connector)

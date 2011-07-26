@@ -135,12 +135,12 @@ class ChatProtocol(Protocol):
     def dataReceived(self, data):
         """ Called by twisted when data is received.
             
-            The data received is added to out buffer. If there are any
-            full packets in the buffer, these packets are sent to the
-            :py:class:`Client <dAmnViper.base.Client>` instance to
-            be parsed properly.
+            The data received is added to out buffer. If there are any full
+            packets in the buffer, these packets are sent to the
+            :py:class:`Client <dAmnViper.base.Client>` instance to be parsed
+            properly.
             
-            Any event handling relating to specific packet is done in the
+            Any event handling relating to specific packets is done in the
             ``Client`` instance.
         """
         
