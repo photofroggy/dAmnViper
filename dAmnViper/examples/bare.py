@@ -1,14 +1,14 @@
-''' Example of a client using dAmn Viper's dAmnSock class!
+''' Example of a client using dAmn Viper's dAmnClient class!
     Created by photofroggy
 '''
 
 from twisted.internet import reactor
 
-from dAmnViper.base import dAmnSock
+from dAmnViper.base import dAmnClient
 
 if __name__ == '__main__':
     
-    dAmn = dAmnSock()
+    dAmn = dAmnClient()
     
     dAmn.user.username = 'username'
     dAmn.user.token = 'authtoken'

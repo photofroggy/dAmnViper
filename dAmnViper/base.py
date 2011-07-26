@@ -46,8 +46,8 @@ class Client(object):
         name = 'dAmn Viper'
         version = 3
         state = 'Beta'
-        build = 55
-        stamp = '03062011-170934'
+        build = 56
+        stamp = '26072011-013703'
         series = 'Twister'
         author = 'photofroggy'
     
@@ -186,7 +186,14 @@ class Client(object):
         self.defer.loop = reactor.callLater(1, self.mainloop, args, kwargs)
     
     def makeConnection(self):
-        """ Opens a connection to a dAmn-like server. """
+        """ Opens a connection to a dAmn-like server.
+            
+            Raises a ``ValueError`` if ``Client.user.username`` or
+            ``Client.user.token`` is ``None``.
+            
+            Raises a ``ValueError`` if any of the ``Client.CONST`` attributes
+            are ``None``.
+        """
         if None in (self.user.username, self.user.token):
             raise ValueError('.user.username and .user.token must be set.')
         
@@ -200,7 +207,14 @@ class Client(object):
         reactor.connectTCP(self.CONST.SERVER, self.CONST.PORT, self.conn)
     
     def startedConnecting(self, connector):
-        """ This method is called when we have started connecting. """
+        """ This method is called when twisted is starting to connect.
+            
+            Sub classes of the ``Client`` class must override this method in
+            order to determine what the client should do when trying to
+            connect to the chat server.
+            
+            Raises a ``NotImplementedError`` if not overridden.
+        """
         raise NotImplementedError
     
     def connectionLost(self, connector, reason):
@@ -399,7 +413,14 @@ class Client(object):
         return self.send(pkt)
     
     def login(self):
-        """ Send our login packet. Set the loggingin flag to true. """
+        """ Send our login packet. Set the loggingin flag to true.
+            
+            Raises a ``ValueError`` if ``Client.user.username`` or
+            ``Client.user.token`` is ``None``.
+        """
+        if None in (self.user.username, self.user.token):
+            raise ValueError('.user.username and .user.token must be set.')
+        
         self.flag.loggingin = True
         return self.send('login {0}\npk={1}\n'.format(self.user.username, self.user.token))
         
@@ -742,7 +763,7 @@ class dAmnClient(Client):
             from twisted.internet import reactor
             from dAmnViper.base import dAmnSock
             
-            dAmn = dAmnSock()    
+            dAmn = dAmnClient()    
             
             dAmn.user.username = 'username'
             dAmn.user.token = 'authtoken'
@@ -758,10 +779,9 @@ class dAmnClient(Client):
         The ``teardown`` callback needs to be defined or the application
         will hang when the connection to dAmn is lost.
         
-        A way to remove the need to check the
-        ``dAmnSock.flag.connecting`` flag is to define your own
-        ``on_token`` method on the object, and using this to call
-        ``reactor.run()``.
+        A way to remove the need to check the ``dAmnClient.flag.connecting``
+        flag is to define your own ``on_connection_start`` method on the
+        object, and using this to call ``reactor.run()``.
     """
 
     def __init__(self, *args, **kwargs):
