@@ -1,0 +1,217 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Protocol parsing &mdash; dAmn Viper</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.56',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="dAmn Viper" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">dAmn Viper</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="protocol-parsing">
+<h1>2. Protocol parsing<a class="headerlink" href="#protocol-parsing" title="Permalink to this headline">¶</a></h1>
+<p>As mentioned in the <a class="reference internal" href="dAmn_packets.html"><em>dAmn packets page</em></a>, the protocol used
+by the dAmn server is text based. Messages, or packets, sent to and from
+clients, follow a specific format. Different packets mean different things.
+Most of the packets in the protocol are documented <a class="reference external" href="http://www.botdom.com/documentation/DAmn">on this wiki</a>.</p>
+<p>dAmn Viper provides enough functionality to parse the protocol into usable
+objects and messages which can be displayed on the screen. This is done by the
+<tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> class.</p>
+<div class="section" id="packet-naming">
+<h2>2.1. Packet naming<a class="headerlink" href="#packet-naming" title="Permalink to this headline">¶</a></h2>
+<p>For dAmn packets to be used in a program, the data they represent needs to be
+translated into an object which can be used by programs to determine a
+response.</p>
+<p>The <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> class has a <tt class="docutils literal"><span class="pre">mapper</span></tt> method whichreturns a dictionary
+with the following values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;event&#39;</span><span class="p">:</span> <span class="n">packet_name</span><span class="p">,</span>
+    <span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="n">mapped_args</span><span class="p">,</span>
+    <span class="s">&#39;rules&#39;</span><span class="p">:</span> <span class="n">key_value_rules</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">packet_name</span></tt> is usually the packet&#8217;s <tt class="docutils literal"><span class="pre">cmd</span></tt>, or the command name of the
+packet. In general, packet names can have the following formats:</p>
+<div class="highlight-python"><pre>{pkt.cmd}
+{pkt.cmd}_{pkt.sub.cmd}
+{pkt.cmd}_{pkt.sub.cmd}_{pkt.sub.param}</pre>
+</div>
+<p>Where <tt class="docutils literal"><span class="pre">pkt</span></tt> is a <tt class="docutils literal"><span class="pre">Packet</span></tt> object and <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> is the object
+<tt class="docutils literal"><span class="pre">Packet(pkt.body)</span></tt>.</p>
+<p>By default, all packet names follow the first format. Packets may use other
+formats if their <tt class="docutils literal"><span class="pre">cmd</span></tt> values have an entry in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute of
+the <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> class.</p>
+<p>Entries in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute are always iterables. The iterable can have
+at most two items, and these items can be a <tt class="docutils literal"><span class="pre">pkt.cmd</span></tt> and a <tt class="docutils literal"><span class="pre">pkt.sub.cmd</span></tt>,
+in that order.</p>
+<p>If a packet&#8217;s command is found in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute, then the second
+format for the packet name is used. If a sub-packet&#8217;s command is found, then
+the third format is used.</p>
+</div>
+<div class="section" id="packet-mapping">
+<h2>2.2. Packet mapping<a class="headerlink" href="#packet-mapping" title="Permalink to this headline">¶</a></h2>
+<p>Packet data is mapped into a dictionary according to the objects in the
+<tt class="docutils literal"><span class="pre">maps</span></tt> attribute of the <cite>ProtocolParser</cite> class. The <tt class="docutils literal"><span class="pre">mapper</span></tt> method uses
+the object which is stored under the packet name&#8217;s corresponding key. Each
+object is a list, containing the names that each value will be stored under.
+The data is mapped as so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="n">packet_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>As an example, this is the map for the <tt class="docutils literal"><span class="pre">login</span></tt> packet:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="s">&#39;login&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="s">&#39;data&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Which results in the following dictionary being returned by the <tt class="docutils literal"><span class="pre">mapper</span></tt>
+method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;event&#39;</span><span class="p">:</span> <span class="s">&#39;login&#39;</span><span class="p">,</span>
+    <span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">,</span>
+        <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">],</span>
+        <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span>
+    <span class="p">},</span>
+    <span class="s">&#39;rules&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">param</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">pkt</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> <em>Examples beyond this point will only show the ``args`` portion of
+the returned object.</em></p>
+<p>If a <tt class="docutils literal"><span class="pre">generic_{pkt.cmd}</span></tt> method is defined, the behaviour of the mapper can
+be changed for all packets with the same <tt class="docutils literal"><span class="pre">cmd</span></tt> value.</p>
+<p>The <cite>ProtocolParser</cite> class defines a <tt class="docutils literal"><span class="pre">generic_recv</span></tt> packet, which creates the
+mapped data using the attributes of <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> instead of <tt class="docutils literal"><span class="pre">pkt</span></tt>.</p>
+</div>
+<div class="section" id="packet-arguments-mapping">
+<h2>2.3. Packet arguments mapping<a class="headerlink" href="#packet-arguments-mapping" title="Permalink to this headline">¶</a></h2>
+<p>In the previous example, you may have noticed that the object defining the
+mapping for the <tt class="docutils literal"><span class="pre">login</span></tt> packet used a list to define how the packet&#8217;s
+<tt class="docutils literal"><span class="pre">args</span></tt> data was mapped. This is because the packet&#8217;s <tt class="docutils literal"><span class="pre">args</span></tt> attribute is a
+dictionary in itself.</p>
+<p>There are two ways in which we can define the mapping for each packet argument
+using the mapping list. The first and simplest way is to simply define the name
+or the argument we want to have mapped to the resulting object. This will cause
+the <tt class="docutils literal"><span class="pre">mapper</span></tt> to find that argument, and to store the argument under a key of
+the same name, which is why we get <tt class="docutils literal"><span class="pre">args['e']</span> <span class="pre">=</span> <span class="pre">pkt.args['e']</span></tt>.</p>
+<p>The second way to define the mapping is to use a pair of strings. Using the
+pair, you define which argument you want to store, and the key name you want to
+store it under. For example, the <tt class="docutils literal"><span class="pre">recv_msg</span></tt> packet has the following
+mapping:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">maps</span><span class="p">[</span><span class="s">&#39;recv_msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;from&#39;</span><span class="p">,</span> <span class="s">&#39;user&#39;</span><span class="p">)],</span> <span class="s">&#39;*message&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> <em>Using None tells the mapper not to store the value.</em></p>
+<p>The mapping above results in the following object being given under the
+<tt class="docutils literal"><span class="pre">args</span></tt> key:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">sub</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;from&#39;</span><span class="p">],</span>
+    <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">pkt</span><span class="o">.</span><span class="n">sub</span><span class="o">.</span><span class="n">body</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Remember, <tt class="docutils literal"><span class="pre">pkt.sub</span></tt> is used here because of the <tt class="docutils literal"><span class="pre">generic_recv</span></tt> method!</p>
+</div>
+<div class="section" id="tablumps-parsing">
+<h2>2.4. Tablumps parsing<a class="headerlink" href="#tablumps-parsing" title="Permalink to this headline">¶</a></h2>
+<p>The mapping definitions can tell the parser to parse tablumps on a specific
+value. This is done by putting an asterisk (<tt class="docutils literal"><span class="pre">*</span></tt>) at the front of the key
+name!</p>
+<p>In the example given above, the mapping definition defines the key <tt class="docutils literal"><span class="pre">*message</span></tt>
+for the <tt class="docutils literal"><span class="pre">pkt.sub.body</span></tt> value. As a result, the parser stores the
+<tt class="docutils literal"><span class="pre">pkt.sub.body</span></tt> data under the <tt class="docutils literal"><span class="pre">message</span></tt> after passing it through the
+tablumps parser!</p>
+<p>Instances of the <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> class store a <tt class="docutils literal"><span class="pre">Tablumps</span></tt> object in the
+<tt class="docutils literal"><span class="pre">tablumps</span></tt> attribute in instances of the class.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Protocol parsing</a><ul>
+<li><a class="reference internal" href="#packet-naming">2.1. Packet naming</a></li>
+<li><a class="reference internal" href="#packet-mapping">2.2. Packet mapping</a></li>
+<li><a class="reference internal" href="#packet-arguments-mapping">2.3. Packet arguments mapping</a></li>
+<li><a class="reference internal" href="#tablumps-parsing">2.4. Tablumps parsing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/concepts/protocol_parser.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">dAmn Viper</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, photofroggy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

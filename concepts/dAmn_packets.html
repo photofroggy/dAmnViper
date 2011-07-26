@@ -1,0 +1,159 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. dAmn style packets &mdash; dAmn Viper</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.56',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="dAmn Viper" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">dAmn Viper</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="damn-style-packets">
+<h1>1. dAmn style packets<a class="headerlink" href="#damn-style-packets" title="Permalink to this headline">¶</a></h1>
+<p>The deviantART messaging network chatrooms use a text-based protocol, with
+messages, or packets, formatted with newlines. All packets follow the same
+basic pattern, using sub-packets in the body to determine sub-commands and the
+like.</p>
+<div class="section" id="packet-structure">
+<h2>1.1. Packet structure<a class="headerlink" href="#packet-structure" title="Permalink to this headline">¶</a></h2>
+<p>The basic structure of a dAmn style packet is as follows:</p>
+<div class="highlight-python"><pre>command parameter
+argument=value
+
+body</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">command</span></tt> value determines the packet&#8217;s command. The <tt class="docutils literal"><span class="pre">parameter</span></tt> value
+determines the parameter being used with the command. The packet can have
+several arguments, which are key-value pairs. The body is separated from the
+packet&#8217;s head with two newlines. An example packet is below:</p>
+<div class="highlight-python"><pre>kicked chat:Botdom
+by=photofroggy
+
+Don't spam</pre>
+</div>
+<p>In the above example, the packet&#8217;s <tt class="docutils literal"><span class="pre">command</span></tt> is <tt class="docutils literal"><span class="pre">&quot;kicked&quot;</span></tt> and the
+<tt class="docutils literal"><span class="pre">parameter</span></tt> is <tt class="docutils literal"><span class="pre">&quot;chat:Botdom&quot;</span></tt>. There is one argument called <tt class="docutils literal"><span class="pre">by</span></tt> with
+the value <tt class="docutils literal"><span class="pre">&quot;photofroggy&quot;</span></tt>, and the body is <tt class="docutils literal"><span class="pre">&quot;Don't</span> <span class="pre">spam&quot;</span></tt>. In quotes, the
+above example looks like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;kicked chat:Botdom</span><span class="se">\n</span><span class="s">by=photofroggy</span><span class="se">\n\n</span><span class="s">Don&#39;tspam</span><span class="se">\0</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>Note that all dAmn packets end with <tt class="docutils literal"><span class="pre">\0</span></tt>, and some packets require a newline
+before the <tt class="docutils literal"><span class="pre">NULL</span></tt> character. Packets without empty bodies do not need a
+newline before the <tt class="docutils literal"><span class="pre">NULL</span></tt> character.</p>
+</div>
+<div class="section" id="viper-s-packet-parser">
+<h2>1.2. Viper&#8217;s packet parser<a class="headerlink" href="#viper-s-packet-parser" title="Permalink to this headline">¶</a></h2>
+<p>dAmnViper has it&#8217;s own packet parser which I created to turn text packets into
+objects which are usable in a program. The object processes given strings as
+dAmn packets, and stores information from the string in different object
+attributes. This makes it easier to work with packets in other parts of the
+API.</p>
+<p>An example usage of this parser is as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Packet</span><span class="p">(</span><span class="s">&quot;packetname mainparam</span><span class="se">\n</span><span class="s">some=variables</span><span class="se">\n</span><span class="s">somemore=variables</span><span class="se">\n\n</span><span class="s">Main content is placed here.&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">cmd</span>
+<span class="go">&#39;packetname&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">param</span>
+<span class="go">&#39;mainparam&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">args</span>
+<span class="go">{&#39;some&#39;: &#39;variables&#39;, &#39;somemore&#39;: &#39;variables&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">body</span>
+<span class="go">&#39;Main content is placed here.&#39;</span>
+</pre></div>
+</div>
+<p>To parse a sub-packet that may be stored in the the body of a packet, simply
+use the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">subPacket</span> <span class="o">=</span> <span class="n">Packet</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If there is a sub-packet in the body, then the appropriate attributes will be
+filled as normal, because sub packets follow the same format as normal packets.</p>
+<p>Note that the <tt class="docutils literal"><span class="pre">sep</span></tt> parameter in this object refers to the character
+separating argument keys from their values. Note that arguments are stored in
+the <tt class="docutils literal"><span class="pre">args</span></tt> attribute.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. dAmn style packets</a><ul>
+<li><a class="reference internal" href="#packet-structure">1.1. Packet structure</a></li>
+<li><a class="reference internal" href="#viper-s-packet-parser">1.2. Viper&#8217;s packet parser</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/concepts/dAmn_packets.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">dAmn Viper</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, photofroggy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
