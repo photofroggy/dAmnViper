@@ -1,10 +1,10 @@
 ''' dAmnViper.parse module
     Created by photofroggy.
     
-    This module provides objects for parsing data going to and from
-    the dAmn server. Tablumps and packets are handled by classes here,
-    and a class is provided to generate output messages for stdout
-    based on packets received from dAmn.
+    This module provides objects for parsing data going to and from the dAmn
+    server. Tablumps and packets are handled by classes here, and a class is
+    provided to generate output messages for stdout based on packets received
+    from dAmn.
 '''
 
 import re

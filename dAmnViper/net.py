@@ -1,11 +1,11 @@
 ''' dAmnViper.net module
     Created by photofroggy.
     
-    This module provides classes used to actually connect
-    to dAmn using Twisted. The ConnectionFactory starts connections
-    and handles disconnects. The IOProtocol handles basic IO operations
-    on the connection, but delegates most of the processing to an
-    instance of the dAmnSock class from the dAmnViper.base module.
+    This module provides classes used to actually connect to dAmn using
+    Twisted. The ConnectionFactory starts connections and handles disconnects.
+    The IOProtocol handles basic IO operations on the connection, but delegates
+    most of the processing to an instance of the Client class from the
+    dAmnViper.base module.
 '''
 
 # Standard library
@@ -129,7 +129,6 @@ class ChatProtocol(Protocol):
             
             This method simply calls the same method in the client object.
         """
-        
         self.client.connectionMade()
     
     def dataReceived(self, data):
@@ -143,6 +142,9 @@ class ChatProtocol(Protocol):
             Any event handling relating to specific packets is done in the
             ``Client`` instance.
         """
+        
+        # Tell the client some data has arrived. Woo...
+        self.client.dataReceived(data)
         
         # Split on null.
         self.__buffer+= data

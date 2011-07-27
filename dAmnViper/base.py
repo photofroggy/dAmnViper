@@ -1,10 +1,9 @@
 ''' dAmnViper.base module
     Created by photofroggy.
     
-    This module provides the dAmnSock class, which acts
-    as an API for connecting to and interacting with
-    deviantART.com's chatrooms. This is achieved using
-    Twisted.
+    This module provides the dAmnClient class, which acts as an API for
+    connecting to and interacting with deviantART.com's chatrooms. This is
+    achieved using Twisted.
 '''
 
 # Standard library
@@ -130,6 +129,12 @@ class IClient(object):
             
             This method should call ``makeConnection`` directly if the client
             is going to connect again.
+        """
+        raise NotImplementedError
+    
+    def dataReceived(self, data):
+        """ We have received data from the server. If you need to do something
+            now, do it.
         """
         raise NotImplementedError
     
@@ -356,7 +361,6 @@ class Client(IClient):
             return
         
         self.on_connection_made()
-        
         self.handshake()
     
     def persist(self):
@@ -476,13 +480,18 @@ class Client(IClient):
             return ns
         return '#'+ns
     
-    def handle_pkt(self, packet, stamp):
-        """ Handle packets as they come in. """
+    def dataReceived(self, data):
+        """ Called when we have received data from the server.
+            
+            All we do here is reset the timeout deferred and stuff. Woo.
+        """
         if self.defer.timeout is not None:
             self.defer.timeout.cancel()
         self.defer.timeout = reactor.callLater(self.timeout_delay, self.timedout)
-        
-        ns = '~Global'
+    
+    def handle_pkt(self, packet, stamp):
+        """ Handle packets as they come in. """
+        ns = self.default_ns
         
         if packet.param:
             if packet.param[:5] in ('chat:', 'pchat'):

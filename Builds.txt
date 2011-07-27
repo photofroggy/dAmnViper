@@ -8,6 +8,10 @@
         ** This class acts as an interface definition for clients.
         * Added documentation for IClient.
         * Updated documentation for other objects.
+        * Created the tests package dAmnViper.test!
+        * Added dAmnViper.test.__init__!
+        * Added dAmnViper.test.test_packet_object!
+        * Improved performance of dAmnViper.base.Client.handle_pkt.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.

@@ -2,8 +2,11 @@
     Created by photofroggy
 '''
 
+import os
 import sys
 from twisted.internet import reactor
+
+sys.path.insert(0, os.curdir)
 
 from dAmnViper.base import dAmnClient
 from dAmnViper.examples.util import get_input
