@@ -12,7 +12,7 @@ from dAmnViper.parse import Packet
 class TestPacketObject(unittest.TestCase):
     """ Unit tests for the packet parser. """
     
-    def test_simple_packet(self):
+    def test_a_simple_packet(self):
         """ Test parsing a simple packet. """
         packet = Packet('command parameter\nargument=value\n\nbody')
         
@@ -32,10 +32,24 @@ class TestPacketObject(unittest.TestCase):
         """ Test parsing packets with broken arguments. """
         packet = Packet('command parameter\nargument=\n\nbody')
         
-        self.failIf(packet.args != {'argument': ''},
-            'Parser stored an incorrect value for the broken argument')
+        self.failIf('argument' in packet.args,
+            'Parser stored the broken argument')
         
         self.failIf(packet.body != 'body',
             'Parser did not store the correct packet body')
+    
+    def test_construct_packet(self):
+        """ Test constructing packets using the packet object. """
+        packet = Packet()
+        
+        packet.cmd = 'command'
+        packet.param = 'parameter'
+        packet.args['argument'] = 'value'
+        packet.body = 'body'
+        
+        raw = packet.compile()
+        
+        self.failIf(raw != 'command parameter\nargument=value\n\nbody',
+            'Packet object failed to correctly construct the raw packet')
 
 # EOF

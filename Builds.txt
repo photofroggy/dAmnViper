@@ -11,7 +11,9 @@
         * Created the tests package dAmnViper.test!
         * Added dAmnViper.test.__init__!
         * Added dAmnViper.test.test_packet_object!
+        * Added dAmnViper.test.test_protocol_parser!
         * Improved performance of dAmnViper.base.Client.handle_pkt.
+        * Renamed Channel.head to Channel.Head.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.

@@ -59,7 +59,7 @@ class Channel(object):
         types until the appropriate data is received from the server.
     """
     
-    class header:
+    class Header:
         def __init__(self):
             self.content = ''
             self.by = ''
@@ -67,8 +67,8 @@ class Channel(object):
     
     def __init__(self, namespace, shorthand):
         """Set up all our variables."""
-        self.title = Channel.header()
-        self.topic = Channel.header()
+        self.title = Channel.Header()
+        self.topic = Channel.Header()
         self.pc = {}
         self.pc_order = []
         self.member = {}
@@ -88,14 +88,17 @@ class Channel(object):
             self.title.content = data['value']
             self.title.by = data['by']
             self.title.ts = data['ts']
+        
         if data['p'] == 'topic':
             self.topic.content = data['value']
             self.topic.by = data['by']
             self.topic.ts = data['ts']
+        
         if data['p'] == 'privclasses':
             self.pc = Packet(data['value'], ':').args
             self.pc_order = sorted(self.pc.keys(), key=int)
             self.pc_order.reverse()
+        
         if data['p'] == 'members':
             member = Packet(data['value'])
             while member.cmd != None and len(member.args) > 0:

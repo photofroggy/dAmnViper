@@ -39,11 +39,26 @@ class Packet(object):
         while data[0]:
             arg = data[0].partition(sep)
             data = data[2].partition('\n')
-            if not arg[1]:
+            if not arg[1] or not arg[2]:
                 continue
             self.args[arg[0]] = arg[2]
         
         # And that's the end of that chapter.
+    
+    def compile(self, sep='='):
+        """ Return a plain text packet based on the packet's values. """
+        if self.cmd is None:
+            raise ValueError('Empty packet')
+        
+        return '{0}{1}\n{2}{3}'.format(
+            self.cmd,
+            '' if self.param is None else ' {0}'.format(self.param),
+            '' if not self.args else '{0}\n'.format(
+                '\n'.join([sep.join([key, value]) for key, value in self.args.iteritems()])
+            ),
+            '' if self.body is None else '\n{0}'.format(self.body)
+        )
+
 
 class Tablumps(object):
     """ dAmn tablumps parser.
@@ -326,8 +341,8 @@ class ProtocolParser(object):
     def logger(self, event, data, ns, pkt):
         """ Return a log_list (message, channel[, bool(showns)[, bool(mute)]]).
             
-            The message returned is based on the templates defined in
-            the ``messages`` attribute of this class.
+            The message returned is based on the templates defined in the
+            ``messages`` attribute of this class.
         """
         sequence = ['', ns, True, False, pkt]
         

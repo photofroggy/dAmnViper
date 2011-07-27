@@ -11,14 +11,18 @@ setup(name='dAmnViper',
     url='https://github.com/photofroggy/dAmnViper',
     packages=[
         'dAmnViper',
-        'dAmnViper.examples'
+        'dAmnViper.examples',
+        'dAmnViper.test'
     ],
+    provides=['dAmnViper'],
+    requires=['twisted (>=11.0.0)'],
     platforms=['Any'],
     classifiers=[
         'Natural Language :: English',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'License :: OSI Approved :: GNU General Public License (GPL)',
