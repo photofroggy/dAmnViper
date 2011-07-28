@@ -13,11 +13,13 @@
         * Added dAmnViper.test.test_packet_object!
         * Added dAmnViper.test.test_protocol_parser!
         * Added dAmnViper.test.test_client_connection!
+        * Added dAmnViper.test.test_packet_event_object!
         * Improved performance of dAmnViper.base.Client.handle_pkt.
         * Renamed Channel.head to Channel.Head.
         * Modified setup.py to cite dependencies.
         * Edited dAmnViper.base.Client.close to call loseConnection on the transport.
         ** Now sets flag.quitting to True also.
+        * Created the PacketEvent object.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.

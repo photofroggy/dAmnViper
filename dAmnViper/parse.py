@@ -61,6 +61,28 @@ class Packet(object):
             '' if self.body is None else '\n{0}'.format(self.body)
         )
 
+class PacketEvent(object):
+    """ Packet event.
+        
+        This object is a data structure which stores packet data under specific
+        keys according to the mapping rules defined in the Protocol Parser.
+    """
+    
+    def __init__(self, event, args=None):
+        self.name = event
+        self.args = args or []
+    
+    def arg(self, argument):
+        """ Return the value of the argument defined by ``argument``.
+            
+            Raises ``KeyError`` if the key is not found.
+        """
+        pass
+    
+    def keys(self):
+        """ Return an iterable containing the argument names. """
+        pass
+
 
 class Tablumps(object):
     """ dAmn tablumps parser.
