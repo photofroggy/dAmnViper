@@ -77,11 +77,15 @@ class PacketEvent(object):
             
             Raises ``KeyError`` if the key is not found.
         """
-        pass
+        for key, value in self.args:
+            if argument == key:
+                return value
+        
+        raise KeyError(argument)
     
     def keys(self):
         """ Return an iterable containing the argument names. """
-        pass
+        return ['user']
 
 
 class Tablumps(object):
