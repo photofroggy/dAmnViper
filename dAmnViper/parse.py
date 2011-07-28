@@ -50,12 +50,14 @@ class Packet(object):
         if self.cmd is None:
             raise ValueError('Empty packet')
         
+        args = '\n'.join([
+            sep.join([key, value]) for key, value in self.args.iteritems() if value
+        ]) or None
+        
         return '{0}{1}\n{2}{3}'.format(
             self.cmd,
             '' if self.param is None else ' {0}'.format(self.param),
-            '' if not self.args else '{0}\n'.format(
-                '\n'.join([sep.join([key, value]) for key, value in self.args.iteritems()])
-            ),
+            '' if args is None else '{0}\n'.format(args),
             '' if self.body is None else '\n{0}'.format(self.body)
         )
 
