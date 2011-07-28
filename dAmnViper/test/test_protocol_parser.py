@@ -17,24 +17,24 @@ class TestProtocolParser(unittest.TestCase):
     def setUp(self):
         self.parser = ProtocolParser()
         
-    def test_evt_namespace(self):
-        """ Test the ``evt_namespace`` method of the protocol parser. """
+    def test_event_name(self):
+        """ Test the ``event_name`` method of the protocol parser. """
         # Basic part packet
         packet = Packet('recv chat:Botdom\n\npart photofroggy\nr=timed out')
         
-        # evt_namespace should return `recv_part` in this case!
-        packet_name = self.parser.evt_namespace(packet)
+        # event_name should return `recv_part` in this case!
+        packet_name = self.parser.event_name(packet)
         
         self.failIf(packet_name != 'recv_part',
             'Protocol parser does not properly determine packet names')
     
-    def test_evt_namespace_unknown(self):
+    def test_event_name_unknown(self):
         """ Make sure the parser returns a correct value for an unknown packet. """
         # Unsupported packet.
         packet = Packet('foo bar\n')
         
-        # evt_namespace should return `unknown` in this case!
-        packet_name = self.parser.evt_namespace(packet)
+        # event_name should return `unknown` in this case!
+        packet_name = self.parser.event_name(packet)
         
         self.failIf(packet_name != 'unknown',
             'Protocol recognised an unsupported packet as a supported packet')
@@ -44,7 +44,7 @@ class TestProtocolParser(unittest.TestCase):
         # Testing the mapper using a recv_msg packet has the side-effect
         # of testing both the generic_recv and sort methods.
         packet = Packet('recv chat:Botdom\n\nmsg main\nfrom=photofroggy\n\nStupid message here.')
-        data = self.parser.mapper(packet)
+        event = self.parser.mapper(packet)
         
         ''' Time to make sure we got the right data out of the protocol parser.
             The data returned should look like this:
@@ -78,21 +78,19 @@ class TestProtocolParser(unittest.TestCase):
         ]
         
         for rule in expected:
-            self.failIf(not rule in data['rules'],
-                'Protocol parser failed to store {0} value in rules tuple'.format(rule[0]))
-            
-            self.failIf(not rule[0] in data['args'].keys(),
-                'Protocol parser stored no args dictionary entry for the {0} value'.format(rule[0]))
-            
-            self.failIf(rule[1] != data['args'][rule[0]],
-                'Protocol parser stored an incorrect {0} value in the args dictionary'.format(rule[0]))
+            try:
+                arg = event.arg(rule[0])
+                self.failIf(arg != rule[1],
+                    'Protocol parser stored an incorrect {0} value in the event object'.format(rule[0]))
+            except KeyError:
+                self.fail('Protocol parser failed to store {0} value in the event object'.format(rule[0]))
     
     def test_message_generating(self):
         """ Test the ``logger`` method to make sure it generates messages properly. """
         packet = Packet('recv chat:Botdom\n\nmsg main\nfrom=photofroggy\n\nStupid message here.')
         data = self.parser.mapper(packet)
         
-        log_list = self.parser.logger(data['event'], data['rules'], '#Botdom', packet.raw)
+        log_list = self.parser.logger(data, '#Botdom', packet.raw)
         
         self.failIf(log_list is None,
             'Protocol parser did not recognise the given packet')

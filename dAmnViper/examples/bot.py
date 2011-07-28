@@ -158,6 +158,10 @@ if __name__ == '__main__':
     sys.stdout.write('>> Starting the client...\n')
     sys.stdout.flush()
     
+    # Uncomment here if you want to try out going on a llama server.
+    # Change details as appropriate.
+    # dAmn.CONST.SERVER = 'plaguethenet.dyndns.org'
+    
     # Start the dAmn client.
     dAmn.start()
 

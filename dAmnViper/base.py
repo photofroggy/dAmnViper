@@ -500,15 +500,14 @@ class Client(IClient):
             elif packet.param[:6] == 'login:':
                 ns = '@' + packet.param[6:]
         
-        data = self.protocol.mapper(packet)
-        loglist = self.protocol.logger(data['event'], data['rules'], ns, packet)
+        evt = self.protocol.mapper(packet)
+        loglist = self.protocol.logger(evt, ns, packet)
         
         if loglist is not None:
             self.logger(*loglist, ts=stamp)
         
-        getattr(self, 'pkt_' + data['event'], self.pkt_unknown)(data['args'])
-        self.pkt_generic(data)
-        return data
+        getattr(self, 'pkt_' + evt.name, self.pkt_unknown)(evt)
+        self.pkt_generic(evt)
     
     # PROTOCOL OUTPUT
     # The methods below pretty much define the protocol for outgoing packets.
@@ -613,7 +612,7 @@ class Client(IClient):
     # BEGIN PROTOCOL INPUT METHODS
     # These methods process incomming data.
     
-    def pkt_generic(self, data):
+    def pkt_generic(self, event):
         """ We have received a packet!
             
             Override this method to do stuff whenever a packet is
@@ -632,11 +631,11 @@ class Client(IClient):
         """
         pass
     
-    def pkt_unknown(self, data):
+    def pkt_unknown(self, event):
         """ We received something unexpected. Oh well. """
         pass
         
-    def pkt_login(self, data):
+    def pkt_login(self, event):
         """ Received a login packet.
             
             When we receive a login packet, we need to determine whether
@@ -651,7 +650,7 @@ class Client(IClient):
         
         self.flag.loggingin = False
         
-        if data['e'] != 'ok':
+        if event.arg('e') != 'ok':
             self.nullflags()
             self.close()
             return
@@ -664,7 +663,7 @@ class Client(IClient):
         for ns in self.autojoin:
             self.join(self.format_ns(ns))
     
-    def pkt_join(self, data):
+    def pkt_join(self, event):
         """ Received a join packet.
             
             This is sent by the server when the client tries to join a
@@ -677,10 +676,9 @@ class Client(IClient):
             If the join failed, the client disconnects if there are no
             other joined channels. (``naive``)
         """
-        if data['e'] == 'ok':
-            self.channel[data['ns']] = Channel(
-                data['ns'], self.deform_ns(data['ns'])
-            )
+        if event.arg('e') == 'ok':
+            ns = event.arg('ns')
+            self.channel[ns] = Channel(ns, self.deform_ns(ns))
             return
         
         if len(self.channel) > 0:
@@ -688,26 +686,26 @@ class Client(IClient):
         
         self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
     
-    def pkt_part(self, data):
+    def pkt_part(self, event):
         """ Received a part packet.
             
             Similar to ``pkt_join``. This method determines whether or
             not the client is being kicked off the server.
         """
-        if data['ns'] in self.channel.keys():
-            del self.channel[data['ns']]
+        if event.arg('ns') in self.channel.keys():
+            del self.channel[event.arg('ns')]
         
         if len(self.channel) > 0:
             return
         
         if 'r' in data.keys():
-            if data['r'] in ('bad data', 'bad msg', 'msg too big') or 'killed:' in data['r']:
+            if event.arg('r') in ('bad data', 'bad msg', 'msg too big') or 'killed:' in event.arg('r'):
                 self.handle_pkt(
-                    Packet('disconnect{0}e={1}{2}{3}'.format("\n", data['r'], "\n", "\n")),
+                    Packet('disconnect{0}e={1}{2}{3}'.format("\n", event.arg('r'), "\n", "\n")),
                     time.time())
                 return
         
-        if data['e'] != 'ok':
+        if event.arg('e') != 'ok':
             return
         
         if self.channel or self.flag.disconnecting or self.flag.quitting:
@@ -715,21 +713,21 @@ class Client(IClient):
         
         self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
     
-    def pkt_property(self, data):
+    def pkt_property(self, event):
         """ Received a channel property packet.
             
             This method makes sure that the information received is
             stored in the right place.
         """
-        if data['p'] == 'info':
+        if event.arg('p') == 'info':
             return
         
-        if not data['ns'] in self.channel.keys():
+        if not event.arg('ns') in self.channel.keys():
             return
         
-        self.channel[data['ns']].process_property(data)
+        self.channel[event.arg('ns')].process_property(data)
     
-    def pkt_recv_join(self, data):
+    def pkt_recv_join(self, event):
         """ Received a recv_join packet.
             
             This happens when a user joins a channel in which the client
@@ -738,9 +736,9 @@ class Client(IClient):
             This method simply stores information about the user that
             just joined.
         """
-        self.channel[data['ns']].register_user(Packet(data['info']), data['user'])
+        self.channel[event.arg('ns')].register_user(Packet(event.arg('info')), event.arg('user'))
         
-    def pkt_recv_part(self, data):
+    def pkt_recv_part(self, event):
         """ Received a recv_part packet.
             
             This happens when a user leaves a channel in which the
@@ -748,35 +746,38 @@ class Client(IClient):
             
             Here, we remove any records of the user being in the channel.
         """
-        if not data['user'] in self.channel[data['ns']].member:
+        if not event.arg('user') in self.channel[event.arg('ns')].member:
             return
         
-        self.channel[data['ns']].member[data['user']]['con']-= 1
+        ns = event.arg('ns')
+        user = event.arg('user')
         
-        if self.channel[data['ns']].member[data['user']]['con'] == 0:
-            del self.channel[data['ns']].member[data['user']]
+        self.channel[ns].member[user]['con']-= 1
+        
+        if self.channel[ns].member[user]['con'] == 0:
+            del self.channel['ns'].member[user]
             
-    def pkt_recv_kicked(self, data):
+    def pkt_recv_kicked(self, event):
         """ Received a recv_kick packet.
             
             Similar to the ``pkt_recv_part`` method.
         """
-        if not data['user'] in self.channel[data['ns']].member:
+        if not event.arg('user') in self.channel[event.arg('ns')].member:
             return
-        del self.channel[data['ns']].member[data['user']]
+        del self.channel[event.arg('ns')].member[event.arg('user')]
         
-    def pkt_recv_privchg(self, data):
+    def pkt_recv_privchg(self, event):
         """ Received a recv_privchg packet.
             
             This happens when a user's privclass is changed. All we do
             here is make sure the user is recorded as being in that
             privclass.
         """
-        if not data['user'] in self.channel[data['ns']].member:
+        if not event.arg('user') in self.channel[event.arg('ns')].member:
             return
-        self.channel[data['ns']].member[data['user']]['pc'] = data['pc']
+        self.channel[event.arg('ns')].member[event.arg('user')]['pc'] = event.arg('pc')
     
-    def pkt_kicked(self, data):
+    def pkt_kicked(self, event):
         """ Received a kicked packet.
             
             This happens when the client is kicked from a channel.
@@ -784,21 +785,21 @@ class Client(IClient):
             Here we automatically rejoin the channel if we are permitted
             to do so.
         """
-        del self.channel[data['ns']]
+        del self.channel[event.arg('ns')]
         if self.flag.disconnecting or self.flag.quitting:
             return
         
         if 'r' in data.keys():
-            if 'autokicked' in data['r'].lower() or 'not privileged' in data['r'].lower():
+            if 'autokicked' in event.arg('r').lower() or 'not privileged' in event.arg('r').lower():
                 if len(self.channel) > 0:
                     return
                 self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
                 return
         
         if self.flag.autorejoin:
-            self.join(data['ns'])
+            self.join(event.arg('ns'))
     
-    def pkt_disconnect(self, data):
+    def pkt_disconnect(self, event):
         """ Received a disconnect packet from the server.
             
             Here we make sure the client does the right thing when a
@@ -814,7 +815,7 @@ class Client(IClient):
             self.flag.close = True
             return
         
-        if data['e'] == 'no joined channels' and len(self.autojoin) == 0:
+        if event.arg('e') == 'no joined channels' and len(self.autojoin) == 0:
             return
         
         if not self.flag.disconnecting:
@@ -927,7 +928,7 @@ class dAmnClient(Client):
         self.flag.connecting = True
         self.on_connection_start(connector)
     
-    def pkt_dAmnServer(self, data):
+    def pkt_dAmnServer(self, event):
         """ Received a dAmnServer packet.
             
             This method calls the ``login`` method of this class and

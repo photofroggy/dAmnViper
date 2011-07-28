@@ -279,8 +279,8 @@ class ProtocolParser(object):
     def __init__(self):
         self.tablumps = self.tablumps()
     
-    def evt_namespace(self, pkt):
-        # Work on the namespace of an event!
+    def event_name(self, pkt):
+        """ Determine the event name for a given packet. """
         namespace = pkt.cmd
         
         for conditions in self.names:
@@ -308,11 +308,11 @@ class ProtocolParser(object):
             Return data mapped according to the conditions defined in
             the ``maps`` attribute.
         """
-        store = {'args': {}, 'rules': [], 'event': self.evt_namespace(pkt)}
-        map = self.maps[store['event']]
-        return getattr(self, 'gen_'+pkt.cmd, self.sort)(store, pkt, map)
+        pevent = PacketEvent(self.event_name(pkt))
+        map = self.maps[pevent.name]
+        return getattr(self, 'gen_'+pkt.cmd, self.sort)(pevent, pkt, map)
         
-    def sort(self, store, data, map):
+    def sort(self, pevent, data, map):
         """ Sort data according to the conditions in the given map. """
         for i, cond in enumerate(map):
             if not cond:
@@ -325,8 +325,7 @@ class ProtocolParser(object):
                     cond = cond[1:]
                 
                 val = (data.param if not ptab else self.tablumps.parse(data.param)) if data.param else ''
-                store['rules'].append((cond, val))
-                store['args'][cond] = val
+                pevent.args.append((cond, val))
             
             if i is 1:
                 for item in cond:
@@ -344,8 +343,7 @@ class ProtocolParser(object):
                     if ptab:
                         val = self.tablumps.parse(val)
                     
-                    store['rules'].append((name, val))
-                    store['args'][name] = val
+                    pevent.args.append((name, val))
             
             if i is 2:
                 ptab = cond[0] == '*'
@@ -354,20 +352,18 @@ class ProtocolParser(object):
                     cond = cond[1:]
                 
                 val = (data.body if not ptab else self.tablumps.parse(data.body)) if data.body else ''
-                store['rules'].append((cond, val))
-                store['args'][cond] = val
+                pevent.args.append((cond, val))
             
             if i is 3:
                 store = self.sort(store, Packet(data.body), cond)
             
             if i is 4:
                 val = data.raw if data.raw else ''
-                store['rules'].append((cond, val))
-                store['args'][cond] = val
+                pevent.args.append((cond, val))
         
-        return store
+        return pevent
     
-    def logger(self, event, data, ns, pkt):
+    def logger(self, event, ns, pkt):
         """ Return a log_list (message, channel[, bool(showns)[, bool(mute)]]).
             
             The message returned is based on the templates defined in the
@@ -376,21 +372,21 @@ class ProtocolParser(object):
         sequence = ['', ns, True, False, pkt]
         
         # Return None if we don't have a message for this packet.
-        if not event in self.messages.keys():
+        if not event.name in self.messages.keys():
             return None
         
         # Use custom log method if available.
-        if hasattr(self, 'log_'+event):
-            return getattr(self, 'log_'+event)(event, data, ns, pkt)
+        if hasattr(self, 'log_'+event.name):
+            return getattr(self, 'log_'+event.name)(event, ns, pkt)
         
         # Reference message options.
-        options = self.messages[event]
+        options = self.messages[event.name]
         
         if options is None or len(options) == 0:
             return None
         
         # Format the associated message.
-        data = [(item[1] if bool(item[1]) else '') for item in data]
+        data = [(item[1] if bool(item[1]) else '') for item in event.args]
         msg = (options[0].replace('{ns}', ns)).format(*data)
         
         # Trim any empty brackets.
@@ -409,16 +405,14 @@ class ProtocolParser(object):
         
         return sequence
     
-    def gen_recv(self, store, data, map):
+    def gen_recv(self, pevent, data, map):
         # Generic recv packet mapping operations.
-        store['args']['ns'] = data.param
-        store['rules'].append(('ns', data.param))
-        store = self.sort(store, Packet(data.body), map)
+        pevent.args.append(('ns', data.param))
+        pevent = self.sort(pevent, Packet(data.body), map)
         
-        if store['event'] in ('recv_msg', 'recv_action'):
-            store['args']['raw'] = data.raw
-            store['rules'].append(('raw', data.raw))
+        if pevent.name in ('recv_msg', 'recv_action'):
+            pevent.args.append(('raw', data.raw))
         
-        return store
+        return pevent
 
 # EOF
