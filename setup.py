@@ -12,7 +12,8 @@ setup(name='dAmnViper',
     packages=[
         'dAmnViper',
         'dAmnViper.examples',
-        'dAmnViper.test'
+        'dAmnViper.test',
+        'dAmnViper.test.dummy'
     ],
     provides=['dAmnViper'],
     requires=['twisted (>=11.0.0)'],

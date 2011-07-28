@@ -345,7 +345,7 @@ class Client(IClient):
             ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''),
             False)
         
-        if self.connection.attempts == self.connection.limit:
+        if self.connection.attempts >= self.connection.limit:
             self.logger('** Failed to connect {0} times in a row.'.format(
                 self.connection.attempts), showns=False)
         else:
@@ -434,7 +434,8 @@ class Client(IClient):
     
     def close(self):
         """ This is how we close our connection! """
-        self.set_protocol()
+        self.flag.quitting = True # Safe to assume we don't want to connect again.
+        self.io.transport.loseConnection()
         
         if self.defer.timeout is not None:
             try:

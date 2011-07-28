@@ -1,4 +1,4 @@
-''' dAmnViper.test.dummy_server module
+''' dAmnViper.test.dummy.server module
     Created by photofroggy
     
     This module is intended to be used in conjunction with unit tests testing
@@ -10,6 +10,14 @@
     Note that the server here is based on the echoserv example provided by
     Twisted Matrix Laboratories.
 '''
+
+import os
+import sys
+import os.path
+
+os.chdir(os.path.dirname(__file__))
+os.chdir('../../../')
+sys.path.insert(0, os.getcwd())
 
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory
