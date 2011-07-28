@@ -85,7 +85,8 @@ class PacketEvent(object):
     
     def keys(self):
         """ Return an iterable containing the argument names. """
-        return ['user']
+        for pair in self.args:
+            yield pair[0]
 
 
 class Tablumps(object):
