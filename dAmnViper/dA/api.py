@@ -85,8 +85,6 @@ class Request(object):
     
     def got_data(self, data):
         """ Received when we have the response body. """
-        if self.d.callback is None:
-            return
         self.d.callback(Response(self.response, data))
 
 
@@ -166,7 +164,7 @@ class APIClient(object):
             state=req_state,
             code=self.auth_code
         ))
-        d.addCallback(self.handle_grant)
+        d.addCallbacks(self.handle_grant, self.handle_grant_fail)
         self._grantd = defer.Deferred()
         
         return self._grantd
@@ -179,6 +177,9 @@ class APIClient(object):
             return
         
         self._grantd.errback(response)
+    
+    def handle_grant_fail(self, err):
+        sefl._grantd.errback(err)
     
     def placebo(self, token=None):
         """ Check that the access token is still valid. """

@@ -25,6 +25,11 @@
         ** Client does not try to reconnect if the connection was closed in a non-clean fashion.
         ** Reasons for disconnects are properly displayed.
         * Implemented dAmnViper.parse.PacketEvent.
+        * Fixed errors in grant handling... probably...
+        * Loosely implemented deviantART's API.
+        ** Created dAmnViper.dA.
+        *** Created dAmnViper.dA.oauth.
+        *** Created dAmnViper.dA.api.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.
