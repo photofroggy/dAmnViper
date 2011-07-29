@@ -39,8 +39,6 @@ class oAuthClient(object):
         self._reactor = _reactor
         self.d = None
         self.port = port
-        self.state = state
-        self.agent = agent
     
     def serve(self):
         """ Start serving our oAuth response stuff. """

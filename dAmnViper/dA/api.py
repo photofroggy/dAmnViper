@@ -20,6 +20,9 @@ from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
 
+from dAmnViper.dA.oauth import oAuthClient
+
+
 class ResponseReceiver(protocol.Protocol):
     """ Response receiver.
         
@@ -44,7 +47,11 @@ class Response(object):
     
     def __init__(self, head, data):
         self.head = head
-        self.data = json.loads(data)
+        
+        try:
+            self.data = json.loads(data)
+        except Exception as e:
+            self.data = None
 
 
 class Request(object):
@@ -86,22 +93,46 @@ class Request(object):
 class APIClient(object):
     """ Client for deviantart.com's API. """
     
-    def __init__(self, _reactor, client_id, client_secret, token=None, agent='dAmnViper/dA/api/apiclient'):
+    def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, agent='dAmnViper/dA/api/apiclient'):
         self._reactor = _reactor
         self.client_id = client_id
         self.client_secret = client_secret
+        self.auth_code = auth_code
         self.token = token
         self.agent = agent
+        # Auth deferred
+        self._authd = None
+        self._grantd = None
         # URL stuff
         self.draft = 'draft15'
         self.api_url = 'https://www.deviantart.com/api/'
+    
+    def auth_app(self, port=8080):
+        """ Start the oAuth client. """
+        client = oAuthClient(self._reactor, port)
+        # Start serving requests.
+        d = client.serve()
+        # Defer the handling or whatever.
+        d.addCallbacks(self._authResponse, self._authResponse)
+        # Make a deferred to be used externally.
+        self._authd = defer.Deferred()
+        return self._authd
+    
+    def _authResponse(self, response):
+        """ Process the response from deviantart. """
+        if 'code' in response.args:
+            self.auth_code = response.args['code'][0]
+            self._authd.callback(response)
+            return
         
-    def url(self.klass, method=None, **kwargs):
+        self._authd.errback(response)
+    
+    def url(self, klass, method=None, **kwargs):
         """ Create an API URL based on the input. """
         args = {}
         
         for key, value in kwargs.iteritems():
-            if value is None:
+            if not value:
                 continue
             args[key] = value
         
@@ -120,15 +151,43 @@ class APIClient(object):
         Request(self._reactor, d, url, self.agent)
         return d
     
-    def grant(self, auth_code, req_state=None):
+    def grant(self, auth_code=None, req_state=None):
         """ Request a grant token. """
-        return self.makeRequest(self.url('grant',
+        if auth_code != None:
+            self.auth_code = auth_code
+        
+        if self.auth_code is None:
+            raise ValueError('Authorization code must not be None')
+        
+        d = self.makeRequest(self.url('grant',
             client_id=self.client_id,
             client_secret=self.client_secret,
             grant_type='authorization_code',
             state=req_state,
-            code=auth_code
+            code=self.auth_code
         ))
+        d.addCallback(self.handle_grant)
+        self._grantd = defer.Deferred()
+        
+        return self._grantd
+    
+    def handle_grant(self, response):
+        """ Handle the response to the grant api call. """
+        if response.data['status'] == 'success':
+            self.token = response.data['access_token']
+            self._grantd.callback(response)
+            return
+        
+        self._grantd.errback(response)
+    
+    def placebo(self, token=None):
+        """ Check that the access token is still valid. """
+        if token != None:
+            self.token = token
+        else:
+            self.requiresToken()
+        
+        return self.makeRequest(self.url('placebo', access_token=self.token))
     
     def user_whoami(self, token=None):
         """ Request info on the user. """
