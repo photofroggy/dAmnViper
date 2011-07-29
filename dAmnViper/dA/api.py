@@ -49,7 +49,7 @@ class Response(object):
         self.head = head
         
         try:
-            self.data = json.loads(data)
+            self.data = json.loads(str(data))
         except Exception as e:
             self.data = None
 
@@ -105,11 +105,11 @@ class APIClient(object):
         self._grantd = None
         # URL stuff
         self.draft = 'draft15'
-        self.api_url = 'https://www.deviantart.com/api/'
+        self.api_url = 'https://www.deviantart.com/'
     
-    def auth_app(self, port=8080):
+    def auth_app(self, port=8080, resource=None, html=None):
         """ Start the oAuth client. """
-        client = oAuthClient(self._reactor, port)
+        client = oAuthClient(self._reactor, port, resource, html)
         # Start serving requests.
         d = client.serve()
         # Defer the handling or whatever.
@@ -127,7 +127,7 @@ class APIClient(object):
         
         self._authd.errback(response)
     
-    def url(self, klass, method=None, **kwargs):
+    def url(self, klass, method=None, api='api', **kwargs):
         """ Create an API URL based on the input. """
         args = {}
         
@@ -136,8 +136,8 @@ class APIClient(object):
                 continue
             args[key] = value
         
-        return '{0}{1}/{2}{3}{4}'.format(self.api_url, self.draft, klass,
-            '' if method if None else '/{0}'.format(method),
+        return '{0}{1}/{2}/{3}{4}{5}'.format(self.api_url, api, self.draft, klass,
+            '' if method is None else '/{0}'.format(method),
             '' if not args else '?{0}'.format(urlencode(args)))
     
     def requiresToken(self):
@@ -159,7 +159,7 @@ class APIClient(object):
         if self.auth_code is None:
             raise ValueError('Authorization code must not be None')
         
-        d = self.makeRequest(self.url('grant',
+        d = self.makeRequest(self.url('token', api='oauth2',
             client_id=self.client_id,
             client_secret=self.client_secret,
             grant_type='authorization_code',
@@ -173,7 +173,7 @@ class APIClient(object):
     
     def handle_grant(self, response):
         """ Handle the response to the grant api call. """
-        if response.data['status'] == 'success':
+        if response.data is not None and response.data['status'] == 'success':
             self.token = response.data['access_token']
             self._grantd.callback(response)
             return

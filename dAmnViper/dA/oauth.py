@@ -32,20 +32,25 @@ def auth_url(self, client_id, client_secret, response_type='code', **kwargs):
 
 class oAuthClient(object):
     """ oAuth client object. """
-    resource = AuthResource
     
-    def __init__(self, _reactor, port=8080):
+    def __init__(self, _reactor, port=8080, resource=None, html=None):
         # Store input
         self._reactor = _reactor
         self.d = None
         self.port = port
+        self.resource = resource
+        self.html = html
+        
+        if self.resource is None:
+            self.resource = AuthResource
+        
+        if self.html is None:
+            self.html = html_response
     
     def serve(self):
         """ Start serving our oAuth response stuff. """
         self.d = defer.Deferred()
-        d = defer.Deferred()
-        d.addCallback(self.gotResponse)
-        site = server.Site(self.resource(self, d))
+        site = server.Site(self.resource(self.gotResponse, self.html))
         self.sitePort = self._reactor.listenTCP(self.port, site)
         return self.d
     
@@ -74,8 +79,12 @@ class AuthResource(resource.Resource):
     
     isLeaf=True
     
-    def __init__(self, deferred):
-        self.d = deferred
+    def __init__(self, callback, html=None):
+        self.callback = callback
+        self.html = html
+        
+        if self.html is None:
+            self.html = html_response
     
     def render_GET(self, request):
         """ Determine whether or not to pass the request to the application. """
@@ -87,8 +96,87 @@ class AuthResource(resource.Resource):
         if data is None:
             return ''
         
-        self.d.callback(request)
-        return 'Thanks! You can close this window now!'
+        try:
+            self.callback(request)
+        except Exception as e:
+            pass
+        
+        return self.html
+
+
+html_response="""<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset=utf-8 />
+        <title>Response Received!</title>
+    </head>
+    <body>
+        <style>
+            html, body {
+                font-family: Verdana, Arial, sans-serif;
+                line-height: 1.6em;
+                font-size: small;
+            }
+            
+            body {
+                width: 800px;
+                margin: 5em auto 5em auto;
+                background-color: #c6dbe0;
+                color: #157171;
+            }
+            
+            div {
+                background-color: #FFFFFF;
+                border: 1px solid #69aab8;
+                padding: 2em 5em;
+                -moz-border-radius: 3em;
+                -webkit-border-radius: 3em;
+                -moz-box-shadow: 2px 2px 3px #003333;
+                -webkit-box-shadow: 2px 2px 3px #003333;
+                box-shadow: 2px 2px 3px #003333;
+            }
+            
+            h1 {
+                font-family: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", "Times New Roman", Times, serif;
+                padding-bottom: .5em;
+                color: #168787;
+                font-size: 26pt;
+            }
+            
+            p {
+                margin: 5em
+                padding-right: 10em;
+                padding-left: 2em;
+            }
+            
+            em {
+                color: #003333;
+                font-style: normal;
+                font-weight: bold;
+            }
+            
+            @media print {
+                section { border: none; }
+                h1 {
+                    margin: .5em 0em 0em 0em;
+                    padding: 2px 50px 10px 10px;
+                    border-bottom: 3px solid #000000;
+                    color: #003333;
+                    font-size: 32pt;
+                }
+            }
+        </style>
+        <div>
+            <h1>Response received!</h1>
+            <p>
+                The application has now received your response. You can <em>
+                close this browser window</em> and return to your application.
+                Easy as pie.
+            </p>
+        </div>
+    </body>
+</html>
+"""
 
 
 # EOF
