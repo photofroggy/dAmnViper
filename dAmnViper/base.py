@@ -27,7 +27,7 @@ from dAmnViper.parse import ProtocolParser
 from dAmnViper.net import ConnectionFactory
 
 
-class IClient(object):
+class IChatClient(object):
     """ Interface for client objects for dAmn-like servers.
         
         **Note:** *This object does not use zope.interface. I find z.i to be
@@ -38,7 +38,7 @@ class IClient(object):
         
         All methods in this class raise a ``NotImplementedError`` exception if
         they are not overridden. Note that ``startedConnecting`` is *not*
-        overridden in the ``Client`` class, but is overridden in the
+        overridden in the ``ChatClient`` class, but is overridden in the
         ``dAmnClient`` class.
     """
     
@@ -151,7 +151,7 @@ class IClient(object):
         raise NotImplementedError
 
 
-class Client(IClient):
+class ChatClient(IChatClient):
     """ This class is a client for llama-like chat servers.
         
         The llama project can be seen here:
@@ -882,7 +882,7 @@ class Client(IClient):
         return (self.new_logger(showns=False), self.new_logger(showns=False, mute=(not self.flag.debug)))
 
 
-class dAmnClient(Client):
+class dAmnClient(ChatClient):
     """ This class provides an easy to use API for connecting to dAmn, and for
         interacting with the server.
         

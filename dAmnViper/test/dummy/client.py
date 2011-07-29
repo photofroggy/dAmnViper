@@ -6,9 +6,9 @@
     to the dAmnClient object provided in dAmnViper.base.
 '''
 
-from dAmnViper.base import Client
+from dAmnViper.base import ChatClient
 
-class DummyClient(Client):
+class DummyClient(ChatClient):
     """ Dummy chat client. """
 
     def __init__(self, *args, **kwargs):
