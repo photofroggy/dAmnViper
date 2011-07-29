@@ -104,8 +104,8 @@ class MyApplication(object):
 if __name__ == '__main__':
     
     app = MyApplication(reactor,
-        '25',
-        'c4c4ac91e8a385f73905874c6d81ce2c'
+        'client_id',
+        'client_secret'
     )
     
     app.start('http://localhost:8080')

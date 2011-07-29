@@ -11,6 +11,7 @@ setup(name='dAmnViper',
     url='https://github.com/photofroggy/dAmnViper',
     packages=[
         'dAmnViper',
+        'dAmnViper.dA',
         'dAmnViper.examples',
         'dAmnViper.test',
         'dAmnViper.test.dummy'
