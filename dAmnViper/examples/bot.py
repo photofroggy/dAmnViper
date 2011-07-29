@@ -11,7 +11,7 @@ sys.path.insert(0, os.curdir)
 from dAmnViper.base import dAmnClient
 from dAmnViper.examples.util import get_input
 
-# Extend the dAmnViper.dAmnSock class to add some functionality.
+# Extend the dAmnViper.dAmnClient class to add some functionality.
 
 class MyClient(dAmnClient):
     
@@ -35,16 +35,16 @@ class MyClient(dAmnClient):
         self.autojoin = autojoin or ['Botdom']
         self.callbacks = callbacks or Commands()
     
-    def on_connection_start(self, connector):
-        """ This method is called when dAmnViper has started connecting.
+    def on_client_start(self, *args, **kwargs):
+        """ This method is called when client has been told to start.
             
-            Use this method to start the reactor if needed. We can
-            assume we have everything needed to connect, as this method
-            is only called when dAmnViper actually succeeds in getting
-            an authtoken.
+            Use this method to start the reactor if needed. This method is
+            called after the client has started up, but is not called before
+            attempting reconnects. This means we can start the reactor here,
+            and we won't get any errors about trying to restart the reactor.
             
-            Technically you can achieve the same behaviour by using
-            something similar to this outside of the class::
+            Technically you can achieve the same behaviour by using something
+            similar to this outside of the class::
                 
                 dAmn.start()
                 if dAmn.flag.connecting:
@@ -53,11 +53,14 @@ class MyClient(dAmnClient):
             Using this method just makes things a little cleaner on the
             outside, but not really.
         """
-        reactor.run()
+        try:
+            reactor.run()
+        except KeyboardInterrupt:
+            pass
     
     def teardown(self):
         """ Overriding this method is required to stop the application.
-            This method is called by dAmnSock when the client has
+            This method is called by dAmnClient when the client has
             determined that it no longer needs to keep connected to
             dAmn, and has been fully disconnected from the server.
             
@@ -84,11 +87,10 @@ class MyClient(dAmnClient):
             message, and then passes the message to a command handler
             where appropriate.
         """
-        if data['message'][:len(self.trigger)] == self.trigger:
-            data['message'] = data['message'][len(self.trigger):]
-            data['args'] = data['message'].split(' ')
-            self.callbacks.handle(
-                data['args'][0].lower(), data, self)
+        if data('message')[:len(self.trigger)] == self.trigger:
+            data.arguments['message'] = data('message')[len(self.trigger):]
+            data.arguments['args'] = data('message').split(' ')
+            self.callbacks.handle(data('args')[0].lower(), data, self)
 
 
 class Commands(object):
@@ -103,21 +105,21 @@ class Commands(object):
     
     def cmd_about(self, data, dAmn):
         """Basic command callback."""
-        dAmn.say(data['ns'], data['user']+': Basic dAmn Viper bot by photofroggy.')
+        dAmn.say(data('ns'), data('user')+': Basic dAmn Viper bot by photofroggy.')
     
     def cmd_quit(self, data, dAmn):
         """Quit command! Enter the admin name in place of 'admin'!"""
-        if data['user'].lower() != dAmn._admin:
+        if data('user').lower() != dAmn._admin:
             return
-        dAmn.say(data['ns'], data['user']+': Closing down!')
+        dAmn.say(data('ns'), data('user')+': Closing down!')
         dAmn.flag.quitting = True
         dAmn.disconnect()
     
     def cmd_refresh(self, data, dAmn):
         """Quit command! Enter the admin name in place of 'admin'!"""
-        if data['user'].lower() != dAmn._admin:
+        if data('user').lower() != dAmn._admin:
             return
-        dAmn.say(data['ns'], data['user']+': Refreshing connection!')
+        dAmn.say(data('ns'), data('user')+': Refreshing connection!')
         dAmn.flag.disconnecting = True
         dAmn.disconnect()
         

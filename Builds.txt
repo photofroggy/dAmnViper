@@ -20,6 +20,11 @@
         * Edited dAmnViper.base.Client.close to call loseConnection on the transport.
         ** Now sets flag.quitting to True also.
         * Created the PacketEvent object.
+        * Fixed a bug in Client.pkt_recv_part.
+        * Reorganised the flow of the library a bit.
+        ** Client does not try to reconnect if the connection was closed in a non-clean fashion.
+        ** Reasons for disconnects are properly displayed.
+        * Implemented dAmnViper.parse.PacketEvent.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.

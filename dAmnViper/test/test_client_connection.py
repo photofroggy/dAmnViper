@@ -40,8 +40,8 @@ class TestClientConnection(unittest.TestCase):
         
         # Deferred callback and whatnot
         def callback(obj):
-            self.proc.terminate()
             self.client.close()
+            self.proc.terminate()
         
         def errback(obj):
             self.fail('Failed to connect to the dummy server and handshake.')

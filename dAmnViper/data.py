@@ -84,23 +84,23 @@ class Channel(object):
             This method makes sure that the data is stored in the right
             places in the object.
         """
-        if data['p'] == 'title':
-            self.title.content = data['value']
-            self.title.by = data['by']
-            self.title.ts = data['ts']
+        if data.arguments['p'] == 'title':
+            self.title.content = data.arguments['value']
+            self.title.by = data.arguments['by']
+            self.title.ts = data.arguments['ts']
         
-        if data['p'] == 'topic':
-            self.topic.content = data['value']
-            self.topic.by = data['by']
-            self.topic.ts = data['ts']
+        if data.arguments['p'] == 'topic':
+            self.topic.content = data.arguments['value']
+            self.topic.by = data.arguments['by']
+            self.topic.ts = data.arguments['ts']
         
-        if data['p'] == 'privclasses':
-            self.pc = Packet(data['value'], ':').args
+        if data.arguments['p'] == 'privclasses':
+            self.pc = Packet(data.arguments['value'], ':').args
             self.pc_order = sorted(self.pc.keys(), key=int)
             self.pc_order.reverse()
         
-        if data['p'] == 'members':
-            member = Packet(data['value'])
+        if data.arguments['p'] == 'members':
+            member = Packet(data.arguments['value'])
             while member.cmd != None and len(member.args) > 0:
                 self.register_user(member)
                 member = Packet(member.body)

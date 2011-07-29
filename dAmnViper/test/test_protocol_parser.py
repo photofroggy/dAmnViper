@@ -79,7 +79,7 @@ class TestProtocolParser(unittest.TestCase):
         
         for rule in expected:
             try:
-                arg = event.arg(rule[0])
+                arg = event(rule[0])
                 self.failIf(arg != rule[1],
                     'Protocol parser stored an incorrect {0} value in the event object'.format(rule[0]))
             except KeyError:

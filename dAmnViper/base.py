@@ -307,6 +307,9 @@ class Client(IClient):
         
         # Set up the client's main loop.
         self.defer.loop = reactor.callLater(1, self.mainloop, args, kwargs)
+        
+        # Allow subclasses to do whatever
+        self.on_client_start(*args, **kwargs)
     
     def makeConnection(self):
         """ Opens a connection to a dAmn-like server.
@@ -331,9 +334,18 @@ class Client(IClient):
     
     def connectionLost(self, connector, reason):
         """ This method is called when we lose our connection. """
-        self.logger('** Connection closed.{0}'.format(
-            ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''),
-            showns=False)
+        if isinstance(reason, str):
+            self.logger('** Connection closed. Reason: {0}'.format(reason),
+                showns=False)
+        else:
+            err = reason.getErrorMessage()
+            if 'non-clean fashion' in err:
+                self.logger('** Connection closed. Reason: Assumed interrupt (Control-C)',
+                    showns=False)
+                self.flag.quitting = True
+            else:
+                self.logger('** Connection closed. Reason: {0}'.format(err),
+                    showns=False)
         
         self.on_connection_lost(connector, reason)
         
@@ -392,6 +404,10 @@ class Client(IClient):
             It is a good idea to use this method to call reactor.stop().
         """
         raise NotImplementedError
+    
+    def on_client_start(self, *args, **kwargs):
+        """ Override as needed. """
+        pass
     
     def on_connection_start(self, connector):
         """ Override as needed. """
@@ -650,7 +666,7 @@ class Client(IClient):
         
         self.flag.loggingin = False
         
-        if event.arg('e') != 'ok':
+        if event.arguments['e'] != 'ok':
             self.nullflags()
             self.close()
             return
@@ -676,8 +692,8 @@ class Client(IClient):
             If the join failed, the client disconnects if there are no
             other joined channels. (``naive``)
         """
-        if event.arg('e') == 'ok':
-            ns = event.arg('ns')
+        if event.arguments['e'] == 'ok':
+            ns = event.arguments['ns']
             self.channel[ns] = Channel(ns, self.deform_ns(ns))
             return
         
@@ -692,20 +708,20 @@ class Client(IClient):
             Similar to ``pkt_join``. This method determines whether or
             not the client is being kicked off the server.
         """
-        if event.arg('ns') in self.channel.keys():
-            del self.channel[event.arg('ns')]
+        if event.arguments['ns'] in self.channel.keys():
+            del self.channel[event.arguments['ns']]
         
         if len(self.channel) > 0:
             return
         
-        if 'r' in data.keys():
-            if event.arg('r') in ('bad data', 'bad msg', 'msg too big') or 'killed:' in event.arg('r'):
+        if 'r' in event.arguments:
+            if event.arguments['r'] in ('bad data', 'bad msg', 'msg too big') or 'killed:' in event.arguments['r']:
                 self.handle_pkt(
-                    Packet('disconnect{0}e={1}{2}{3}'.format("\n", event.arg('r'), "\n", "\n")),
+                    Packet('disconnect{0}e={1}{2}{3}'.format("\n", event.arguments['r'], "\n", "\n")),
                     time.time())
                 return
         
-        if event.arg('e') != 'ok':
+        if event.arguments['e'] != 'ok':
             return
         
         if self.channel or self.flag.disconnecting or self.flag.quitting:
@@ -719,13 +735,13 @@ class Client(IClient):
             This method makes sure that the information received is
             stored in the right place.
         """
-        if event.arg('p') == 'info':
+        if event.arguments['p'] == 'info':
             return
         
-        if not event.arg('ns') in self.channel.keys():
+        if not event.arguments['ns'] in self.channel.keys():
             return
         
-        self.channel[event.arg('ns')].process_property(data)
+        self.channel[event.arguments['ns']].process_property(event)
     
     def pkt_recv_join(self, event):
         """ Received a recv_join packet.
@@ -736,7 +752,7 @@ class Client(IClient):
             This method simply stores information about the user that
             just joined.
         """
-        self.channel[event.arg('ns')].register_user(Packet(event.arg('info')), event.arg('user'))
+        self.channel[event.arguments['ns']].register_user(Packet(event.arguments['info']), event.arguments['user'])
         
     def pkt_recv_part(self, event):
         """ Received a recv_part packet.
@@ -746,25 +762,28 @@ class Client(IClient):
             
             Here, we remove any records of the user being in the channel.
         """
-        if not event.arg('user') in self.channel[event.arg('ns')].member:
+        if not event.arguments['ns'] in self.channel:
             return
         
-        ns = event.arg('ns')
-        user = event.arg('user')
+        if not event.arguments['user'] in self.channel[event.arguments['ns']].member:
+            return
+        
+        ns = event.arguments['ns']
+        user = event.arguments['user']
         
         self.channel[ns].member[user]['con']-= 1
         
         if self.channel[ns].member[user]['con'] == 0:
-            del self.channel['ns'].member[user]
+            del self.channel[ns].member[user]
             
     def pkt_recv_kicked(self, event):
         """ Received a recv_kick packet.
             
             Similar to the ``pkt_recv_part`` method.
         """
-        if not event.arg('user') in self.channel[event.arg('ns')].member:
+        if not event.arguments['user'] in self.channel[event.arguments['ns']].member:
             return
-        del self.channel[event.arg('ns')].member[event.arg('user')]
+        del self.channel[event.arguments['ns']].member[event.arguments['user']]
         
     def pkt_recv_privchg(self, event):
         """ Received a recv_privchg packet.
@@ -773,9 +792,9 @@ class Client(IClient):
             here is make sure the user is recorded as being in that
             privclass.
         """
-        if not event.arg('user') in self.channel[event.arg('ns')].member:
+        if not event.arguments['user'] in self.channel[event.arguments['ns']].member:
             return
-        self.channel[event.arg('ns')].member[event.arg('user')]['pc'] = event.arg('pc')
+        self.channel[event.arguments['ns']].member[event.arguments['user']]['pc'] = event.arguments['pc']
     
     def pkt_kicked(self, event):
         """ Received a kicked packet.
@@ -785,19 +804,19 @@ class Client(IClient):
             Here we automatically rejoin the channel if we are permitted
             to do so.
         """
-        del self.channel[event.arg('ns')]
+        del self.channel[event.arguments['ns']]
         if self.flag.disconnecting or self.flag.quitting:
             return
         
-        if 'r' in data.keys():
-            if 'autokicked' in event.arg('r').lower() or 'not privileged' in event.arg('r').lower():
+        if 'r' in event.arguments:
+            if 'autokicked' in event.arguments['r'].lower() or 'not privileged' in event.arguments['r'].lower():
                 if len(self.channel) > 0:
                     return
                 self.handle_pkt(Packet('disconnect\ne=no joined channels\n\n'), time.time())
                 return
         
         if self.flag.autorejoin:
-            self.join(event.arg('ns'))
+            self.join(event.arguments['ns'])
     
     def pkt_disconnect(self, event):
         """ Received a disconnect packet from the server.
@@ -815,7 +834,7 @@ class Client(IClient):
             self.flag.close = True
             return
         
-        if event.arg('e') == 'no joined channels' and len(self.autojoin) == 0:
+        if event.arguments['e'] == 'no joined channels' and len(self.autojoin) == 0:
             return
         
         if not self.flag.disconnecting:

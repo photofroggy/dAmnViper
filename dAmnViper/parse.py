@@ -8,6 +8,7 @@
 '''
 
 import re
+from collections import OrderedDict
 
 class Packet(object):
     """ Use this class to parse dAmn packets.
@@ -70,23 +71,16 @@ class PacketEvent(object):
     
     def __init__(self, event, args=None):
         self.name = event
-        self.args = args or []
+        self.arguments = OrderedDict() if args is None else OrderedDict(args)
     
-    def arg(self, argument):
-        """ Return the value of the argument defined by ``argument``.
-            
-            Raises ``KeyError`` if the key is not found.
-        """
-        for key, value in self.args:
-            if argument == key:
-                return value
+    def __call__(self, argument, value=None):
+        """ Shortcut for `.arg` and `.set_arg`. """
         
-        raise KeyError(argument)
-    
-    def keys(self):
-        """ Return an iterable containing the argument names. """
-        for pair in self.args:
-            yield pair[0]
+        if value is None:
+            return self.arguments[argument]
+        
+        self.arguments[argument] = value
+        return value
 
 
 class Tablumps(object):
@@ -325,7 +319,7 @@ class ProtocolParser(object):
                     cond = cond[1:]
                 
                 val = (data.param if not ptab else self.tablumps.parse(data.param)) if data.param else ''
-                pevent.args.append((cond, val))
+                pevent.arguments[cond] = val
             
             if i is 1:
                 for item in cond:
@@ -343,7 +337,7 @@ class ProtocolParser(object):
                     if ptab:
                         val = self.tablumps.parse(val)
                     
-                    pevent.args.append((name, val))
+                    pevent.arguments[name] = val
             
             if i is 2:
                 ptab = cond[0] == '*'
@@ -352,14 +346,14 @@ class ProtocolParser(object):
                     cond = cond[1:]
                 
                 val = (data.body if not ptab else self.tablumps.parse(data.body)) if data.body else ''
-                pevent.args.append((cond, val))
+                pevent.arguments[cond] = val
             
             if i is 3:
                 store = self.sort(store, Packet(data.body), cond)
             
             if i is 4:
                 val = data.raw if data.raw else ''
-                pevent.args.append((cond, val))
+                pevent.arguments[cond] = val
         
         return pevent
     
@@ -386,7 +380,7 @@ class ProtocolParser(object):
             return None
         
         # Format the associated message.
-        data = [(item[1] if bool(item[1]) else '') for item in event.args]
+        data = event.arguments.values()
         msg = (options[0].replace('{ns}', ns)).format(*data)
         
         # Trim any empty brackets.
@@ -407,11 +401,11 @@ class ProtocolParser(object):
     
     def gen_recv(self, pevent, data, map):
         # Generic recv packet mapping operations.
-        pevent.args.append(('ns', data.param))
+        pevent.arguments['ns'] = data.param
         pevent = self.sort(pevent, Packet(data.body), map)
         
         if pevent.name in ('recv_msg', 'recv_action'):
-            pevent.args.append(('raw', data.raw))
+            pevent.arguments['raw'] = data.raw
         
         return pevent
 
