@@ -47,28 +47,14 @@ class TestProtocolParser(unittest.TestCase):
         event = self.parser.mapper(packet)
         
         ''' Time to make sure we got the right data out of the protocol parser.
-            The data returned should look like this:
+            The object returned should contain this data:
                 
-                data = {
-                    'event': 'recv_msg',
-                    'args': {
-                        'ns': 'chat:Botdom',
-                        'user': 'photofroggy',
-                        'message': 'Stupid message here.',
-                        'raw': 'recv chat:Botdom\n\nmsg main\nfrom=photofroggy\n\nStupid message here.'
-                    },
-                    'rules': [
-                        ('ns', 'chat:Botdom'),
-                        ('user', 'photofroggy'),
-                        ('message', 'Stupid message here.'),
-                        ('raw', 'recv chat:Botdom\n\nmsg main\nfrom=photofroggy\n\nStupid message here.')
-                    ]
-                }
-            
-            There is always an entry in the 'args' dictionary for every tuple
-            in 'rules', so for every tuple in 'rules', we know that the
-            corresponding 'args' key-value pair exists. This could make testing
-            easier, but it's trivial to test both.
+                event.args = OrderedDict({
+                    'ns': 'chat:Botdom',
+                    'user': 'photofroggy',
+                    'message': 'Stupid message here.',
+                    'raw': 'recv chat:Botdom\n\nmsg main\nfrom=photofroggy\n\nStupid message here.'
+                })
         '''
         expected = [
             ('ns', 'chat:Botdom'),
