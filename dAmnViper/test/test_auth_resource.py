@@ -46,7 +46,7 @@ class TestAuthResource(unittest.TestCase):
         def setFlag(req):
             req.flag = True
         
-        response = AuthResource(failRequest).render_GET(req)
+        response = AuthResource(setFlag).render_GET(req)
         
         self.failIf(not req.flag, 'callback not called for a valid request')
         
