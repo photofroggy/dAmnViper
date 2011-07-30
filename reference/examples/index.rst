@@ -1,0 +1,23 @@
+7. ``examples`` package
+=======================
+
+This package contains examples on how to use ``dAmnViper``. Run these
+examples using the following command::
+
+    python -m dAmnViper.examples.example_name
+
+For example, to run the :py:mod:`example bot <dAmnViper.examples.bot>`,
+use the following::
+
+    python -m dAmnViper.examples.bot
+
+Simple as that!
+
+**Package reference:**
+
+.. toctree::
+    :maxdepth: 2
+
+    bare
+    bot
+    

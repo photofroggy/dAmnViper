@@ -1,0 +1,174 @@
+1. ``base`` module
+==============================================
+This module provides the dAmnClient class, which acts as an API for
+connecting to and interacting with deviantART.com's chatrooms. This is
+achieved using Twisted.
+
+``dAmnClient`` is built on top of the ``Client`` class, which provides the
+basic functionality required to connect to a dAmn server. The ``dAmnClient``
+class handles the server handshake and sets the right information for the
+connection, so should be used instead of the ``Client`` class in most cases.
+
+1.1. ``IClient`` - Basic client interface
+------------------------------------------
+.. _clientinterface
+
+.. autoclass:: dAmnViper.base.IClient
+    :members:
+
+
+1.2. ``Client`` - The base chat client API
+------------------------------------------
+.. _baseclient:
+
+.. autoclass:: dAmnViper.base.Client
+    :members: __doc__
+    :member-order: bysource
+
+1.2.1. Main methods
++++++++++++++++++++
+
+These methods should be a point of interest in understanding how
+the class starts up and handles the connection.
+
+.. automethod:: dAmnViper.base.Client.init
+
+.. automethod:: dAmnViper.base.Client.populate_objects
+
+.. automethod:: dAmnViper.base.Client.nullflags
+
+.. automethod:: dAmnViper.base.Client.set_protocol
+
+.. automethod:: dAmnViper.base.Client.start
+
+.. automethod:: dAmnViper.base.Client.makeConnection
+
+.. automethod:: dAmnViper.base.Client.connectionLost
+
+.. automethod:: dAmnViper.base.Client.connectionFailed
+
+.. automethod:: dAmnViper.base.Client.connectionMade
+
+.. automethod:: dAmnViper.base.Client.persist
+
+.. automethod:: dAmnViper.base.Client.teardown
+
+.. automethod:: dAmnViper.base.Client.mainloop
+
+.. automethod:: dAmnViper.base.Client.on_loop
+
+.. automethod:: dAmnViper.base.Client.timedout
+
+.. automethod:: dAmnViper.base.Client.close
+
+1.2.2. Connection events
+++++++++++++++++++++++++
+As well as the above methods, there are dummy methods which are called for
+different events to do with the connection. These methods can be overwritten
+if your client needs to do anything specific on those events. Those methods are
+as follows:
+    
+    * ``on_connection_start`` - Parameters: connector
+    * ``on_connection_lost`` - Parameters: connector, reason
+    * ``on_connection_failed`` - Parameters: connector, reason
+    * ``on_connection_made`` - No input.
+
+1.1.3. Sending data
++++++++++++++++++++
+These methods are used to send data to the server. You should use these
+methods if you want to interact with dAmn.
+
+.. automethod:: dAmnViper.base.Client.send
+
+.. automethod:: dAmnViper.base.Client.raw
+
+.. automethod:: dAmnViper.base.Client.pong
+
+.. automethod:: dAmnViper.base.Client.handshake
+
+.. automethod:: dAmnViper.base.Client.login
+
+.. automethod:: dAmnViper.base.Client.join
+
+.. automethod:: dAmnViper.base.Client.part
+
+.. automethod:: dAmnViper.base.Client.say
+
+.. automethod:: dAmnViper.base.Client.npmsg
+
+.. automethod:: dAmnViper.base.Client.action
+
+.. automethod:: dAmnViper.base.Client.me
+
+.. automethod:: dAmnViper.base.Client.promote
+
+.. automethod:: dAmnViper.base.Client.demote
+
+.. automethod:: dAmnViper.base.Client.kick
+
+.. automethod:: dAmnViper.base.Client.ban
+
+.. automethod:: dAmnViper.base.Client.unban
+
+.. automethod:: dAmnViper.base.Client.get
+
+.. automethod:: dAmnViper.base.Client.set
+
+.. automethod:: dAmnViper.base.Client.admin
+
+.. automethod:: dAmnViper.base.Client.disconnect
+
+.. automethod:: dAmnViper.base.Client.kill
+
+1.2.4. Receiving data
++++++++++++++++++++++
+These methods are used to handle incoming data.
+
+.. automethod:: dAmnViper.base.Client.handle_pkt
+
+.. automethod:: dAmnViper.base.Client.pkt_generic
+
+.. automethod:: dAmnViper.base.Client.pkt_unknown
+
+.. automethod:: dAmnViper.base.Client.pkt_login
+
+.. automethod:: dAmnViper.base.Client.pkt_join
+
+.. automethod:: dAmnViper.base.Client.pkt_part
+
+.. automethod:: dAmnViper.base.Client.pkt_property
+
+.. automethod:: dAmnViper.base.Client.pkt_recv_join
+
+.. automethod:: dAmnViper.base.Client.pkt_recv_part
+
+.. automethod:: dAmnViper.base.Client.pkt_recv_kicked
+
+.. automethod:: dAmnViper.base.Client.pkt_recv_privchg
+
+.. automethod:: dAmnViper.base.Client.pkt_kicked
+
+.. automethod:: dAmnViper.base.Client.pkt_disconnect
+
+1.2.5. Utility methods
+++++++++++++++++++++++
+These methods are general purpose methods which can be used in your
+application.
+
+.. automethod:: dAmnViper.base.Client.format_ns
+
+.. automethod:: dAmnViper.base.Client.deform_ns
+
+.. automethod:: dAmnViper.base.Client.logger
+
+.. automethod:: dAmnViper.base.Client.new_logger
+
+.. automethod:: dAmnViper.base.Client.get_write_pair
+
+1.3. ``dAmnClient`` - Basic dAmn client class
+---------------------------------------------
+.. _damnclient:
+
+.. autoclass:: dAmnViper.base.dAmnClient
+    :members:
+
