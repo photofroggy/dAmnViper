@@ -1,4 +1,5 @@
 ''' dAmnViper setup.
+    Created by photofroggy
 '''
 
 from distutils.core import setup

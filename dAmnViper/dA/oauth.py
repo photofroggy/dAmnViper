@@ -109,8 +109,6 @@ html_response="""<!DOCTYPE html>
     <head>
         <meta charset=utf-8 />
         <title>Response Received!</title>
-    </head>
-    <body>
         <style>
             html, body {
                 font-family: Verdana, Arial, sans-serif;
@@ -166,6 +164,8 @@ html_response="""<!DOCTYPE html>
                 }
             }
         </style>
+    </head>
+    <body>
         <div>
             <h1>Response received!</h1>
             <p>
