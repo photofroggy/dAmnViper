@@ -62,12 +62,17 @@ class Request(object):
         Gives response data to the callback given to the contructor.
     """
     
-    def __init__(self, _reactor, deferred, url, agent='dAmnViper/dA/api/request'):
+    def __init__(self, _reactor, deferred, url, agent='dAmnViper/dA/api/request', response=None):
         self._reactor = _reactor
         self.d = deferred
         self.agent = agent
         self.url = url
         self.agent = agent
+        self.response = response
+        
+        if self.response is None:
+            self.response = Response
+        
         self.start_request()
     
     def start_request(self):
@@ -85,7 +90,7 @@ class Request(object):
     
     def got_data(self, data):
         """ Received when we have the response body. """
-        self.d.callback(Response(self.response, data))
+        self.d.callback(self.response(self.response, data))
 
 
 class APIClient(object):
@@ -104,6 +109,12 @@ class APIClient(object):
         # URL stuff
         self.draft = 'draft15'
         self.api_url = 'https://www.deviantart.com/'
+        # Custom? Maybe
+        self.init()
+    
+    def init(self):
+        """ Override this method if you want to customise the class a bit. """
+        pass
     
     def auth_app(self, port=8080, resource=None, html=None):
         """ Start the oAuth client. """
@@ -143,10 +154,10 @@ class APIClient(object):
         if self.token is None:
             raise ValueError('token required for this method')
     
-    def makeRequest(self, url):
+    def makeRequest(self, url, response_obj=None):
         """ Send a request to the api. """
         d = defer.Deferred()
-        Request(self._reactor, d, url, self.agent)
+        Request(self._reactor, d, url, self.agent, response_obj)
         return d
     
     def grant(self, auth_code=None, req_state=None):
