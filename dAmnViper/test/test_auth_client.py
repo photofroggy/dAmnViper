@@ -20,9 +20,6 @@ from dAmnViper.test.dummy import oauth
 class TestOAuthClient(unittest.TestCase):
     """ Unit tests for the oAuthClient object. """
     
-    server = None
-    proc = None
-    
     def test_invalid_request(self):
         """ Test what happens when an invalid request is sent to the server. """
         
