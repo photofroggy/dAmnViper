@@ -155,11 +155,22 @@ class APIClient(object):
         if self.token is None:
             raise ValueError('token required for this method')
     
-    def makeRequest(self, url, response_obj=None):
-        """ Send a request to the api. """
+    def sendRequest(self, url, response_obj=None):
+        """ Send a request to the api.
+            
+            Returns a ``Deferred`` object.
+        """
         d = defer.Deferred()
         Request(self._reactor, d, url, self.agent, response_obj)
         return d
+    
+    def call(self, klass, method=None, api='api', **kwargs):
+        """ Call an api method.
+            
+            This method is a shortcut for combining both ``.sendRequest`` and
+            ``.url``.
+        """
+        return self.sendRequest(self.url(klass, method, api, **kwargs))
     
     def grant(self, auth_code=None, req_state=None):
         """ Request a grant token. """
@@ -169,7 +180,7 @@ class APIClient(object):
         if self.auth_code is None:
             raise ValueError('Authorization code must not be None')
         
-        d = self.makeRequest(self.url('token', api='oauth2',
+        d = self.sendRequest(self.url('token', api='oauth2',
             client_id=self.client_id,
             client_secret=self.client_secret,
             grant_type='authorization_code',
@@ -191,6 +202,7 @@ class APIClient(object):
         self._grantd.errback(response)
     
     def handle_grant_fail(self, err):
+        """ When the grant token request fails, handle it here. """
         sefl._grantd.errback(err)
     
     def placebo(self, token=None):
@@ -200,7 +212,7 @@ class APIClient(object):
         else:
             self.requiresToken()
         
-        return self.makeRequest(self.url('placebo', access_token=self.token))
+        return self.sendRequest(self.url('placebo', access_token=self.token))
     
     def user_whoami(self, token=None):
         """ Request info on the user. """
@@ -209,7 +221,7 @@ class APIClient(object):
         else:
             self.requiresToken()
         
-        return self.makeRequest(self.url('user', 'whoami', access_token=self.token))
+        return self.sendRequest(self.url('user', 'whoami', access_token=self.token))
     
     def user_damntoken(self, token=None):
         """ Request info on the user. """
@@ -218,7 +230,7 @@ class APIClient(object):
         else:
             self.requiresToken()
         
-        return self.makeRequest(self.url('user', 'damntoken', access_token=self.token))
+        return self.sendRequest(self.url('user', 'damntoken', access_token=self.token))
 
 
 # EOF

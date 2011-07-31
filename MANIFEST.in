@@ -1,2 +1,2 @@
-include README.txt Builds.txt License.txt
+include README.rst Builds.txt License.txt
 recursive-include dAmnViper *.py
