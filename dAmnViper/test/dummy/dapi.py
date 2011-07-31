@@ -22,7 +22,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         
     def do_POST(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.payload = self.rfile.read(int(self.headers.get('Content-length', '0')))
         
@@ -31,6 +31,8 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         
         if '/user/whoami' in self.path:
             self.wfile.write('{"username": "photofroggy", "symbol": "~"}')
+        
+        self.wfile.close()
     
     def log_request(self, *args, **kwargs):
         pass

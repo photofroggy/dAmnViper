@@ -64,11 +64,12 @@ class TestAPIClient(unittest.TestCase):
                 self.fail('Failed to process response{0}'.format(
                 '' if not response.raw_data else ' from "{0}"'.format(response.raw_data)))
         
+        d.addCallback(handle)
+        
         def timeout():
             self.proc.terminate()
             self.fail('No response received')
         
-        d.addCallback(handle)
         self.delayed = reactor.callLater(10, timeout)
         
         return d

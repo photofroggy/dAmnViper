@@ -69,10 +69,10 @@ class Request(object):
         self.agent = agent
         self.url = url
         self.agent = agent
-        self.response = response
+        self.response_obj = response
         
-        if self.response is None:
-            self.response = Response
+        if self.response_obj is None:
+            self.response_obj = Response
         
         self.start_request()
     
@@ -91,7 +91,7 @@ class Request(object):
     
     def got_data(self, data):
         """ Received when we have the response body. """
-        self.d.callback(self.response(self.response, data))
+        self.d.callback(self.response_obj(self.response, data))
 
 
 class APIClient(object):
