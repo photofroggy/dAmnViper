@@ -44,6 +44,7 @@ class TestClientConnection(unittest.TestCase):
             self.proc.terminate()
         
         def errback(obj):
+            self.proc.terminate()
             self.fail('Failed to connect to the dummy server and handshake.')
         
         self.d = defer.Deferred()
