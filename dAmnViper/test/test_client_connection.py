@@ -11,8 +11,6 @@ import subprocess
 
 from twisted.trial import unittest
 from twisted.internet import defer
-from twisted.python.filepath import FilePath
-from twisted.internet.protocol import ProcessProtocol
 
 from dAmnViper.test.dummy.client import DummyClient
 
@@ -44,6 +42,7 @@ class TestClientConnection(unittest.TestCase):
             self.proc.terminate()
         
         def errback(obj):
+            self.proc.terminate()
             self.fail('Failed to connect to the dummy server and handshake.')
         
         self.d = defer.Deferred()

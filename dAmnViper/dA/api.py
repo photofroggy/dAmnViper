@@ -47,6 +47,7 @@ class Response(object):
     
     def __init__(self, head, data):
         self.head = head
+        self.raw_data = data
         
         try:
             self.data = json.loads(str(data))

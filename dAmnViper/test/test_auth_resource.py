@@ -39,8 +39,18 @@ class TestAuthResource(unittest.TestCase):
         self.failIf(response != '',
             'empty request actually returned something')
     
-    def test_valid_response(self):
+    def test_valid_request(self):
         """ Test what happens when the good stuff is given. """
+        req = oauth.Request(args={'code':['something']})
+        
+        def setFlag(req):
+            req.flag = True
+        
+        response = AuthResource(setFlag).render_GET(req)
+        
+        self.failIf(not req.flag, 'callback not called for a valid request')
+        
+        self.failIf(not response, 'empty response given for a valid request')
 
 
 # EOF
