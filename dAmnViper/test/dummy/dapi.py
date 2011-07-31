@@ -29,7 +29,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         if self.path == '/':
             self.wfile.write('{"lol": "wot"}')
         
-        if self.path == '/user/whoami':
+        if '/user/whoami' in self.path:
             self.wfile.write('{"username": "photofroggy", "symbol": "~"}')
     
     def log_request(self, *args, **kwargs):
