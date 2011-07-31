@@ -3,7 +3,7 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
-    Build 57 () Twister
+    Build 57 (31072011-192229) Twister
         * Created dAmnViper.base.IClient.
         ** This class acts as an interface definition for clients.
         * Added documentation for IClient.
@@ -31,6 +31,7 @@
         ** Created dAmnViper.dA.
         *** Created dAmnViper.dA.oauth.
         *** Created dAmnViper.dA.api.
+        * Modified base client classes so it is easier to change the method used for output to screen.
     
     Build 56 (26072011-013703) Twister
         * Cleaned up the Login class a little.

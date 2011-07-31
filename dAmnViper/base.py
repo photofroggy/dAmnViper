@@ -169,8 +169,8 @@ class ChatClient(IChatClient):
         name = 'dAmn Viper'
         version = 3
         state = 'Beta'
-        build = 56
-        stamp = '26072011-013703'
+        build = 57
+        stamp = '31072011-192229'
         series = 'Twister'
         author = 'photofroggy'
     
@@ -256,18 +256,22 @@ class ChatClient(IChatClient):
     Protocol = ProtocolParser
     
     autojoin = ['chat:Botdom']
-    channel = {}
-    
-    timeout_delay = 120
-    
     default_ns = '~Global'
+    timeout_delay = 120
+    channel = {}
+    stdout = None
+    
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, stdout=None, *args, **kwargs):
         # Create an instance of our protocol class. Do anything else required.
+        
         self.populate_objects()
         self.agent = 'dAmnViper/{0} (Python) viper/base/Client/{1}.{2}'.format(
             self.platform.series, self.platform.version, self.platform.build)
         self.default_ns = '~Global'
+        
+        self.stdout = stdout if stdout is not None else sys.stdout.write
+        
         self.init(*args, **kwargs)
     
     def init(self, *args, **kwargs):
@@ -865,10 +869,9 @@ class ChatClient(IChatClient):
         ns = ns + '|' if showns else ''
         
         try:
-            sys.stdout.write('{0}|{1} {2}\n'.format(stamp, ns, msg))
+            self.stdout('{0}|{1} {2}\n'.format(stamp, ns, msg))
         except:
-            sys.stdout.write('{0}| >> I failed to display a message! Sorry.\n'.format(stamp))
-        sys.stdout.flush()
+            self.stdout('{0}| >> I failed to display a message! Sorry.\n'.format(stamp))
         
     def new_logger(self, ns=None, showns=True, mute=False):
         """ Returns a wrapped logger method. """
@@ -921,17 +924,20 @@ class dAmnClient(ChatClient):
         object, and using this to call ``reactor.run()``.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, stdout=None, *args, **kwargs):
         """ Initiate everything. """
         # Populate our attributes.
         self.populate_objects()
         self.agent = 'dAmnViper/{0} (Python) viper/base/dAmnClient/{1}.{2}'.format(
             self.platform.series, self.platform.version, self.platform.build)
         self.default_ns = '~Global'
+        self.stdout = stdout if stdout is not None else sys.stdout.write
+        
         # Configure the class to connect to the dAmn server.
         self.CONST.SERVER = 'chat.deviantart.com'
         self.CONST.CLIENT = 'dAmnClient 0.3'
         self.CONST.PORT = 3900
+        
         # Init?
         self.init(*args, **kwargs)
     

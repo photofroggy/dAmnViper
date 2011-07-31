@@ -5,7 +5,7 @@
 from distutils.core import setup
 
 setup(name='dAmnViper',
-    version='3.56',
+    version='3.57',
     description='dAmn connection library',
     author='photofroggy',
     author_email='froggywillneverdie@msn.com',
