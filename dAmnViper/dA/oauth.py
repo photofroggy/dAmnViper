@@ -88,9 +88,7 @@ class AuthResource(resource.Resource):
     
     def render_GET(self, request):
         """ Determine whether or not to pass the request to the application. """
-        print 'hi'
         if 'favicon' in request.path:
-            print 'foo'
             return ''
         
         data = request.args or None

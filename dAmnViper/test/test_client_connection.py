@@ -11,8 +11,6 @@ import subprocess
 
 from twisted.trial import unittest
 from twisted.internet import defer
-from twisted.python.filepath import FilePath
-from twisted.internet.protocol import ProcessProtocol
 
 from dAmnViper.test.dummy.client import DummyClient
 
