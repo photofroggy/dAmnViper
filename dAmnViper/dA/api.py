@@ -43,7 +43,7 @@ class ResponseReceiver(protocol.Protocol):
 
 
 class Response(object):
-    """ API Response object. """
+    """ API Response object. Stores response data. """
     
     def __init__(self, head, data):
         self.head = head
@@ -60,7 +60,8 @@ class Request(object):
         
         This is a helper object to send requests to API methods.
         
-        Gives response data to the callback given to the contructor.
+        A deferred method must be provided, as this object will call the
+        deferred with the response from the api request.
     """
     
     def __init__(self, _reactor, deferred, url, agent='dAmnViper/dA/api/request', response=None):
@@ -95,7 +96,25 @@ class Request(object):
 
 
 class APIClient(object):
-    """ Client for deviantart.com's API. """
+    """ Client for deviantart.com's API.
+        
+        This client acts as a client which can be used to interact with
+        deviantART.com's API. The client object provides methods to aid in
+        authorizing applications, and for interacting with the ``user`` api
+        methods.
+        
+        You can use the ``call`` method to perform api calls for any methods
+        provided by deviantART.com. Documentation of the API can be found
+        at this web page: http://www.deviantart.com/developers/
+        
+        Using the ``url`` method directly allows you to generate your urls
+        for api calls. The ``call`` method uses this internally in combination
+        with the ``sendRequest`` method.
+        
+        If all you need to do is authorize your application, then it may be
+        best to only use the objects provided in the ``dA.oauth`` module in
+        this package.
+    """
     
     def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, agent='dAmnViper/dA/api/apiclient'):
         self._reactor = _reactor
@@ -118,7 +137,11 @@ class APIClient(object):
         pass
     
     def auth_app(self, port=8080, resource=None, html=None):
-        """ Start the oAuth client. """
+        """ Start the oAuth client.
+            
+            Provide custom HTML in the ``html`` parameter to provide a custom
+            response page to be given in return to web requests.
+        """
         client = oAuthClient(self._reactor, port, resource, html)
         # Start serving requests.
         d = client.serve()
@@ -129,7 +152,7 @@ class APIClient(object):
         return self._authd
     
     def _authResponse(self, response):
-        """ Process the response from deviantart. """
+        """ Process oAuth responses. """
         if 'code' in response.args:
             self.auth_code = response.args['code'][0]
             self._authd.callback(response)
@@ -138,7 +161,16 @@ class APIClient(object):
         self._authd.errback(response)
     
     def url(self, klass, method=None, api='api', **kwargs):
-        """ Create an API URL based on the input. """
+        """ Create an API URL based on the input.
+            
+            Typically, the format for api urls is as follows::
+                
+                "https://www.deviantart.com/api/draft15/class/method?arg=value"
+            
+            The ``klass`` and ``method`` parameters are used for the class and
+            method values in the url. Method names are not required, but appear
+            more often than not in the api.
+        """
         args = {}
         
         for key, value in kwargs.iteritems():
@@ -224,7 +256,7 @@ class APIClient(object):
         return self.sendRequest(self.url('user', 'whoami', access_token=self.token))
     
     def user_damntoken(self, token=None):
-        """ Request info on the user. """
+        """ Request the user's dAmn authtoken. """
         if token != None:
             self.token = token
         else:

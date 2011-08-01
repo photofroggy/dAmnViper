@@ -15,23 +15,27 @@ from twisted.web import resource
 from twisted.internet import defer
 
 
-def auth_url(self, client_id, client_secret, response_type='code', **kwargs):
-    """ Generate an oAuth url.
-        
-        Generate a URL for users to visit so they can authorize your
-        application with deviantart.com.
-    """
-    
-    kwargs['client_id'] = client_id
-    kwargs['client_secret'] = client_secret
-    kwargs['response_type'] = response_type
-    
-    return 'https://www.deviantart.com/oauth2/draft15/authorize?{0}'.format(
-        urlencode(kwargs))
-
-
 class oAuthClient(object):
-    """ oAuth client object. """
+    """ oAuth client object.
+        
+        Technically, this object acts as a web server. The server listens for
+        connections on localhost, and processes requests received.
+        
+        Deviantart uses an oAuth API to authorize third party applications.
+        This is done by redirecting the user's web browser to a url provided
+        by the application when requesting authorization.
+        
+        This server listens for the request given by the user's web browser (as
+        a result of the redirect), processes the given data, gives a response
+        to the browser, and provides the application with the request data.
+        
+        Any HTML or string given in the ``html`` argument is used as the
+        response given to the user's web browser. The default HTML page is a
+        simple page informing the user that they can close their web browser
+        and return to the application. It is advised that you provide custom
+        HTML to make the response match the design of your application, or just
+        so that your application is mentioned in the response.
+    """
     
     def __init__(self, _reactor, port=8080, resource=None, html=None):
         # Store input

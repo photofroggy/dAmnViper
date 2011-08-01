@@ -312,7 +312,8 @@ class ProtocolParser(object):
             if not cond:
                 continue
             
-            if i is 0:
+            if i in [0, 2]:
+                # Handle mapping rules for pkt.param and the packet body
                 ptab = cond[0] == '*'
                 
                 if ptab:
@@ -322,6 +323,7 @@ class ProtocolParser(object):
                 pevent.arguments[cond] = val
             
             if i is 1:
+                # Handle mapping rules for packet arguments
                 for item in cond:
                     if not item:
                         continue
@@ -339,19 +341,12 @@ class ProtocolParser(object):
                     
                     pevent.arguments[name] = val
             
-            if i is 2:
-                ptab = cond[0] == '*'
-                
-                if ptab:
-                    cond = cond[1:]
-                
-                val = (data.body if not ptab else self.tablumps.parse(data.body)) if data.body else ''
-                pevent.arguments[cond] = val
-            
             if i is 3:
+                # Rules for the sub packet, if there is any
                 store = self.sort(store, Packet(data.body), cond)
             
             if i is 4:
+                # Rule for storing the raw packet
                 val = data.raw if data.raw else ''
                 pevent.arguments[cond] = val
         

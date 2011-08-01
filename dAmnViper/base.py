@@ -318,11 +318,11 @@ class ChatClient(IChatClient):
     def makeConnection(self):
         """ Opens a connection to a dAmn-like server.
             
-            Raises a ``ValueError`` if ``Client.user.username`` or
-            ``Client.user.token`` is ``None``.
+            Raises a ``ValueError`` if ``ChatClient.user.username`` or
+            ``ChatClient.user.token`` is ``None``.
             
-            Raises a ``ValueError`` if any of the ``Client.CONST`` attributes
-            are ``None``.
+            Raises a ``ValueError`` if any of the ``ChatClient.CONST``
+            attributes are ``None``.
         """
         if None in (self.user.username, self.user.token):
             raise ValueError('.user.username and .user.token must be set.')
@@ -551,8 +551,8 @@ class ChatClient(IChatClient):
     def login(self):
         """ Send our login packet. Set the loggingin flag to true.
             
-            Raises a ``ValueError`` if ``Client.user.username`` or
-            ``Client.user.token`` is ``None``.
+            Raises a ``ValueError`` if ``ChatClient.user.username`` or
+            ``ChatClient.user.token`` is ``None``.
         """
         if None in (self.user.username, self.user.token):
             raise ValueError('.user.username and .user.token must be set.')

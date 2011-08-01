@@ -23,8 +23,8 @@ from dAmnViper.parse import Packet
 class ConnectionFactory(ClientFactory):
     """ Connection management.
         
-        Instances of this class are used by the base :py:class:`Client class
-        <dAmnViper.base.Client>` to connect to chat networks.
+        Instances of this class are used by the base :py:class:`ChatClient
+        class <dAmnViper.base.ChatClient>` to connect to chat networks.
         
         The object returns instances of :py:class:`ChatProtocol
         <dAmnViper.net.ChatProtocol>` when a connection is made and
@@ -62,8 +62,8 @@ class ConnectionFactory(ClientFactory):
             Twisted calls this method when a connection can be
             established with the server. This method creates an instance
             of the :py:class:`ChatProtocol <dAmnViper.net.ChatProtocol>`
-            class. This instance is given to the :py:class:`base Client
-            <dAmnViper.base.Client>` object that the factory belongs
+            class. This instance is given to the :py:class:`ChatClient
+            <dAmnViper.base.ChatClient>` object that the factory belongs
             to, and returned to twisted.
         """
         protocol = self.create_protocol()
@@ -74,8 +74,8 @@ class ConnectionFactory(ClientFactory):
         """ Called by twisted when a connection is lost.
             
             Displays a message notifying the connection loss and tells
-            the base :py:class:`Client <dAmnViper.base.Client>` object
-            that there is no longer a connection open.
+            the :py:class:`ChatClient <dAmnViper.base.ChatClient>` object that
+            there is no longer a connection open.
         """
         
         self.client.connectionLost(connector, reason)
@@ -95,7 +95,7 @@ class ChatProtocol(Protocol):
         
         Instances of this class are used to directly communicate with
         the connection to dAmn via twisted, and gives any data received
-        to the :py:class:`Client <dAmnViper.base.Client>` instance
+        to the :py:class:`ChatClient <dAmnViper.base.ChatClient>` instance
         being used for this connection.
         
         This object should not be used directly by applications using
@@ -136,11 +136,11 @@ class ChatProtocol(Protocol):
             
             The data received is added to out buffer. If there are any full
             packets in the buffer, these packets are sent to the
-            :py:class:`Client <dAmnViper.base.Client>` instance to be parsed
-            properly.
+            :py:class:`ChatClient <dAmnViper.base.ChatClient>` instance to be
+            parsed properly.
             
             Any event handling relating to specific packets is done in the
-            ``Client`` instance.
+            ``ChatClient`` instance.
         """
         
         # Tell the client some data has arrived. Woo...
