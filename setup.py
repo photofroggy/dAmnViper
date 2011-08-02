@@ -2,7 +2,12 @@
     Created by photofroggy
 '''
 
-from distutils.core import setup
+from setuptools import setup
+import os
+import sys
+import os.path
+
+sys.path.insert(0, os.path.dirname(__file__))
 
 setup(name='dAmnViper',
     version='3.57',
@@ -19,6 +24,7 @@ setup(name='dAmnViper',
     ],
     provides=['dAmnViper'],
     requires=['twisted (>=11.0.0)'],
+    install_requires=['twisted'],
     platforms=['Any'],
     classifiers=[
         'Natural Language :: English',

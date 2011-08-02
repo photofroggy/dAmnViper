@@ -5,6 +5,11 @@
     
     Build 58 () Twister
         * Updated code comments.
+        * Fixed bugs in protocol parser.
+        ** And that's why we have unit tests.
+        * Fixed ``ChatClient.kill``.
+        ** Was using malformed namespace.
+        ** And that's why we have blazer-flamewing.
     
     Build 57 (31072011-192229) Twister
         * Created dAmnViper.base.IClient.

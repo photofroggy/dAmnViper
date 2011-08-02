@@ -626,7 +626,7 @@ class ChatClient(IChatClient):
         
     def kill(self, ns, r=None):
         """ Send a kill packet to the dAmn server. """
-        return self.send('kill {0}\n{1}'.format(ns, '' if r == None else '\n'+str(r)))
+        return self.send('kill login:{0}\n{1}'.format(ns, '' if r == None else '\n'+str(r)))
     
     # END PROTOCOL OUTPUT METHODS
     # BEGIN PROTOCOL INPUT METHODS
