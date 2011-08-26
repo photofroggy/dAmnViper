@@ -14,17 +14,16 @@ from twisted.trial import unittest
 from twisted.internet import reactor
 
 from dAmnViper.dA.oauth import oAuthClient
-from dAmnViper.test.dummy import oauth
 
 
 class TestOAuthClient(unittest.TestCase):
     """ Unit tests for the oAuthClient object. """
     
-    def test_invalid_request(self):
-        """ Test what happens when an invalid request is sent to the server. """
+    def test_handle_request(self):
+        """ Test what happens when a request is sent to the server. """
         
         def onSuccess(request):
-            self.fail('Invalid request seen as valid')
+            pass
         
         def onFailure(err):
             pass
@@ -34,25 +33,11 @@ class TestOAuthClient(unittest.TestCase):
         self.d.addCallbacks(onSuccess, onFailure)
         
         # Web request
-        self.server.gotResponse(oauth.Request())
+        self.server.gotResponse({})
         
-        return self.d
-    
-    def test_valid_request(self):
-        """ Test what happens when an valid request is sent to the server. """
-        
-        def onSuccess(request):
-            pass
-        
-        def onFailure(request):
-            self.fail('Valid request seen as invalid')
-        
-        self.server = oAuthClient(reactor)
-        self.d = self.server.serve()
-        self.d.addCallbacks(onSuccess, onFailure)
-        
-        # Web request
-        self.server.gotResponse(oauth.Request(path='', args={'code':['2376343']}))
+        # There's really no need to return a callback here. ``gotResponse``
+        # invokes our callback without waiting. So yeah... Just to be safe,
+        # though.
         
         return self.d
 

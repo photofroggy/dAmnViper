@@ -58,7 +58,8 @@ class MyApplication(object):
         """ Called when authorization fails. """
         sys.stdout.write('>> Authorization failed.\n')
         sys.stdout.write('>> Printing debug data...\n')
-        sys.stdout.write('>> {0}\n'.format(response.args))
+        sys.stdout.write('>> {0}\n'.format(response))
+        self._reactor.stop()
     
     def grantSuccess(self, response):
         """ Called when the app is granted access to the API. """
@@ -72,6 +73,7 @@ class MyApplication(object):
         sys.stdout.write('>> Failed to get an access token.\n')
         sys.stdout.write('>> Printing debug data...\n')
         sys.stdout.write('>> {0}\n'.format(response))
+        self._reactor.stop()
     
     def whoami(self, response):
         """ Handle the response to whoami API call. """
@@ -104,8 +106,8 @@ class MyApplication(object):
 if __name__ == '__main__':
     
     app = MyApplication(reactor,
-        'client_id',
-        'client_secret'
+        '25',
+        'c4c4ac91e8a385f73905874c6d81ce2c'
     )
     
     app.start('http://localhost:8080')

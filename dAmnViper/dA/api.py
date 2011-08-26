@@ -146,7 +146,7 @@ class APIClient(object):
         # Start serving requests.
         d = client.serve()
         # Defer the handling or whatever.
-        d.addCallbacks(self._authResponse, self._authResponse)
+        d.addCallbacks(self._authResponse)
         # Make a deferred to be used externally.
         self._authd = defer.Deferred()
         return self._authd

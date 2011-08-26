@@ -62,12 +62,7 @@ class oAuthClient(object):
         """ Process the response from dA. """
         self.sitePort.stopListening()
         
-        if 'code' in request.args:
-            self.d.callback(request)
-            self.d = None
-            return
-        
-        self.d.errback(request)
+        self.d.callback(request)
         self.d = None
 
 
