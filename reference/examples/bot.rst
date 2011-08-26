@@ -1,4 +1,4 @@
-7.3. ``bot`` module
+7.2. ``bot`` module
 =========================
 
 .. literalinclude:: ../../../../dAmnViper/dAmnViper/examples/bot.py
