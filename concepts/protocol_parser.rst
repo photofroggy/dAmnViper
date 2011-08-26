@@ -12,21 +12,8 @@ objects and messages which can be displayed on the screen. This is done by the
 
 2.1. Packet naming
 -------------------
-For dAmn packets to be used in a program, the data they represent needs to be
-translated into an object which can be used by programs to determine a
-response.
-
-The ``ProtocolParser`` class has a ``mapper`` method whichreturns a dictionary
-with the following values::
-
-    {
-        'event': packet_name,
-        'args': mapped_args,
-        'rules': key_value_rules
-    }
-
-The ``packet_name`` is usually the packet's ``cmd``, or the command name of the
-packet. In general, packet names can have the following formats::
+A packet is usually named after the packet's ``cmd``, or the command name of
+the packet. In general, packet names can have the following formats::
         
             {pkt.cmd}
             {pkt.cmd}_{pkt.sub.cmd}
@@ -39,9 +26,9 @@ By default, all packet names follow the first format. Packets may use other
 formats if their ``cmd`` values have an entry in the ``names`` attribute of
 the ``ProtocolParser`` class.
 
-Entries in the ``names`` attribute are always iterables. The iterable can have
-at most two items, and these items can be a ``pkt.cmd`` and a ``pkt.sub.cmd``,
-in that order.
+Entries in the ``names`` attribute of the ``ProtocolParser`` object are always
+iterables. The iterable can have at most two items, and these items can be a
+``pkt.cmd`` and a ``pkt.sub.cmd``, in that order.
 
 If a packet's command is found in the ``names`` attribute, then the second
 format for the packet name is used. If a sub-packet's command is found, then
@@ -49,6 +36,16 @@ the third format is used.
         
 2.2. Packet mapping
 -------------------
+For dAmn packets to be used in a program, the data they represent needs to be
+translated into an object which can be used by programs to determine a
+response.
+
+The ``ProtocolParser`` class has a ``mapper`` method which returns a
+``PacketEvent`` object, which has the following attributes::
+
+    packet_event.name = packet_name
+    packet_event.arguments = mapped_args
+
 Packet data is mapped into a dictionary according to the objects in the
 ``maps`` attribute of the `ProtocolParser` class. The ``mapper`` method uses
 the object which is stored under the packet name's corresponding key. Each
@@ -61,25 +58,23 @@ As an example, this is the map for the ``login`` packet::
 
     maps['login'] = ['username', ['e'], 'data']
 
-Which results in the following dictionary being returned by the ``mapper``
+.. sidebar:: Packet Event Arguments
+    
+    ``PacketEvent`` objects have an ``arguments`` attribute, which is an
+    ``OrderedDict`` containing the event data of the given packet.
+
+Which results in the following object being returned by the ``mapper``
 method::
 
-    {
-        'event': 'login',
-        'args': {
-            'username': pkt.param,
-            'e': pkt.args['e'],
-            'data': pkt.body
-        },
-        'rules': [
-            ('username', pkt.param),
-            ('e', pkt.args['e']),
-            ('data', pkt.body)
-        ]
+    packet_event.name = 'login'
+    packet_event.arguments = {
+        'username': pkt.param,
+        'e': pkt.args['e'],
+        'data': pkt.body
     }
 
-**Note:** *Examples beyond this point will only show the ``args`` portion of
-the returned object.*
+**Note:** *Examples beyond this point will only show the ``arguments`` dict
+from the returned object.*
 
 If a ``generic_{pkt.cmd}`` method is defined, the behaviour of the mapper can
 be changed for all packets with the same ``cmd`` value.
@@ -109,8 +104,8 @@ mapping::
 
 **Note:** *Using None tells the mapper not to store the value.*
 
-The mapping above results in the following object being given under the
-``args`` key::
+The mapping above results in the following object being stored as the
+``arguments`` attribute::
 
     {
         'user': pkt.sub.args['from'],

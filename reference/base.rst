@@ -9,19 +9,19 @@ basic functionality required to connect to a dAmn server. The ``dAmnClient``
 class handles the server handshake and sets the right information for the
 connection, so should be used instead of the ``Client`` class in most cases.
 
-1.1. ``IClient`` - Basic client interface
-------------------------------------------
-.. _clientinterface
+1.1. ``IChatClient`` - Basic client interface
+---------------------------------------------
+.. _clientinterface:
 
-.. autoclass:: dAmnViper.base.IClient
+.. autoclass:: dAmnViper.base.IChatClient
     :members:
 
 
-1.2. ``Client`` - The base chat client API
-------------------------------------------
+1.2. ``ChatClient`` - The base chat client API
+----------------------------------------------
 .. _baseclient:
 
-.. autoclass:: dAmnViper.base.Client
+.. autoclass:: dAmnViper.base.ChatClient
     :members: __doc__
     :member-order: bysource
 
@@ -31,35 +31,35 @@ connection, so should be used instead of the ``Client`` class in most cases.
 These methods should be a point of interest in understanding how
 the class starts up and handles the connection.
 
-.. automethod:: dAmnViper.base.Client.init
+.. automethod:: dAmnViper.base.ChatClient.init
 
-.. automethod:: dAmnViper.base.Client.populate_objects
+.. automethod:: dAmnViper.base.ChatClient.populate_objects
 
-.. automethod:: dAmnViper.base.Client.nullflags
+.. automethod:: dAmnViper.base.ChatClient.nullflags
 
-.. automethod:: dAmnViper.base.Client.set_protocol
+.. automethod:: dAmnViper.base.ChatClient.set_protocol
 
-.. automethod:: dAmnViper.base.Client.start
+.. automethod:: dAmnViper.base.ChatClient.start
 
-.. automethod:: dAmnViper.base.Client.makeConnection
+.. automethod:: dAmnViper.base.ChatClient.makeConnection
 
-.. automethod:: dAmnViper.base.Client.connectionLost
+.. automethod:: dAmnViper.base.ChatClient.connectionLost
 
-.. automethod:: dAmnViper.base.Client.connectionFailed
+.. automethod:: dAmnViper.base.ChatClient.connectionFailed
 
-.. automethod:: dAmnViper.base.Client.connectionMade
+.. automethod:: dAmnViper.base.ChatClient.connectionMade
 
-.. automethod:: dAmnViper.base.Client.persist
+.. automethod:: dAmnViper.base.ChatClient.persist
 
-.. automethod:: dAmnViper.base.Client.teardown
+.. automethod:: dAmnViper.base.ChatClient.teardown
 
-.. automethod:: dAmnViper.base.Client.mainloop
+.. automethod:: dAmnViper.base.ChatClient.mainloop
 
-.. automethod:: dAmnViper.base.Client.on_loop
+.. automethod:: dAmnViper.base.ChatClient.on_loop
 
-.. automethod:: dAmnViper.base.Client.timedout
+.. automethod:: dAmnViper.base.ChatClient.timedout
 
-.. automethod:: dAmnViper.base.Client.close
+.. automethod:: dAmnViper.base.ChatClient.close
 
 1.2.2. Connection events
 ++++++++++++++++++++++++
@@ -78,92 +78,92 @@ as follows:
 These methods are used to send data to the server. You should use these
 methods if you want to interact with dAmn.
 
-.. automethod:: dAmnViper.base.Client.send
+.. automethod:: dAmnViper.base.ChatClient.send
 
-.. automethod:: dAmnViper.base.Client.raw
+.. automethod:: dAmnViper.base.ChatClient.raw
 
-.. automethod:: dAmnViper.base.Client.pong
+.. automethod:: dAmnViper.base.ChatClient.pong
 
-.. automethod:: dAmnViper.base.Client.handshake
+.. automethod:: dAmnViper.base.ChatClient.handshake
 
-.. automethod:: dAmnViper.base.Client.login
+.. automethod:: dAmnViper.base.ChatClient.login
 
-.. automethod:: dAmnViper.base.Client.join
+.. automethod:: dAmnViper.base.ChatClient.join
 
-.. automethod:: dAmnViper.base.Client.part
+.. automethod:: dAmnViper.base.ChatClient.part
 
-.. automethod:: dAmnViper.base.Client.say
+.. automethod:: dAmnViper.base.ChatClient.say
 
-.. automethod:: dAmnViper.base.Client.npmsg
+.. automethod:: dAmnViper.base.ChatClient.npmsg
 
-.. automethod:: dAmnViper.base.Client.action
+.. automethod:: dAmnViper.base.ChatClient.action
 
-.. automethod:: dAmnViper.base.Client.me
+.. automethod:: dAmnViper.base.ChatClient.me
 
-.. automethod:: dAmnViper.base.Client.promote
+.. automethod:: dAmnViper.base.ChatClient.promote
 
-.. automethod:: dAmnViper.base.Client.demote
+.. automethod:: dAmnViper.base.ChatClient.demote
 
-.. automethod:: dAmnViper.base.Client.kick
+.. automethod:: dAmnViper.base.ChatClient.kick
 
-.. automethod:: dAmnViper.base.Client.ban
+.. automethod:: dAmnViper.base.ChatClient.ban
 
-.. automethod:: dAmnViper.base.Client.unban
+.. automethod:: dAmnViper.base.ChatClient.unban
 
-.. automethod:: dAmnViper.base.Client.get
+.. automethod:: dAmnViper.base.ChatClient.get
 
-.. automethod:: dAmnViper.base.Client.set
+.. automethod:: dAmnViper.base.ChatClient.set
 
-.. automethod:: dAmnViper.base.Client.admin
+.. automethod:: dAmnViper.base.ChatClient.admin
 
-.. automethod:: dAmnViper.base.Client.disconnect
+.. automethod:: dAmnViper.base.ChatClient.disconnect
 
-.. automethod:: dAmnViper.base.Client.kill
+.. automethod:: dAmnViper.base.ChatClient.kill
 
 1.2.4. Receiving data
 +++++++++++++++++++++
 These methods are used to handle incoming data.
 
-.. automethod:: dAmnViper.base.Client.handle_pkt
+.. automethod:: dAmnViper.base.ChatClient.handle_pkt
 
-.. automethod:: dAmnViper.base.Client.pkt_generic
+.. automethod:: dAmnViper.base.ChatClient.pkt_generic
 
-.. automethod:: dAmnViper.base.Client.pkt_unknown
+.. automethod:: dAmnViper.base.ChatClient.pkt_unknown
 
-.. automethod:: dAmnViper.base.Client.pkt_login
+.. automethod:: dAmnViper.base.ChatClient.pkt_login
 
-.. automethod:: dAmnViper.base.Client.pkt_join
+.. automethod:: dAmnViper.base.ChatClient.pkt_join
 
-.. automethod:: dAmnViper.base.Client.pkt_part
+.. automethod:: dAmnViper.base.ChatClient.pkt_part
 
-.. automethod:: dAmnViper.base.Client.pkt_property
+.. automethod:: dAmnViper.base.ChatClient.pkt_property
 
-.. automethod:: dAmnViper.base.Client.pkt_recv_join
+.. automethod:: dAmnViper.base.ChatClient.pkt_recv_join
 
-.. automethod:: dAmnViper.base.Client.pkt_recv_part
+.. automethod:: dAmnViper.base.ChatClient.pkt_recv_part
 
-.. automethod:: dAmnViper.base.Client.pkt_recv_kicked
+.. automethod:: dAmnViper.base.ChatClient.pkt_recv_kicked
 
-.. automethod:: dAmnViper.base.Client.pkt_recv_privchg
+.. automethod:: dAmnViper.base.ChatClient.pkt_recv_privchg
 
-.. automethod:: dAmnViper.base.Client.pkt_kicked
+.. automethod:: dAmnViper.base.ChatClient.pkt_kicked
 
-.. automethod:: dAmnViper.base.Client.pkt_disconnect
+.. automethod:: dAmnViper.base.ChatClient.pkt_disconnect
 
 1.2.5. Utility methods
 ++++++++++++++++++++++
 These methods are general purpose methods which can be used in your
 application.
 
-.. automethod:: dAmnViper.base.Client.format_ns
+.. automethod:: dAmnViper.base.ChatClient.format_ns
 
-.. automethod:: dAmnViper.base.Client.deform_ns
+.. automethod:: dAmnViper.base.ChatClient.deform_ns
 
-.. automethod:: dAmnViper.base.Client.logger
+.. automethod:: dAmnViper.base.ChatClient.logger
 
-.. automethod:: dAmnViper.base.Client.new_logger
+.. automethod:: dAmnViper.base.ChatClient.new_logger
 
-.. automethod:: dAmnViper.base.Client.get_write_pair
+.. automethod:: dAmnViper.base.ChatClient.get_write_pair
 
 1.3. ``dAmnClient`` - Basic dAmn client class
 ---------------------------------------------

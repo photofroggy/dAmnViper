@@ -16,6 +16,8 @@ version is relevent to you, but the latest download is always advised.
 
 **Downloads:**
 
+* `dAmn Viper 3 Beta - Build 57 (31072011-192229) Twisted
+  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.57.zip>`_
 * `dAmn Viper 3 Beta - Build 56 (26072011-013703) Twisted
   <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.56.zip>`_
 * `dAmn Viper 3 Beta - Build 55 (03062011-170934) Twister
