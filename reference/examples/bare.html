@@ -55,7 +55,12 @@
 <span class="sd">    Created by photofroggy</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
 <span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnClient</span>
 
@@ -90,7 +95,7 @@
                         title="previous chapter">7. <tt class="docutils literal"><span class="pre">examples</span></tt> package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="bot.html"
-                        title="next chapter">7.3. <tt class="docutils literal"><span class="pre">bot</span></tt> module</a></p>
+                        title="next chapter">7.3. <tt class="docutils literal docutils literal"><span class="pre">bot</span></tt> module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/reference/examples/bare.txt"

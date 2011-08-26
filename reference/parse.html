@@ -64,11 +64,28 @@ received from dAmn.</p>
 <p>This object processes given strings as dAmn packets, and stores
 information from the string in different object attributes. This
 makes it easier to work with packets in other parts of the API.</p>
+<dl class="method">
+<dt id="dAmnViper.parse.Packet.compile">
+<tt class="descname">compile</tt><big>(</big><em>sep='='</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.Packet.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a plain text packet based on the packet&#8217;s values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="packetevent-packet-event-object">
+<h2>4.2 <tt class="docutils literal"><span class="pre">PacketEvent</span></tt> - Packet event object<a class="headerlink" href="#packetevent-packet-event-object" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="packetevtobj"></span><dl class="class">
+<dt id="dAmnViper.parse.PacketEvent">
+<em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">PacketEvent</tt><big>(</big><em>event</em>, <em>args=None</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.PacketEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packet event.</p>
+<p>This object is a data structure which stores packet data under specific
+keys according to the mapping rules defined in the Protocol Parser.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="protocolparser-damn-protocol-mapping">
-<h2>4.2. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping<a class="headerlink" href="#protocolparser-damn-protocol-mapping" title="Permalink to this headline">¶</a></h2>
+<h2>4.3. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping<a class="headerlink" href="#protocolparser-damn-protocol-mapping" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="protocolparser"></span><dl class="class">
 <dt id="dAmnViper.parse.ProtocolParser">
 <em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">ProtocolParser</tt><a class="headerlink" href="#dAmnViper.parse.ProtocolParser" title="Permalink to this definition">¶</a></dt>
@@ -77,11 +94,17 @@ makes it easier to work with packets in other parts of the API.</p>
 customise how different packets are handled by adding items to
 protocol.maps and protocol.messages.</p>
 <dl class="method">
+<dt id="dAmnViper.parse.ProtocolParser.event_name">
+<tt class="descname">event_name</tt><big>(</big><em>pkt</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.event_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the event name for a given packet.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="dAmnViper.parse.ProtocolParser.logger">
-<tt class="descname">logger</tt><big>(</big><em>event</em>, <em>data</em>, <em>ns</em>, <em>pkt</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">logger</tt><big>(</big><em>event</em>, <em>ns</em>, <em>pkt</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a log_list (message, channel[, bool(showns)[, bool(mute)]]).</p>
-<p>The message returned is based on the templates defined in
-the <tt class="docutils literal"><span class="pre">messages</span></tt> attribute of this class.</p>
+<p>The message returned is based on the templates defined in the
+<tt class="docutils literal"><span class="pre">messages</span></tt> attribute of this class.</p>
 </dd></dl>
 
 <dl class="method">
@@ -94,7 +117,7 @@ the <tt class="docutils literal"><span class="pre">maps</span></tt> attribute.</
 
 <dl class="method">
 <dt id="dAmnViper.parse.ProtocolParser.sort">
-<tt class="descname">sort</tt><big>(</big><em>store</em>, <em>data</em>, <em>map</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.sort" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">sort</tt><big>(</big><em>pevent</em>, <em>data</em>, <em>map</em><big>)</big><a class="headerlink" href="#dAmnViper.parse.ProtocolParser.sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort data according to the conditions in the given map.</p>
 </dd></dl>
 
@@ -108,7 +131,7 @@ the <tt class="docutils literal"><span class="pre">maps</span></tt> attribute.</
 
 </div>
 <div class="section" id="tablumps-damn-tablump-parsing">
-<h2>4.3. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing<a class="headerlink" href="#tablumps-damn-tablump-parsing" title="Permalink to this headline">¶</a></h2>
+<h2>4.4. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing<a class="headerlink" href="#tablumps-damn-tablump-parsing" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="tablumps"></span><dl class="class">
 <dt id="dAmnViper.parse.Tablumps">
 <em class="property">class </em><tt class="descclassname">dAmnViper.parse.</tt><tt class="descname">Tablumps</tt><a class="headerlink" href="#dAmnViper.parse.Tablumps" title="Permalink to this definition">¶</a></dt>
@@ -154,8 +177,9 @@ parsed into readable formats.</p>
   <ul>
 <li><a class="reference internal" href="#">4. <tt class="docutils literal"><span class="pre">parse</span></tt> module</a><ul>
 <li><a class="reference internal" href="#packet-basic-packet-parsing">4.1 <tt class="docutils literal"><span class="pre">Packet</span></tt> - Basic packet parsing</a></li>
-<li><a class="reference internal" href="#protocolparser-damn-protocol-mapping">4.2. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping</a></li>
-<li><a class="reference internal" href="#tablumps-damn-tablump-parsing">4.3. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing</a></li>
+<li><a class="reference internal" href="#packetevent-packet-event-object">4.2 <tt class="docutils literal"><span class="pre">PacketEvent</span></tt> - Packet event object</a></li>
+<li><a class="reference internal" href="#protocolparser-damn-protocol-mapping">4.3. <tt class="docutils literal"><span class="pre">ProtocolParser</span></tt> - dAmn protocol mapping</a></li>
+<li><a class="reference internal" href="#tablumps-damn-tablump-parsing">4.4. <tt class="docutils literal"><span class="pre">Tablumps</span></tt> - dAmn tablump parsing</a></li>
 </ul>
 </li>
 </ul>

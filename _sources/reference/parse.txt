@@ -12,14 +12,21 @@ received from dAmn.
 .. autoclass:: dAmnViper.parse.Packet
     :members:
 
-4.2. ``ProtocolParser`` - dAmn protocol mapping
+4.2 ``PacketEvent`` - Packet event object
+-----------------------------------------
+.. _packetevtobj:
+
+.. autoclass:: dAmnViper.parse.PacketEvent
+    :members:
+
+4.3. ``ProtocolParser`` - dAmn protocol mapping
 -----------------------------------------------
 .. _protocolparser:
 
 .. autoclass:: dAmnViper.parse.ProtocolParser
     :members:
 
-4.3. ``Tablumps`` - dAmn tablump parsing
+4.4. ``Tablumps`` - dAmn tablump parsing
 ----------------------------------------
 .. _tablumps:
 

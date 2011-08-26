@@ -12,6 +12,7 @@
     downloads
     reference/index
     reference/examples/index
+    concepts/index
 
 dAmn Viper - dAmn API in Python
 ===============================
@@ -37,8 +38,8 @@ In order to work properly, dAmn Viper requires the following:
 
 **Get stable releases of dAmn Viper here:**
 
-* `dAmn Viper 3 Beta - Build 56
-  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.56.zip>`_
+* `dAmn Viper 3 Beta - Build 57
+  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.57.zip>`_
 * :doc:`more... <downloads>`
 
 **Get the bleeding edge builds of dAmn Viper here:**

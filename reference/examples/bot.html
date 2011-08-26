@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="dAmn Viper" href="../../index.html" />
     <link rel="up" title="7. examples package" href="index.html" />
+    <link rel="next" title="dAmnViper Concepts" href="../../concepts/index.html" />
     <link rel="prev" title="7.2. bare module" href="bare.html" /> 
   </head>
   <body>
@@ -32,6 +33,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../concepts/index.html" title="dAmnViper Concepts"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              accesskey="P">previous</a> |</li>
@@ -51,13 +55,16 @@
 <span class="sd">    Created by photofroggy</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">dAmnViper.base</span> <span class="kn">import</span> <span class="n">dAmnClient</span>
 <span class="kn">from</span> <span class="nn">dAmnViper.examples.util</span> <span class="kn">import</span> <span class="n">get_input</span>
 
-<span class="c"># Extend the dAmnViper.dAmnSock class to add some functionality.</span>
+<span class="c"># Extend the dAmnViper.dAmnClient class to add some functionality.</span>
 
 <span class="k">class</span> <span class="nc">MyClient</span><span class="p">(</span><span class="n">dAmnClient</span><span class="p">):</span>
     
@@ -81,16 +88,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">autojoin</span> <span class="o">=</span> <span class="n">autojoin</span> <span class="ow">or</span> <span class="p">[</span><span class="s">&#39;Botdom&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span> <span class="ow">or</span> <span class="n">Commands</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">on_connection_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connector</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This method is called when dAmnViper has started connecting.</span>
+    <span class="k">def</span> <span class="nf">on_client_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This method is called when client has been told to start.</span>
 <span class="sd">            </span>
-<span class="sd">            Use this method to start the reactor if needed. We can</span>
-<span class="sd">            assume we have everything needed to connect, as this method</span>
-<span class="sd">            is only called when dAmnViper actually succeeds in getting</span>
-<span class="sd">            an authtoken.</span>
+<span class="sd">            Use this method to start the reactor if needed. This method is</span>
+<span class="sd">            called after the client has started up, but is not called before</span>
+<span class="sd">            attempting reconnects. This means we can start the reactor here,</span>
+<span class="sd">            and we won&#39;t get any errors about trying to restart the reactor.</span>
 <span class="sd">            </span>
-<span class="sd">            Technically you can achieve the same behaviour by using</span>
-<span class="sd">            something similar to this outside of the class::</span>
+<span class="sd">            Technically you can achieve the same behaviour by using something</span>
+<span class="sd">            similar to this outside of the class::</span>
 <span class="sd">                </span>
 <span class="sd">                dAmn.start()</span>
 <span class="sd">                if dAmn.flag.connecting:</span>
@@ -99,11 +106,14 @@
 <span class="sd">            Using this method just makes things a little cleaner on the</span>
 <span class="sd">            outside, but not really.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">pass</span>
     
     <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overriding this method is required to stop the application.</span>
-<span class="sd">            This method is called by dAmnSock when the client has</span>
+<span class="sd">            This method is called by dAmnClient when the client has</span>
 <span class="sd">            determined that it no longer needs to keep connected to</span>
 <span class="sd">            dAmn, and has been fully disconnected from the server.</span>
 <span class="sd">            </span>
@@ -130,11 +140,10 @@
 <span class="sd">            message, and then passes the message to a command handler</span>
 <span class="sd">            where appropriate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">)]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">):]</span>
-            <span class="n">data</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;message&#39;</span><span class="p">)[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">)]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;message&#39;</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">):]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;message&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="s">&#39;args&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">Commands</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -149,21 +158,21 @@
     
     <span class="k">def</span> <span class="nf">cmd_about</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dAmn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Basic command callback.&quot;&quot;&quot;</span>
-        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;ns&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;: Basic dAmn Viper bot by photofroggy.&#39;</span><span class="p">)</span>
+        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="s">&#39;ns&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;: Basic dAmn Viper bot by photofroggy.&#39;</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">cmd_quit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dAmn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Quit command! Enter the admin name in place of &#39;admin&#39;!&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">_admin</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">_admin</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;ns&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;: Closing down!&#39;</span><span class="p">)</span>
+        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="s">&#39;ns&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;: Closing down!&#39;</span><span class="p">)</span>
         <span class="n">dAmn</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">quitting</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">dAmn</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
     
     <span class="k">def</span> <span class="nf">cmd_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dAmn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Quit command! Enter the admin name in place of &#39;admin&#39;!&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">_admin</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">_admin</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;ns&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;: Refreshing connection!&#39;</span><span class="p">)</span>
+        <span class="n">dAmn</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="s">&#39;ns&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;: Refreshing connection!&#39;</span><span class="p">)</span>
         <span class="n">dAmn</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">disconnecting</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">dAmn</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
         
@@ -204,6 +213,10 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Starting the client...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
     
+    <span class="c"># Uncomment here if you want to try out going on a llama server.</span>
+    <span class="c"># Change details as appropriate.</span>
+    <span class="c"># dAmn.CONST.SERVER = &#39;plaguethenet.dyndns.org&#39;</span>
+    
     <span class="c"># Start the dAmn client.</span>
     <span class="n">dAmn</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
@@ -213,7 +226,7 @@
 <p>For clarity&#8217;s sake, here is some documentation for the module...</p>
 <dl class="class">
 <dt id="dAmnViper.examples.bot.MyClient">
-<em class="property">class </em><tt class="descclassname">dAmnViper.examples.bot.</tt><tt class="descname">MyClient</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dAmnViper.examples.bot.</tt><tt class="descname">MyClient</tt><big>(</big><em>stdout=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="dAmnViper.examples.bot.MyClient.init">
 <tt class="descname">init</tt><big>(</big><em>username</em>, <em>authtoken</em>, <em>admin</em>, <em>trigger='!'</em>, <em>autojoin=None</em>, <em>callbacks=None</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.init" title="Permalink to this definition">¶</a></dt>
@@ -228,15 +241,15 @@ constructor.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dAmnViper.examples.bot.MyClient.on_connection_start">
-<tt class="descname">on_connection_start</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.on_connection_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is called when dAmnViper has started connecting.</p>
-<p>Use this method to start the reactor if needed. We can
-assume we have everything needed to connect, as this method
-is only called when dAmnViper actually succeeds in getting
-an authtoken.</p>
-<p>Technically you can achieve the same behaviour by using
-something similar to this outside of the class:</p>
+<dt id="dAmnViper.examples.bot.MyClient.on_client_start">
+<tt class="descname">on_client_start</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.on_client_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when client has been told to start.</p>
+<p>Use this method to start the reactor if needed. This method is
+called after the client has started up, but is not called before
+attempting reconnects. This means we can start the reactor here,
+and we won&#8217;t get any errors about trying to restart the reactor.</p>
+<p>Technically you can achieve the same behaviour by using something
+similar to this outside of the class:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">dAmn</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">dAmn</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">connecting</span><span class="p">:</span>
     <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -267,7 +280,7 @@ where appropriate.</p>
 <dt id="dAmnViper.examples.bot.MyClient.teardown">
 <tt class="descname">teardown</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.examples.bot.MyClient.teardown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overriding this method is required to stop the application.
-This method is called by dAmnSock when the client has
+This method is called by dAmnClient when the client has
 determined that it no longer needs to keep connected to
 dAmn, and has been fully disconnected from the server.</p>
 <p>If reactor.stop() is not called at this point, the program
@@ -320,6 +333,9 @@ the user, via stdin.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="bare.html"
                         title="previous chapter">7.2. <tt class="docutils literal docutils literal"><span class="pre">bare</span></tt> module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../concepts/index.html"
+                        title="next chapter">dAmnViper Concepts</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/reference/examples/bot.txt"
@@ -348,6 +364,9 @@ the user, via stdin.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../concepts/index.html" title="dAmnViper Concepts"
+             >next</a> |</li>
         <li class="right" >
           <a href="bare.html" title="7.2. bare module"
              >previous</a> |</li>

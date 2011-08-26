@@ -55,14 +55,15 @@
 Twisted. The <cite>ConnectionFactory</cite> starts connections and handles
 disconnects. The <cite>ChatProtocol</cite> handles basic IO operations on the
 connection, but delegates most of the processing to an instance of the
-<a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> class.</p>
+<tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt> class.</p>
 <div class="section" id="connectionfactory-connection-management">
 <h2>2.1 <tt class="docutils literal"><span class="pre">ConnectionFactory</span></tt> - Connection management<a class="headerlink" href="#connectionfactory-connection-management" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="connectionfactory"></span><dl class="class">
 <dt id="dAmnViper.net.ConnectionFactory">
 <em class="property">class </em><tt class="descclassname">dAmnViper.net.</tt><tt class="descname">ConnectionFactory</tt><big>(</big><em>client</em>, <em>stdout=None</em>, <em>debug=None</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connection management.</p>
-<p>Instances of this class are used by the base <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span> <span class="pre">class</span></tt></a> to connect to chat networks.</p>
+<p>Instances of this class are used by the base <a class="reference internal" href="base.html#dAmnViper.base.ChatClient" title="dAmnViper.base.ChatClient"><tt class="xref py py-class docutils literal"><span class="pre">ChatClient</span>
+<span class="pre">class</span></tt></a> to connect to chat networks.</p>
 <p>The object returns instances of <a class="reference internal" href="#dAmnViper.net.ChatProtocol" title="dAmnViper.net.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a> when a connection is made and
 handles disconnects and connection failures.</p>
 <p>This object should not be used directly by applications using
@@ -74,7 +75,7 @@ dAmnViper.</p>
 <p>Twisted calls this method when a connection can be
 established with the server. This method creates an instance
 of the <a class="reference internal" href="#dAmnViper.net.ChatProtocol" title="dAmnViper.net.ChatProtocol"><tt class="xref py py-class docutils literal"><span class="pre">ChatProtocol</span></tt></a>
-class. This instance is given to the <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">base</span> <span class="pre">Client</span></tt></a> object that the factory belongs
+class. This instance is given to the <a class="reference internal" href="base.html#dAmnViper.base.ChatClient" title="dAmnViper.base.ChatClient"><tt class="xref py py-class docutils literal"><span class="pre">ChatClient</span></tt></a> object that the factory belongs
 to, and returned to twisted.</p>
 </dd></dl>
 
@@ -91,8 +92,8 @@ to, and returned to twisted.</p>
 <tt class="descname">clientConnectionLost</tt><big>(</big><em>connector</em>, <em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ConnectionFactory.clientConnectionLost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when a connection is lost.</p>
 <p>Displays a message notifying the connection loss and tells
-the base <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> object
-that there is no longer a connection open.</p>
+the <a class="reference internal" href="base.html#dAmnViper.base.ChatClient" title="dAmnViper.base.ChatClient"><tt class="xref py py-class docutils literal"><span class="pre">ChatClient</span></tt></a> object that
+there is no longer a connection open.</p>
 </dd></dl>
 
 <dl class="method">
@@ -112,7 +113,7 @@ that there is no longer a connection open.</p>
 <dd><p>Protocol layer for the dAmn connection.</p>
 <p>Instances of this class are used to directly communicate with
 the connection to dAmn via twisted, and gives any data received
-to the <a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> instance
+to the <a class="reference internal" href="base.html#dAmnViper.base.ChatClient" title="dAmnViper.base.ChatClient"><tt class="xref py py-class docutils literal"><span class="pre">ChatClient</span></tt></a> instance
 being used for this connection.</p>
 <p>This object should not be used directly by applications using
 dAmnViper.</p>
@@ -127,12 +128,12 @@ dAmnViper.</p>
 <dt id="dAmnViper.net.ChatProtocol.dataReceived">
 <tt class="descname">dataReceived</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.net.ChatProtocol.dataReceived" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by twisted when data is received.</p>
-<p>The data received is added to out buffer. If there are any
-full packets in the buffer, these packets are sent to the
-<a class="reference internal" href="base.html#dAmnViper.base.Client" title="dAmnViper.base.Client"><tt class="xref py py-class docutils literal"><span class="pre">Client</span></tt></a> instance to
-be parsed properly.</p>
-<p>Any event handling relating to specific packet is done in the
-<tt class="docutils literal"><span class="pre">Client</span></tt> instance.</p>
+<p>The data received is added to out buffer. If there are any full
+packets in the buffer, these packets are sent to the
+<a class="reference internal" href="base.html#dAmnViper.base.ChatClient" title="dAmnViper.base.ChatClient"><tt class="xref py py-class docutils literal"><span class="pre">ChatClient</span></tt></a> instance to be
+parsed properly.</p>
+<p>Any event handling relating to specific packets is done in the
+<tt class="docutils literal"><span class="pre">ChatClient</span></tt> instance.</p>
 </dd></dl>
 
 <dl class="method">
