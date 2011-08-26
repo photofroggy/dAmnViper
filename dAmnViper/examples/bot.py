@@ -151,7 +151,7 @@ if __name__ == '__main__':
     sys.stdout.write('>> This is an example bot created with dAmn Viper.\n')
     
     try:
-        dAmn = MyClient(*configure(), callbacks=Commands())
+        dAmn = MyClient(None, *configure(), callbacks=Commands())
     except KeyboardInterrupt as e:
         sys.stdout.write('\n')
         sys.stdout.flush()

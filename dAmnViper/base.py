@@ -154,7 +154,8 @@ class IChatClient(object):
 class ChatClient(IChatClient):
     """ This class is a client for llama-like chat servers.
         
-        The llama project can be seen here:
+        The llama project can be seen here::
+        
             http://code.google.com/p/project-llama-server/
             http://llamaserver.blogspot.com/
         
