@@ -171,8 +171,8 @@ class ChatClient(IChatClient):
         name = 'dAmn Viper'
         version = 3
         state = 'Beta'
-        build = 57
-        stamp = '31072011-192229'
+        build = 58
+        stamp = '27082011-022134'
         series = 'Twister'
         author = 'photofroggy'
     

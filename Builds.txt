@@ -3,7 +3,7 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
-    Build 58 () Twister
+    Build 58 (27082011-022134) Twister
         * Updated code comments.
         * Fixed bugs in protocol parser.
         ** And that's why we have unit tests.
@@ -11,6 +11,7 @@
         ** Was using malformed namespace.
         ** And that's why we have blazer-flamewing.
         * Updated oAuthClient unit tests to test things properly.
+        * Changed license from GNU GPLv3 to ISCL.
     
     Build 57 (31072011-192229) Twister
         * Created dAmnViper.base.IClient.

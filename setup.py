@@ -11,7 +11,7 @@ import os.path
 sys.path.insert(0, os.path.dirname(__file__))
 
 setup(name='dAmnViper',
-    version='3.57',
+    version='3.58',
     description='dAmn connection library',
     author='photofroggy',
     author_email='froggywillneverdie@msn.com',
