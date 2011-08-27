@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_auth_client module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing the oAuthClient object found
     in dAmnViper.dA.oauth.

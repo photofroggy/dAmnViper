@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_client_connection module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing if the Client object is able
     to connect to chat servers properly.

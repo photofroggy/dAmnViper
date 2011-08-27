@@ -1,5 +1,6 @@
 ''' dAmnViper.data module
-    Created by photofroggy.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides the Channel object, which represents a
     joined channel. The object stores information about the channel,

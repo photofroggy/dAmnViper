@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_dapi_response module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing the Response object found in
     dAmnViper.dA.api.

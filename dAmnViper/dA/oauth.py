@@ -1,5 +1,6 @@
 ''' dAmnViper.dA.oauth module
-    Created by photofroggy.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides objects which can be used to authorize applications
     with deviantart.com's oAuth API. Note that this product is in no way

@@ -1,5 +1,6 @@
 ''' dAmnViper.base module
-    Created by photofroggy.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides the dAmnClient class, which acts as an API for
     connecting to and interacting with deviantART.com's chatrooms. This is

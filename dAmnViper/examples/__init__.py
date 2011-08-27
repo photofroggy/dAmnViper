@@ -1,6 +1,6 @@
 ''' dAmn Viper - A Python API for dAmn.
-    Copyright (C) 2009  Henry Rapley <froggywillneverdie@msn.com>
-    Released under a GNU GPL.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     Example scripts.
 '''

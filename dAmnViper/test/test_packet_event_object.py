@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_packet_event_object module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing the packet event object found
     in dAmnViper.parse.

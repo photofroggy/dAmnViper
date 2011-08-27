@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_protocol_parser module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing the protocol parser found in
     dAmnViper.parse.

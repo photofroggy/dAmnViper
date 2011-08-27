@@ -1,5 +1,6 @@
 ''' dAmnViper.test.test_dapi_client module
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides unit tests for testing the APIClient object found in
     dAmnViper.dA.api.

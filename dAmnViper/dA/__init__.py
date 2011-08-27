@@ -1,5 +1,6 @@
 ''' dAmnViper.dA package
-    Created by photofroggy
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This package contains objects which can be used to interact with
     deviantart.com's API and authorize applications on deviantart.com's oAuth

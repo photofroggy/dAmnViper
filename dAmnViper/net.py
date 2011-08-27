@@ -1,5 +1,6 @@
 ''' dAmnViper.net module
-    Created by photofroggy.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides classes used to actually connect to dAmn using
     Twisted. The ConnectionFactory starts connections and handles disconnects.

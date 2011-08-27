@@ -1,5 +1,6 @@
 ''' dAmnViper.parse module
-    Created by photofroggy.
+    Copyright (c) 2011, Henry "photofroggy" Rapley.
+    Released under the ISC License.
     
     This module provides objects for parsing data going to and from the dAmn
     server. Tablumps and packets are handled by classes here, and a class is
