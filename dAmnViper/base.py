@@ -361,7 +361,7 @@ class ChatClient(IChatClient):
         """ This method is called when we fail to connect. """
         self.logger('** Failed to connect.{0}'.format(
             ' Reason: {0}'.format(reason) if isinstance(reason, str) else ''),
-            False)
+            showns=False)
         
         if self.connection.attempts >= self.connection.limit:
             self.logger('** Failed to connect {0} times in a row.'.format(
