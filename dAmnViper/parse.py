@@ -112,7 +112,7 @@ class Tablumps(object):
         self.expressions = [
             re.compile("&avatar\t([a-zA-Z0-9-]+)\t([0-9]+)\t"),
             re.compile("&dev\t(.)\t([a-zA-Z0-9-]+)\t"),
-            re.compile("&emote\t([^\t]+)\t([0-9]+)\t([0-9]+)\t(.*?)\t([a-z0-9./=-]+)\t"),
+            re.compile("&emote\t([^\t]+)\t([0-9]+)\t([0-9]+)\t(.*?)\t([a-z0-9./=-_]+)\t"),
             re.compile("&a\t([^\t]+)\t([^\t]*)\t"),
             re.compile("&link\t([^\t]+)\t&\t"),
             re.compile("&link\t([^\t]+)\t([^\t]+)\t&\t"),
@@ -127,7 +127,7 @@ class Tablumps(object):
         self.subs = [
             (re.compile("&avatar\t([a-zA-Z0-9-]+)\t([0-9]+)\t"), ":icon\\1:"),
             (re.compile("&dev\t(.)\t([a-zA-Z0-9-]+)\t"), ":dev\\2:"),
-            (re.compile("&emote\t([^\t]+)\t([0-9]+)\t([0-9]+)\t(.*?)\t([a-z0-9./=-]+)\t"), "\\1"),
+            (re.compile("&emote\t([^\t]+)\t([0-9]+)\t([0-9]+)\t(.*?)\t([a-z0-9./=-_]+)\t"), "\\1"),
             (re.compile("&a\t([^\t]+)\t([^\t]*)\t"), "<a href=\"\\1\" title=\"\\2\">"),
             (re.compile("&link\t([^\t]+)\t&\t"), "\\1"),
             (re.compile("&link\t([^\t]+)\t([^\t]+)\t&\t"), "\\1 (\\2)"),
