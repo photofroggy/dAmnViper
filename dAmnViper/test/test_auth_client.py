@@ -9,6 +9,7 @@
 
 import os
 import sys
+import time
 import subprocess
 
 from twisted.trial import unittest
@@ -34,11 +35,7 @@ class TestOAuthClient(unittest.TestCase):
         self.d.addCallbacks(onSuccess, onFailure)
         
         # Web request
-        self.server.gotResponse({})
-        
-        # There's really no need to return a callback here. ``gotResponse``
-        # invokes our callback without waiting. So yeah... Just to be safe,
-        # though.
+        self.server.deferred(None, {})
         
         return self.d
 

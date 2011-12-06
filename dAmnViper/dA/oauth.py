@@ -51,21 +51,23 @@ class oAuthClient(object):
         
         if self.html is None:
             self.html = html_response
+        
+        self.resource = self.resource(self.gotResponse, self.html)
     
     def serve(self):
         """ Start serving our oAuth response stuff. """
         self.d = defer.Deferred()
-        site = server.Site(self.resource(self.gotResponse, self.html))
+        site = server.Site(self.resource)
         self.sitePort = self._reactor.listenTCP(self.port, site)
         return self.d
     
     def gotResponse(self, request):
         """ Defer processing the response. """
-        self.sitePort.stopListening()
         request.notifyFinish().addCallback(self.deferred, request)
     
     def deferred(self, obj, request):
         """ Once again we delay processing of the response from dA. """
+        self.sitePort.stopListening()
         self._reactor.callLater(1, self.d.callback, request)
         self.d = None
 
