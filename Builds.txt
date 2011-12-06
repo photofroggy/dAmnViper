@@ -3,6 +3,10 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
+    Build 59 () Twister
+        * Improved the flow of the API client.
+        * Fixed some inherent problems in the oauth client.
+    
     Build 58 (27082011-022134) Twister
         * Updated code comments.
         * Fixed bugs in protocol parser.
