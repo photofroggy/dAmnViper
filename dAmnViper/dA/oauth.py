@@ -62,7 +62,9 @@ class oAuthClient(object):
     def gotResponse(self, request):
         """ Process the response from dA. """
         self.sitePort.stopListening()
-        
+        request.notifyFinish().addCallback(self.deferred, request)
+    
+    def deferred(self, obj, request):
         self.d.callback(request)
         self.d = None
 

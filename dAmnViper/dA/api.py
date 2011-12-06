@@ -147,7 +147,7 @@ class APIClient(object):
         # Start serving requests.
         d = client.serve()
         # Defer the handling or whatever.
-        d.addCallbacks(self._authResponse)
+        d.addCallback(self._authResponse)
         return d
     
     def _authResponse(self, response):
