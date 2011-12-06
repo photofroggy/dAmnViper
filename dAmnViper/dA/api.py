@@ -148,18 +148,18 @@ class APIClient(object):
         d = client.serve()
         # Defer the handling or whatever.
         d.addCallbacks(self._authResponse)
-        # Make a deferred to be used externally.
-        self._authd = defer.Deferred()
-        return self._authd
+        return d
     
     def _authResponse(self, response):
         """ Process oAuth responses. """
-        if 'code' in response.args:
+        if 'error' in response.args:
+            return {'status': False, 'data': response}
+            
+        if 'code' in response.args and response.args['code'][0]:
             self.auth_code = response.args['code'][0]
-            self._authd.callback(response)
-            return
+            return {'status': True, 'data': response}
         
-        self._authd.errback(response)
+        return {'status': False, 'data': response}
     
     def url(self, klass, method=None, api='api', **kwargs):
         """ Create an API URL based on the input.
@@ -220,23 +220,17 @@ class APIClient(object):
             state=req_state,
             code=self.auth_code
         ))
-        d.addCallbacks(self.handle_grant, self.handle_grant_fail)
-        self._grantd = defer.Deferred()
+        d.addCallback(self.handle_grant)
         
-        return self._grantd
+        return d
     
     def handle_grant(self, response):
         """ Handle the response to the grant api call. """
         if response.data is not None and response.data['status'] == 'success':
             self.token = response.data['access_token']
-            self._grantd.callback(response)
-            return
+            return {'status': True, 'data': response}
         
-        self._grantd.errback(response)
-    
-    def handle_grant_fail(self, err):
-        """ When the grant token request fails, handle it here. """
-        sefl._grantd.errback(err)
+        return {'status': False, 'data': response}
     
     def placebo(self, token=None):
         """ Check that the access token is still valid. """
