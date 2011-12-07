@@ -117,7 +117,7 @@ class APIClient(object):
         this package.
     """
     
-    def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, refresh_token=None, agent='dAmnViper/dA/api/apiclient'):
+    def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, refresh_token=None, agent='dAmnViper/dA/api/apiclient', api_url=None):
         self._reactor = _reactor
         self.client_id = client_id
         self.client_secret = client_secret
@@ -125,12 +125,9 @@ class APIClient(object):
         self.token = token
         self.refresh_token = refresh_token
         self.agent = agent
-        # Auth deferred
-        self._authd = None
-        self._grantd = None
         # URL stuff
         self.draft = 'draft15'
-        self.api_url = 'https://www.deviantart.com/'
+        self.api_url = api_url or 'https://www.deviantart.com/'
         # Custom? Maybe
         self.init()
     
