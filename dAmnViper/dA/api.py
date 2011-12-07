@@ -79,7 +79,7 @@ class Request(object):
         self.start_request()
     
     def start_request(self):
-        """ Send the token request to deviantART. """
+        """ Send the api request to deviantART. """
         agent = Agent(self._reactor)
         d = agent.request('POST', self.url, Headers({'User-Agent': [self.agent]}), None)
         d.addCallback(self.received_response)

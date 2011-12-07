@@ -55,7 +55,29 @@ class oAuthClient(object):
         self.resource = self.resource(self.gotResponse, self.html)
     
     def serve(self):
-        """ Start serving our oAuth response stuff. """
+        """ Start serving responses to localhost.
+            
+            This method returns a `Deferred` object. Add a callback to this
+            deferred to perform an action when deviantART redirects the user's
+            browser to `localhost`. Doing this, you should be able to retrieve
+            authorization code. For example::
+                
+                def handle_auth(response):
+                    try:
+                        print 'Auth code:', response.args['code'][0]
+                    except KeyError:
+                        print 'Auth failed'
+                    reactor.stop()
+                
+                client = oAuthClient(reactor, port, resource, html)
+                # Start serving requests.
+                d = client.serve()
+                # Defer the handling or whatever.
+                d.addCallback(handle_auth)
+                
+                reactor.run()
+            
+        """
         self.d = defer.Deferred()
         site = server.Site(self.resource)
         self.sitePort = self._reactor.listenTCP(self.port, site)
