@@ -1,4 +1,4 @@
-7.1. ``bare`` module
+6.1. ``bare`` module
 =========================
 
 .. literalinclude:: ../../../../dAmnViper/dAmnViper/examples/bare.py
