@@ -113,8 +113,6 @@
             <span class="k">return</span> <span class="n">response</span>
             
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Got auth code!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
-        <span class="c"># sys.stdout.write(&#39;&gt;&gt; debug:\n&#39;)</span>
-        <span class="c"># sys.stdout.write(&#39;&gt;&gt; {0}\n&#39;.format(response.args))</span>
         
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">grant</span><span class="p">(</span><span class="n">req_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
         <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grantResponse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grantFailure</span><span class="p">)</span>
