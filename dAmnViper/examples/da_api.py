@@ -113,12 +113,12 @@ class MyApplication(object):
             self.api.user_damntoken().addCallback(self.damntoken)
             return
         
-        
-        time.sleep(5)
         sys.stdout.write('>> Account: {0}{1}\n'.format(
             response.data['symbol'], response.data['username']))
+        
         # damntoken?
         self.api.user_damntoken().addCallback(self.damntoken)
+        
         return response
     
     def damntoken(self, response):
@@ -134,12 +134,8 @@ class MyApplication(object):
             
             self._reactor.stop()
             return
-            
-        print response.data
         
-        sys.stdout.write('>> Authtoken: {0}\n'.format(response.data['damntoken']))
-        
-        time.sleep(5)
+        sys.stdout.write('>> Authtoken: {0}\n>>\n'.format(response.data['damntoken']))
         sys.stdout.write('>> Refreshing...\n')
         
         d = self.api.refresh(req_state=self.state)
