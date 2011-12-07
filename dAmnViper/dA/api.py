@@ -117,12 +117,13 @@ class APIClient(object):
         this package.
     """
     
-    def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, agent='dAmnViper/dA/api/apiclient'):
+    def __init__(self, _reactor, client_id, client_secret, auth_code=None, token=None, refresh_token=None, agent='dAmnViper/dA/api/apiclient'):
         self._reactor = _reactor
         self.client_id = client_id
         self.client_secret = client_secret
         self.auth_code = auth_code
         self.token = token
+        self.refresh_token = refresh_token
         self.agent = agent
         # Auth deferred
         self._authd = None
@@ -183,9 +184,9 @@ class APIClient(object):
             '' if method is None else '/{0}'.format(method),
             '' if not args else '?{0}'.format(urlencode(args)))
     
-    def requiresToken(self):
+    def requiresToken(self, refresh=False):
         """ If the token is not set, raise a ``ValueError``. """
-        if self.token is None:
+        if self.token is None or (refresh and self.refresh_token is None):
             raise ValueError('token required for this method')
     
     def sendRequest(self, url, response_obj=None):
@@ -224,10 +225,28 @@ class APIClient(object):
         
         return d
     
+    def refresh(self, refresh_token=None, req_state=None):
+        """ Request a new grant token using a refresh token. """
+        self.refresh_toke = refresh_token or self.refresh_token
+        
+        self.requiresToken(True)
+        
+        d = self.sendRequest(self.url('token', api='oauth2',
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            grant_type='refresh_token',
+            state=req_state,
+            refresh_token=self.refresh_token
+        ))
+        
+        d.addCallback(self.handle_grant)
+        return d
+    
     def handle_grant(self, response):
         """ Handle the response to the grant api call. """
         if response.data is not None and response.data['status'] == 'success':
             self.token = response.data['access_token']
+            self.refresh_token = response.data['refresh_token']
             return {'status': True, 'data': response}
         
         return {'status': False, 'data': response}

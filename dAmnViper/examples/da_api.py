@@ -4,6 +4,7 @@
 
 import os
 import sys
+import time
 from twisted.internet import reactor
 
 sys.path.insert(0, os.curdir)
@@ -78,9 +79,14 @@ class MyApplication(object):
         """ Called when the app is granted access to the API. """
         if not response['status']:
             sys.stdout.write('>> Failed to get an access token.\n')
-            sys.stdout.write('>> Printing debug data...\n')
-            sys.stdout.write('>> {0}\n'.format(response['data']))
+            
+            try:
+                sys.stdout.write('>> {0}\n'.format(response['data'].data['error_description']))
+            except KeyError:
+                pass
+            
             self._reactor.stop()
+            return
             
         sys.stdout.write('>> Got an access token!\n')
         sys.stdout.write('>> Getting user information...\n')
@@ -108,29 +114,53 @@ class MyApplication(object):
             return
         
         
+        time.sleep(5)
         sys.stdout.write('>> Account: {0}{1}\n'.format(
             response.data['symbol'], response.data['username']))
-        
         # damntoken?
         self.api.user_damntoken().addCallback(self.damntoken)
         return response
     
     def damntoken(self, response):
         """ Handle the response to whoami API call. """
-        self._reactor.stop()
         
-        if response.data is None:
+        if response.data is None or 'error' in response.data:
             sys.stdout.write('>> damntoken failed.\n')
+            
+            try:
+                sys.stdout.write('>> {0}\n.'.format(response.data['error_description']))
+            except KeyError:
+                pass
+            
+            self._reactor.stop()
             return
+            
+        print response.data
         
         sys.stdout.write('>> Authtoken: {0}\n'.format(response.data['damntoken']))
+        
+        time.sleep(5)
+        sys.stdout.write('>> Refreshing...\n')
+        
+        d = self.api.refresh(req_state=self.state)
+        d.addCallbacks(self.refreshResponse, self.grantFailure)
+    
+    def refreshResponse(self, response):
+        """ Handle the response to the refresh API call. """
+        self._reactor.stop()
+        if response['status']:
+            sys.stdout.write('>> Refresh successful!\n')
+            return response
+        
+        sys.stdout.write('>> Refresh failed: {0}\n'.format(response['data'].data['error_description']))
+        return response
 
 
 if __name__ == '__main__':
     
     app = MyApplication(reactor,
-        '25',
-        'c4c4ac91e8a385f73905874c6d81ce2c'
+        'id',
+        'secret'
     )
     
     app.start('http://localhost:8080')
