@@ -14,6 +14,7 @@
         ** Improved flow of the example.
         ** Improved the error handling.
         ** Added a test for the `refresh` method.
+        * Merged branches.
     
     Build 58 (27082011-022134) Twister
         * Updated code comments.
