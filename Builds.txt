@@ -6,6 +6,14 @@
     Build 59 () Twister
         * Improved the flow of the API client.
         * Fixed some inherent problems in the oauth client.
+        * Added to `dAmnViper.dA.api.APIClient`.
+        ** Added a `refresh` method.
+        *** The response to this is handled by `handle_grant`.
+        ** Improved error handling in the client.
+        * Made some changes to dAmnViper/examples/da_api.py.
+        ** Improved flow of the example.
+        ** Improved the error handling.
+        ** Added a test for the `refresh` method.
     
     Build 58 (27082011-022134) Twister
         * Updated code comments.
