@@ -60,8 +60,6 @@ class MyApplication(object):
             return response
             
         sys.stdout.write('>> Got auth code!\n')
-        # sys.stdout.write('>> debug:\n')
-        # sys.stdout.write('>> {0}\n'.format(response.args))
         
         d = self.api.grant(req_state=self.state)
         d.addCallbacks(self.grantResponse, self.grantFailure)
