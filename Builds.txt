@@ -3,7 +3,7 @@
     This tells you the date of each build, and perhaps some brief details.
     The format for build names is "Build [build number] ([date]-[time(24hr)]) [Build series name]
     
-    Build 59 () Twister
+    Build 59 (07122011-034350) Twister
         * Improved the flow of the API client.
         * Fixed some inherent problems in the oauth client.
         * Added to `dAmnViper.dA.api.APIClient`.
@@ -15,6 +15,7 @@
         ** Improved the error handling.
         ** Added a test for the `refresh` method.
         * Merged branches.
+        * Updated documentation.
     
     Build 58 (27082011-022134) Twister
         * Updated code comments.
