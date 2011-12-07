@@ -16,5 +16,6 @@ amongst other tasks.
     net
     data
     parse
+    dA/index
     examples/index
     

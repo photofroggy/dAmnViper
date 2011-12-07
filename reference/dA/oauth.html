@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.1. oauth module &mdash; dAmn Viper</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.59',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="dAmn Viper" href="../../index.html" />
+    <link rel="up" title="5. dA package" href="index.html" />
+    <link rel="next" title="5.2. api module" href="api.html" />
+    <link rel="prev" title="5. dA package" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api.html" title="5.2. api module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="5. dA package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
+          <li><a href="../index.html" >Package Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">5. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">dA</span></tt> package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="oauth-module">
+<h1>5.1. <tt class="docutils literal"><span class="pre">oauth</span></tt> module<a class="headerlink" href="#oauth-module" title="Permalink to this headline">¶</a></h1>
+<p>This package provides objects which can be used to authorize an application
+with deviantART&#8217;s API.</p>
+<p><em>Note that this product is in no way affiliated with or endorsed by
+deviantART.com. This is not an official service of deviantART.com. This is an
+independent project created by photofroggy.</em></p>
+<div class="section" id="oauthclient-class">
+<h2>5.1.1. <tt class="docutils literal"><span class="pre">oAuthClient</span></tt> class<a class="headerlink" href="#oauthclient-class" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="oauthclientclass"></span><dl class="class">
+<dt id="dAmnViper.dA.oauth.oAuthClient">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.oauth.</tt><tt class="descname">oAuthClient</tt><big>(</big><em>_reactor</em>, <em>port=8080</em>, <em>resource=None</em>, <em>html=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.oAuthClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>oAuth client object.</p>
+<p>Technically, this object acts as a web server. The server listens for
+connections on localhost, and processes requests received.</p>
+<p>Deviantart uses an oAuth API to authorize third party applications.
+This is done by redirecting the user&#8217;s web browser to a url provided
+by the application when requesting authorization.</p>
+<p>This server listens for the request given by the user&#8217;s web browser (as
+a result of the redirect), processes the given data, gives a response
+to the browser, and provides the application with the request data.</p>
+<p>Any HTML or string given in the <tt class="docutils literal"><span class="pre">html</span></tt> argument is used as the
+response given to the user&#8217;s web browser. The default HTML page is a
+simple page informing the user that they can close their web browser
+and return to the application. It is advised that you provide custom
+HTML to make the response match the design of your application, or just
+so that your application is mentioned in the response.</p>
+<dl class="method">
+<dt id="dAmnViper.dA.oauth.oAuthClient.deferred">
+<tt class="descname">deferred</tt><big>(</big><em>obj</em>, <em>request</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.oAuthClient.deferred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Once again we delay processing of the response from dA.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.oauth.oAuthClient.gotResponse">
+<tt class="descname">gotResponse</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.oAuthClient.gotResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defer processing the response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.oauth.oAuthClient.serve">
+<tt class="descname">serve</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.oAuthClient.serve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start serving responses to localhost.</p>
+<p>This method returns a <cite>Deferred</cite> object. Add a callback to this
+deferred to perform an action when deviantART redirects the user&#8217;s
+browser to <cite>localhost</cite>. Doing this, you should be able to retrieve
+authorization code. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">handle_auth</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Auth code:&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Auth failed&#39;</span>
+    <span class="n">reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">oAuthClient</span><span class="p">(</span><span class="n">reactor</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">resource</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+<span class="c"># Start serving requests.</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+<span class="c"># Defer the handling or whatever.</span>
+<span class="n">d</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="n">handle_auth</span><span class="p">)</span>
+
+<span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="authresource-class">
+<h2>5.1.2. <tt class="docutils literal"><span class="pre">AuthResource</span></tt> class<a class="headerlink" href="#authresource-class" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="authresourceclass"></span><dl class="class">
+<dt id="dAmnViper.dA.oauth.AuthResource">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.oauth.</tt><tt class="descname">AuthResource</tt><big>(</big><em>callback</em>, <em>html=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.AuthResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authorize resource.</p>
+<p>This is the object which processes requests sent to localhost.
+Required for processing the response from deviantART when
+requesting an authorization code.</p>
+<p>This class is used by the <tt class="docutils literal"><span class="pre">oAuthClient</span></tt> object.</p>
+<dl class="method">
+<dt id="dAmnViper.dA.oauth.AuthResource.render_GET">
+<tt class="descname">render_GET</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.oauth.AuthResource.render_GET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether or not to pass the request to the application.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5.1. <tt class="docutils literal"><span class="pre">oauth</span></tt> module</a><ul>
+<li><a class="reference internal" href="#oauthclient-class">5.1.1. <tt class="docutils literal"><span class="pre">oAuthClient</span></tt> class</a></li>
+<li><a class="reference internal" href="#authresource-class">5.1.2. <tt class="docutils literal"><span class="pre">AuthResource</span></tt> class</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">5. <tt class="docutils literal docutils literal docutils literal"><span class="pre">dA</span></tt> package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">5.2. <tt class="docutils literal docutils literal"><span class="pre">api</span></tt> module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/reference/dA/oauth.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="api.html" title="5.2. api module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="5. dA package"
+             >previous</a> |</li>
+        <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
+          <li><a href="../index.html" >Package Reference</a> &raquo;</li>
+          <li><a href="index.html" >5. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">dA</span></tt> package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, photofroggy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

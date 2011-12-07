@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7.3. da_api module &mdash; dAmn Viper</title>
+    <title>6.3. da_api module &mdash; dAmn Viper</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '3.58',
+        VERSION:     '3.59',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,9 +22,9 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="dAmn Viper" href="../../index.html" />
-    <link rel="up" title="7. examples package" href="index.html" />
+    <link rel="up" title="6. examples package" href="index.html" />
     <link rel="next" title="dAmnViper Concepts" href="../../concepts/index.html" />
-    <link rel="prev" title="7.2. bot module" href="bot.html" /> 
+    <link rel="prev" title="6.2. bot module" href="bot.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../concepts/index.html" title="dAmnViper Concepts"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="bot.html" title="7.2. bot module"
+          <a href="bot.html" title="6.2. bot module"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">7. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">6. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,13 +50,14 @@
           <div class="body">
             
   <div class="section" id="da-api-module">
-<h1>7.3. <tt class="docutils literal"><span class="pre">da_api</span></tt> module<a class="headerlink" href="#da-api-module" title="Permalink to this headline">¶</a></h1>
+<h1>6.3. <tt class="docutils literal"><span class="pre">da_api</span></tt> module<a class="headerlink" href="#da-api-module" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&#39;&#39;&#39; Example usage of deviantart API objects.</span>
 <span class="sd">    Created by photofroggy.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
@@ -83,7 +84,7 @@
 <span class="sd">            url on screen. The user should visit this url to authorize the app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">auth_app</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
-        <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authSuccess</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authFailure</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authResponse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authFailure</span><span class="p">)</span>
         <span class="c"># Make a url</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="s">&#39;authorize&#39;</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="s">&#39;oauth2&#39;</span><span class="p">,</span>
             <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -98,28 +99,53 @@
         
         <span class="c"># Now we wait for the user&#39;s webbrowser to be redirected to our server.</span>
     
-    <span class="k">def</span> <span class="nf">authSuccess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">authResponse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the app is successfully authorized. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">resp</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Auth failed: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;error_description&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Authorization failed.</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Printing debug data...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span>
+            
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Got auth code!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="c"># sys.stdout.write(&#39;&gt;&gt; debug:\n&#39;)</span>
         <span class="c"># sys.stdout.write(&#39;&gt;&gt; {0}\n&#39;.format(response.args))</span>
         
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">grant</span><span class="p">(</span><span class="n">req_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
-        <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grantSuccess</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grantFailure</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grantResponse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grantFailure</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
     
-    <span class="k">def</span> <span class="nf">authFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">authFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when authorization fails. &quot;&quot;&quot;</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Authorization failed.</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Printing debug data...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">err</span>
     
-    <span class="k">def</span> <span class="nf">grantSuccess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">grantResponse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the app is granted access to the API. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Failed to get an access token.</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;error_description&#39;</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">return</span>
+            
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Got an access token!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Getting user information...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="c"># whoami?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">user_whoami</span><span class="p">()</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">whoami</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
     
     <span class="k">def</span> <span class="nf">grantFailure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the app is refused access to the API. &quot;&quot;&quot;</span>
@@ -127,6 +153,7 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Printing debug data...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">response</span>
     
     <span class="k">def</span> <span class="nf">whoami</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handle the response to whoami API call. &quot;&quot;&quot;</span>
@@ -144,23 +171,45 @@
         
         <span class="c"># damntoken?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">user_damntoken</span><span class="p">()</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">damntoken</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">response</span>
     
     <span class="k">def</span> <span class="nf">damntoken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handle the response to whoami API call. &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; damntoken failed.</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; {0}</span><span class="se">\n</span><span class="s">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;error_description&#39;</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="k">return</span>
         
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Authtoken: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;damntoken&#39;</span><span class="p">]))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Authtoken: {0}</span><span class="se">\n</span><span class="s">&gt;&gt;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;damntoken&#39;</span><span class="p">]))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Refreshing...</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">req_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">addCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refreshResponse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grantFailure</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">refreshResponse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the response to the refresh API call. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Refresh successful!</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span>
+        
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&gt;&gt; Refresh failed: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;error_description&#39;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">response</span>
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     
     <span class="n">app</span> <span class="o">=</span> <span class="n">MyApplication</span><span class="p">(</span><span class="n">reactor</span><span class="p">,</span>
-        <span class="s">&#39;client_id&#39;</span><span class="p">,</span>
-        <span class="s">&#39;client_secret&#39;</span>
+        <span class="s">&#39;id&#39;</span><span class="p">,</span>
+        <span class="s">&#39;secret&#39;</span>
     <span class="p">)</span>
     
     <span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&#39;http://localhost:8080&#39;</span><span class="p">)</span>
@@ -181,7 +230,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="bot.html"
-                        title="previous chapter">7.2. <tt class="docutils literal docutils literal docutils literal"><span class="pre">bot</span></tt> module</a></p>
+                        title="previous chapter">6.2. <tt class="docutils literal docutils literal docutils literal"><span class="pre">bot</span></tt> module</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../../concepts/index.html"
                         title="next chapter">dAmnViper Concepts</a></p>
@@ -217,10 +266,10 @@
           <a href="../../concepts/index.html" title="dAmnViper Concepts"
              >next</a> |</li>
         <li class="right" >
-          <a href="bot.html" title="7.2. bot module"
+          <a href="bot.html" title="6.2. bot module"
              >previous</a> |</li>
         <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
-          <li><a href="index.html" >7. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
+          <li><a href="index.html" >6. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">examples</span></tt> package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

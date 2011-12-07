@@ -1,0 +1,302 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.2. api module &mdash; dAmn Viper</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.59',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="dAmn Viper" href="../../index.html" />
+    <link rel="up" title="5. dA package" href="index.html" />
+    <link rel="next" title="6. examples package" href="../examples/index.html" />
+    <link rel="prev" title="5.1. oauth module" href="oauth.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../examples/index.html" title="6. examples package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="oauth.html" title="5.1. oauth module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
+          <li><a href="../index.html" >Package Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">5. <tt class="docutils literal"><span class="pre">dA</span></tt> package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api-module">
+<h1>5.2. <tt class="docutils literal"><span class="pre">api</span></tt> module<a class="headerlink" href="#api-module" title="Permalink to this headline">¶</a></h1>
+<p>This package provides objects which can be used to interact with deviantART&#8217;s
+API.</p>
+<p><em>Note that this product is in no way affiliated with or endorsed by
+deviantART.com. This is not an official service of deviantART.com. This is an
+independent project created by photofroggy.</em></p>
+<div class="section" id="responsereceiver-class">
+<h2>5.2.1. <tt class="docutils literal"><span class="pre">ResponseReceiver</span></tt> class<a class="headerlink" href="#responsereceiver-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dAmnViper.dA.api.ResponseReceiver">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.api.</tt><tt class="descname">ResponseReceiver</tt><big>(</big><em>deferred</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.ResponseReceiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Response receiver.</p>
+<p>A simple object used to receive responses from a web request.</p>
+<dl class="method">
+<dt id="dAmnViper.dA.api.ResponseReceiver.connectionLost">
+<tt class="descname">connectionLost</tt><big>(</big><em>reason</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.ResponseReceiver.connectionLost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure we do something with the response.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.ResponseReceiver.dataReceived">
+<tt class="descname">dataReceived</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.ResponseReceiver.dataReceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store any received data in the buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="response-class">
+<h2>5.2.2. <tt class="docutils literal"><span class="pre">Response</span></tt> class<a class="headerlink" href="#response-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dAmnViper.dA.api.Response">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.api.</tt><tt class="descname">Response</tt><big>(</big><em>head</em>, <em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.Response" title="Permalink to this definition">¶</a></dt>
+<dd><p>API Response object. Stores response data.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="request-class">
+<h2>5.2.3. <tt class="docutils literal"><span class="pre">Request</span></tt> class<a class="headerlink" href="#request-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dAmnViper.dA.api.Request">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.api.</tt><tt class="descname">Request</tt><big>(</big><em>_reactor</em>, <em>deferred</em>, <em>url</em>, <em>agent='dAmnViper/dA/api/request'</em>, <em>response=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.Request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an API request.</p>
+<p>This is a helper object to send requests to API methods.</p>
+<p>A deferred method must be provided, as this object will call the
+deferred with the response from the api request.</p>
+<dl class="method">
+<dt id="dAmnViper.dA.api.Request.got_data">
+<tt class="descname">got_data</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.Request.got_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Received when we have the response body.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.Request.received_response">
+<tt class="descname">received_response</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.Request.received_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Received a response. Get the response body.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.Request.start_request">
+<tt class="descname">start_request</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.Request.start_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the api request to deviantART.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="apiclient-class">
+<h2>5.2.4. <tt class="docutils literal"><span class="pre">APIClient</span></tt> class<a class="headerlink" href="#apiclient-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dAmnViper.dA.api.APIClient">
+<em class="property">class </em><tt class="descclassname">dAmnViper.dA.api.</tt><tt class="descname">APIClient</tt><big>(</big><em>_reactor</em>, <em>client_id</em>, <em>client_secret</em>, <em>auth_code=None</em>, <em>token=None</em>, <em>refresh_token=None</em>, <em>agent='dAmnViper/dA/api/apiclient'</em>, <em>api_url=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client for deviantart.com&#8217;s API.</p>
+<p>This client acts as a client which can be used to interact with
+deviantART.com&#8217;s API. The client object provides methods to aid in
+authorizing applications, and for interacting with the <tt class="docutils literal"><span class="pre">user</span></tt> api
+methods.</p>
+<p>You can use the <tt class="docutils literal"><span class="pre">call</span></tt> method to perform api calls for any methods
+provided by deviantART.com. Documentation of the API can be found
+at this web page: <a class="reference external" href="http://www.deviantart.com/developers/">http://www.deviantart.com/developers/</a></p>
+<p>Using the <tt class="docutils literal"><span class="pre">url</span></tt> method directly allows you to generate your urls
+for api calls. The <tt class="docutils literal"><span class="pre">call</span></tt> method uses this internally in combination
+with the <tt class="docutils literal"><span class="pre">sendRequest</span></tt> method.</p>
+<p>If all you need to do is authorize your application, then it may be
+best to only use the objects provided in the <tt class="docutils literal"><span class="pre">dA.oauth</span></tt> module in
+this package.</p>
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient._authResponse">
+<tt class="descname">_authResponse</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient._authResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process oAuth responses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.auth_app">
+<tt class="descname">auth_app</tt><big>(</big><em>port=8080</em>, <em>resource=None</em>, <em>html=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.auth_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the oAuth client.</p>
+<p>Provide custom HTML in the <tt class="docutils literal"><span class="pre">html</span></tt> parameter to provide a custom
+response page to be given in return to web requests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.call">
+<tt class="descname">call</tt><big>(</big><em>klass</em>, <em>method=None</em>, <em>api='api'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call an api method.</p>
+<p>This method is a shortcut for combining both <tt class="docutils literal"><span class="pre">.sendRequest</span></tt> and
+<tt class="docutils literal"><span class="pre">.url</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.grant">
+<tt class="descname">grant</tt><big>(</big><em>auth_code=None</em>, <em>req_state=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.grant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request a grant token.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.handle_grant">
+<tt class="descname">handle_grant</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.handle_grant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the response to the grant api call.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.init">
+<tt class="descname">init</tt><big>(</big><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method if you want to customise the class a bit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.placebo">
+<tt class="descname">placebo</tt><big>(</big><em>token=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.placebo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the access token is still valid.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.refresh">
+<tt class="descname">refresh</tt><big>(</big><em>refresh_token=None</em>, <em>req_state=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request a new grant token using a refresh token.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.requiresToken">
+<tt class="descname">requiresToken</tt><big>(</big><em>refresh=False</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.requiresToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the token is not set, raise a <tt class="docutils literal"><span class="pre">ValueError</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.sendRequest">
+<tt class="descname">sendRequest</tt><big>(</big><em>url</em>, <em>response_obj=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.sendRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a request to the api.</p>
+<p>Returns a <tt class="docutils literal"><span class="pre">Deferred</span></tt> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.url">
+<tt class="descname">url</tt><big>(</big><em>klass</em>, <em>method=None</em>, <em>api='api'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an API URL based on the input.</p>
+<p>Typically, the format for api urls is as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;https://www.deviantart.com/api/draft15/class/method?arg=value&quot;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">klass</span></tt> and <tt class="docutils literal"><span class="pre">method</span></tt> parameters are used for the class and
+method values in the url. Method names are not required, but appear
+more often than not in the api.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.user_damntoken">
+<tt class="descname">user_damntoken</tt><big>(</big><em>token=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.user_damntoken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request the user&#8217;s dAmn authtoken.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dAmnViper.dA.api.APIClient.user_whoami">
+<tt class="descname">user_whoami</tt><big>(</big><em>token=None</em><big>)</big><a class="headerlink" href="#dAmnViper.dA.api.APIClient.user_whoami" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request info on the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5.2. <tt class="docutils literal"><span class="pre">api</span></tt> module</a><ul>
+<li><a class="reference internal" href="#responsereceiver-class">5.2.1. <tt class="docutils literal"><span class="pre">ResponseReceiver</span></tt> class</a></li>
+<li><a class="reference internal" href="#response-class">5.2.2. <tt class="docutils literal"><span class="pre">Response</span></tt> class</a></li>
+<li><a class="reference internal" href="#request-class">5.2.3. <tt class="docutils literal"><span class="pre">Request</span></tt> class</a></li>
+<li><a class="reference internal" href="#apiclient-class">5.2.4. <tt class="docutils literal"><span class="pre">APIClient</span></tt> class</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="oauth.html"
+                        title="previous chapter">5.1. <tt class="docutils literal"><span class="pre">oauth</span></tt> module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../examples/index.html"
+                        title="next chapter">6. <tt class="docutils literal"><span class="pre">examples</span></tt> package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/reference/dA/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../examples/index.html" title="6. examples package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="oauth.html" title="5.1. oauth module"
+             >previous</a> |</li>
+        <li><a href="../../index.html">dAmn Viper</a> &raquo;</li>
+          <li><a href="../index.html" >Package Reference</a> &raquo;</li>
+          <li><a href="index.html" >5. <tt class="docutils literal"><span class="pre">dA</span></tt> package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, photofroggy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

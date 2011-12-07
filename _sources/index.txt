@@ -38,8 +38,8 @@ In order to work properly, dAmn Viper requires the following:
 
 **Get stable releases of dAmn Viper here:**
 
-* `dAmn Viper 3 Beta - Build 58
-  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.58.zip>`_
+* `dAmn Viper 3 Beta - Build 59
+  <http://pypi.python.org/packages/source/d/dAmnViper/dAmnViper-3.59.zip>`_
 * :doc:`more... <downloads>`
 
 **Get the bleeding edge builds of dAmn Viper here:**

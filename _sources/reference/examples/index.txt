@@ -1,4 +1,4 @@
-7. ``examples`` package
+6. ``examples`` package
 =======================
 
 This package contains examples on how to use ``dAmnViper``. Run these
